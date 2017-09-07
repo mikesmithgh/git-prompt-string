@@ -5,8 +5,15 @@
 #   BGPS_MAX    - length of largest key in config map
 
 declare -A BGPS_CONFIG
-VALID_CONFIG_KEYS=(
-  "COLOR_PROMPT"
+valid_config_keys=(
+  "GIT_COLOR_ENABLED"
+  "GIT_COLOR_CLEAN"
+  "GIT_COLOR_UNTRACKED"
+  "GIT_COLOR_DIRTY"
+  "GIT_COLOR_DEFAULT"
+  "GIT_COLOR_CONFLICT"
+  "PRE_STATUS"
+  "POST_STATUS"
   # TODO add more valid keys
 )
 
@@ -16,7 +23,7 @@ VALID_CONFIG_KEYS=(
 _set_config_value() {
   local key="${1^^}"
   local value="$2"
-  for i in "${VALID_CONFIG_KEYS[@]}"; do 
+  for i in "${valid_config_keys[@]}"; do 
     if [[ $key == $i ]] ; then
       # record max key length for future formatting during print
       local key_length=${#key}
@@ -45,7 +52,7 @@ _read_config() {
   local config_file="$1"
   if [ -f "$config_file" ]; then
     while IFS='=' read -r key value; do
-      _set_config_value $key $value
+      _set_config_value "$key" "$value"
     done < "$config_file"
   fi
 }
@@ -67,7 +74,7 @@ _set_config() {
 _print_config() {
   if [[ -v BGPS_CONFIG[@] ]] ; then
     for i in "${!BGPS_CONFIG[@]}"; do 
-      printf "%-${BGPS_MAX}s = %s\n" $i ${BGPS_CONFIG[$i]} 
+      printf "%-*s = %s\n" "$BGPS_MAX" "$i" "${BGPS_CONFIG[$i]}" 
     done
   fi
 }
@@ -84,7 +91,7 @@ _delete_config() {
 # Unset variables and functions
 #
 _bgps_config_unset() {
-  unset VALID_CONFIG_KEYS
+  unset valid_config_keys
   unset -f _set_config_value
   unset -f _get_config_value
   unset -f _read_config

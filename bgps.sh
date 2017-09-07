@@ -4,9 +4,11 @@
 #   BGPS_CONFIG - map of config values
 #   BGPS_MAX    - length of largest key in config map
 
-source ./bgps-config.sh
+script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "$script_dir/bgps-config.sh"
+source "$script_dir/bgps-prompt.sh"
 
-BGPS_CONFIG_FILE="${HOME}/.bgps_config"
+bgps_config_file="${HOME}/.bgps_config"
 
 # TODO implement flags better than this
 if [[ $1 == "--ls-config" ]] ; then
@@ -14,9 +16,12 @@ if [[ $1 == "--ls-config" ]] ; then
 elif [[ $1 == "--clear-config" ]] ; then
   _delete_config
 else
-  _set_config $BGPS_CONFIG_FILE
+  _set_config $bgps_config_file
+  _bgps_prompt
 fi
 
 # clean up
 _bgps_config_unset
-unset BGPS_CONFIG_FILE
+_bgps_prompt_unset
+unset bgps_config_file
+unset script_dir
