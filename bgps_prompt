@@ -3,7 +3,7 @@
 # TODO add description
 
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "$script_dir/bgps-config"
+source "$script_dir/bgps_config"
 
 #######################################
 # TODO add description
