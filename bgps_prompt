@@ -21,10 +21,9 @@ _bgps_git_status() {
   local color_dirty="$(_get_config_value 'GIT_COLOR_DIRTY')"
   local color_default="$(_get_config_value 'GIT_COLOR_DEFAULT')"
   local color_conflict="$(_get_config_value 'GIT_COLOR_CONFLICT')"
-  local pending_changes
 
-  pending_changes="$(git status --porcelain 2>/dev/null)"
-  if (( $? )) ; then
+  local pending_changes
+  if ! pending_changes="$(git status --porcelain 2>/dev/null)" ; then
     # not in a valid git repo
     return 1
   fi
