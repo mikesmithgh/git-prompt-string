@@ -1,8 +1,6 @@
 #!/bin/bash
-
-# Globals
-#   BGPS_CONFIG - map of config values
-#   BGPS_MAX    - length of largest key in config map
+#
+# TODO add description
 
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "$script_dir/bgps-config"

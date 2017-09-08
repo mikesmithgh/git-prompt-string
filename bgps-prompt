@@ -1,7 +1,19 @@
 #!/bin/bash
+#
+# TODO add description
+
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "$script_dir/bgps-config"
 
+#######################################
+# TODO add description
+# Globals:
+#   TODO add info
+# Arguments:
+#   TODO add info
+# Returns:
+#   TODO add info
+#######################################
 _bgps_git_status() {
   local color_enabled="$(_get_config_value 'GIT_COLOR_ENABLED')"
   local color_clean="$(_get_config_value 'GIT_COLOR_CLEAN')"
@@ -57,6 +69,15 @@ _bgps_git_status() {
   # echo " %s $git_symbol" # TODO add git symbol
 }
 
+#######################################
+# TODO add description
+# Globals:
+#   TODO add info
+# Arguments:
+#   TODO add info
+# Returns:
+#   TODO add info
+#######################################
 _bgps_prompt() {
   # prompt flags
   local git_prompt="false"
@@ -80,6 +101,15 @@ _bgps_prompt() {
   fi
 }
 
+#######################################
+# TODO add description
+# Globals:
+#   TODO add info
+# Arguments:
+#   TODO add info
+# Returns:
+#   TODO add info
+#######################################
 _bgps_prompt_unset() {
   unset -f _bgps_git_status
   unset -f _bgps_prompt

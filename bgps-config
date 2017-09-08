@@ -1,8 +1,9 @@
 #!/bin/bash
-
-# Globals
-#   BGPS_CONFIG - map of config values
-#   BGPS_MAX    - length of largest key in config map
+#
+# TODO add description
+# Globals:
+#   BGPS_CONFIG map of config values
+#   BGPS_MAX    length of largest key in config map
 
 declare -A BGPS_CONFIG
 valid_config_keys=(
@@ -17,9 +18,15 @@ valid_config_keys=(
   # TODO add more valid keys
 )
 
-#
+#######################################
 # Add configuration to config map
-#
+# Globals:
+#   TODO add info
+# Arguments:
+#   TODO add info
+# Returns:
+#   TODO add info
+#######################################
 _set_config_value() {
   local key="${1^^}"
   local value="$2"
@@ -37,17 +44,29 @@ _set_config_value() {
   done
 }
 
-#
+#######################################
 # Get configuration from config map 
-#
+# Globals:
+#   TODO add info
+# Arguments:
+#   TODO add info
+# Returns:
+#   TODO add info
+#######################################
 _get_config_value() {
   local key="${1^^}"
   echo "${BGPS_CONFIG[$key]}"
 }
 
-#
+#######################################
 # Read file and store in global config map
-#
+# Globals:
+#   TODO add info
+# Arguments:
+#   TODO add info
+# Returns:
+#   TODO add info
+#######################################
 _read_config() {
   local config_file="$1"
   if [ -f "$config_file" ]; then
@@ -57,20 +76,32 @@ _read_config() {
   fi
 }
 
-#
+#######################################
 # Set the config map by reading the values from the provided file.
 # If the config map already exists, consider it cached and do not
 # read from the file.
-#
+# Globals:
+#   TODO add info
+# Arguments:
+#   TODO add info
+# Returns:
+#   TODO add info
+#######################################
 _set_config() {
   if [[ ! -v BGPS_CONFIG[@] ]] ; then
     _read_config "$@" 
   fi
 }
 
-#
+#######################################
 # Pretty print the config 
-#
+# Globals:
+#   TODO add info
+# Arguments:
+#   TODO add info
+# Returns:
+#   TODO add info
+#######################################
 _print_config() {
   if [[ -v BGPS_CONFIG[@] ]] ; then
     for i in "${!BGPS_CONFIG[@]}"; do 
@@ -79,17 +110,29 @@ _print_config() {
   fi
 }
 
-#
+#######################################
 # Unset global variables
-#
+# Globals:
+#   TODO add info
+# Arguments:
+#   TODO add info
+# Returns:
+#   TODO add info
+#######################################
 _delete_config() {
   unset BGPS_CONFIG
   unset BGPS_MAX
 }
 
-#
+#######################################
 # Unset variables and functions
-#
+# Globals:
+#   TODO add info
+# Arguments:
+#   TODO add info
+# Returns:
+#   TODO add info
+#######################################
 _bgps_config_unset() {
   unset valid_config_keys
   unset -f _set_config_value
