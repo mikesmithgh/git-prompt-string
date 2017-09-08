@@ -27,14 +27,15 @@ _bgps_git_status() {
     # not in a valid git repo
     return 1
   fi
-  
   pending_changes="$(echo $pending_changes | wc -w)"
   
   # get git branch info
   local git_symbol=""
   local git_color="$color_default"
-  local commit_counts=($(git rev-list --left-right --count ...@{u} 2>/dev/null))
+  local commit_counts
+  commit_counts=($(git rev-list --left-right --count ...@{u} 2>/dev/null))
   if (( $? )) ; then
+    # no upstream configured for branch
     git_color="$color_untracked"
   else
     if (( ! $pending_changes )) ; then
@@ -86,7 +87,9 @@ _bgps_prompt() {
     .  /etc/bash_completion.d/git-prompt
   fi
   # only set git_prompt flag if __git_ps1 function is defined
-  if [ -n "$(type -t __git_ps1)" ] && [ "$(type -t __git_ps1)" == function ]; then 
+  if [[ -n "$(type -t __git_ps1)" ]] && \
+     [[ "$(type -t __git_ps1)" == function ]]
+  then 
     git_prompt="true"
   fi
   
