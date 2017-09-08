@@ -5,8 +5,8 @@
 #   BGPS_MAX    - length of largest key in config map
 
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "$script_dir/bgps-config.sh"
-source "$script_dir/bgps-prompt.sh"
+source "$script_dir/bgps-config"
+source "$script_dir/bgps-prompt"
 
 bgps_config_file="${HOME}/.bgps_config"
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "$script_dir/bgps-config.sh"
+source "$script_dir/bgps-config"
 
 _bgps_git_status() {
   local color_enabled="$(_get_config_value 'GIT_COLOR_ENABLED')"
