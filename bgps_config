@@ -58,6 +58,10 @@ _get_config_value() {
   echo "${BGPS_CONFIG[$key]}"
 }
 
+err() {
+  echo "$@" >&2
+}
+
 #######################################
 # Read file and store in global config map
 # Globals:
@@ -73,6 +77,8 @@ _read_config() {
     while IFS='=' read -r key value; do
       _set_config_value "$key" "$value"
     done < "$config_file"
+  else
+    err "cannot access '$1': No such file"
   fi
 }
 

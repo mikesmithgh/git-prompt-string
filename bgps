@@ -8,15 +8,24 @@ source "$script_dir/bgps_prompt"
 
 bgps_config_file="${HOME}/.bgps_config"
 
-# TODO implement flags better than this
-if [[ $1 == "--ls-config" ]] ; then
-  _print_config
-elif [[ $1 == "--clear-config" ]] ; then
-  _delete_config
-else
-  _set_config $bgps_config_file
-  _bgps_prompt
-fi
+while [[ $# > 0 ]]; do
+  case "${1:2}" in
+    ls-config)
+      _print_config
+      ;;
+    no-cache)
+      _delete_config
+      ;;
+    config-file)
+      shift
+      bgps_config_file="${1}"
+      ;;
+  esac
+  shift
+done
+
+_set_config $bgps_config_file
+_bgps_prompt
 
 # clean up
 _bgps_config_unset
