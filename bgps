@@ -24,8 +24,9 @@ while [[ $# > 0 ]]; do
   shift
 done
 
-_set_config $bgps_config_file
-_bgps_prompt
+if _set_config "${bgps_config_file}" ; then
+  _bgps_prompt
+fi
 
 # clean up
 _bgps_config_unset

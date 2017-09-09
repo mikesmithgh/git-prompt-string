@@ -4,6 +4,7 @@
 # Globals:
 #   BGPS_CONFIG map of config values
 #   BGPS_MAX    length of largest key in config map
+#   BGPS_CHECKSUM md5sum of config file
 
 declare -A BGPS_CONFIG
 valid_config_keys=(
@@ -59,7 +60,17 @@ _get_config_value() {
 }
 
 err() {
-  echo "$@" >&2
+  echo "bgps: $@" >&2
+}
+
+
+_file_exists() {
+  local return_code=0
+  if [[ ! -f "${1}" ]]; then
+    err "cannot access '${1}': No such file"
+    return_code=1
+  fi
+  return ${return_code}
 }
 
 #######################################
@@ -67,37 +78,44 @@ err() {
 # Globals:
 #   TODO add info
 # Arguments:
-#   TODO add info
+#   configuration file
 # Returns:
 #   TODO add info
 #######################################
 _read_config() {
-  local config_file="$1"
-  if [ -f "$config_file" ]; then
+  local config_file="${1}"
+  if _file_exists "${config_file}" ; then
     while IFS='=' read -r key value; do
       _set_config_value "$key" "$value"
     done < "$config_file"
-  else
-    err "cannot access '$1': No such file"
   fi
 }
 
 #######################################
 # Set the config map by reading the values from the provided file.
-# If the config map already exists, consider it cached and do not
-# read from the file.
+# Only read from file if md5sum is different, otherwise hit the cache.
 # Globals:
-#   TODO add info
+#   BGPS_CHECKSUM
 # Arguments:
-#   TODO add info
+#   configuration file
 # Returns:
-#   TODO add info
+#   Nothing
 #######################################
 _set_config() {
-  if [[ ! -v BGPS_CONFIG[@] ]] ; then
-    _read_config "$@" 
+  local return_code=0
+  local config_file="${1}"
+  if _file_exists "${config_file}" ; then
+    local hash="$(md5sum ${config_file} | awk {'print $1'})"
+    if [[ "${hash}" != "${BGPS_CHECKSUM}" ]] ; then
+      BGPS_CHECKSUM="${hash}"
+      _read_config "${config_file}" 
+    fi
+  else
+    return_code=1
   fi
+  return ${return_code}
 }
+
 
 #######################################
 # Pretty print the config 
