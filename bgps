@@ -108,13 +108,21 @@ _read_config() {
 # Globals:
 #   $BGPS_CHECKSUM
 #   $BGPS_CONFIG 
+#   $BGPS_DEFAULT_CONFIG
 # Arguments: $config_file the configuration filepath 
 # Returns: 0 on success
 #######################################
 _set_config() {
   local return_code=0
   local config_file="${1}"
-  if _file_exists "${config_file}" ; then
+  if [[ "${config_file}" == "${BGPS_DEFAULT_CONFIG}" ]] && \
+     ! _file_exists "${config_file}" 2>/dev/null
+  then
+      # default config file does not exist so lets print a shrug face
+      BGPS_CHECKSUM="¯\_(ツ)_/¯"
+      _clear_config_values
+      _set_config_value "POST_STATUS" ' ${BGPS_CHECKSUM} \$ '
+  elif _file_exists "${config_file}" ; then
     local hash="$(md5sum ${config_file} | awk {'print $1'})"
     if [[ "${hash}" != "${BGPS_CHECKSUM}" ]] ; then
       BGPS_CHECKSUM="${hash}"
@@ -220,8 +228,9 @@ _bgps_prompt() {
     git_prompt="true"
   fi
   
+  local reset="\033[0m"
   local pre_status="$(_get_config_value 'PRE_STATUS')"
-  local post_status="$(_get_config_value 'POST_STATUS')"
+  local post_status="$(_get_config_value 'POST_STATUS')${reset} "
   
   if [[ "${git_prompt}" == "true" ]] ; then
     __git_ps1 "${pre_status}" "${post_status}" "$(_bgps_git_status)"
@@ -232,11 +241,13 @@ _bgps_prompt() {
 
 # Script Definition ###########################################################
 # Globals:
-#   BGPS_CONFIG map of config values
-#   BGPS_CHECKSUM md5sum of config file
+#   $BGPS_CONFIG map of config values
+#   $BGPS_CHECKSUM md5sum of config file
+#   $BGPS_DEFAULT_CONFIG default config file filepath
 
 declare -A BGPS_CONFIG
-bgps_config_file="${HOME}/.bgps_config"
+BGPS_DEFAULT_CONFIG="${HOME}/.bgps_config"
+bgps_config_file="${BGPS_DEFAULT_CONFIG}"
 list_config="false"
 
 while [[ $# > 0 ]]; do
