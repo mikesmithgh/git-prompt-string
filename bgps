@@ -2,21 +2,228 @@
 #
 # TODO add description
 
-script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "$script_dir/bgps_config"
-source "$script_dir/bgps_prompt"
+# Function Definitions ########################################################
 
+#######################################
+# Print error message to stderr
+# Arguments: $error_message
+#######################################
+_err() {
+  echo "bgps: ${1}" >&2
+}
+
+#######################################
+# Check if file exists and if file is a regular file
+# Arguments: $filepath the path of the file to check
+# Returns: 0 on success
+#######################################
+_file_exists() {
+  local return_code=0
+  local filepath="${1}"
+  if [[ ! -e "${filepath}" ]]; then
+    _err "cannot access '${filepath}': No such file"
+    return_code=1
+  elif [[ ! -f "${filepath}" ]]; then
+    _err "cannot access '${filepath}': Not a regular file"
+    return_code=1
+  fi
+  return ${return_code}
+}
+
+#######################################
+# Add configuration to config map
+# Globals: $BGPS_CONFIG 
+# Arguments:
+#   $key the config map key
+#   $value the config map value
+#######################################
+_set_config_value() {
+  local valid_config_keys=(
+    "GIT_COLOR_CLEAN"
+    "GIT_COLOR_CONFLICT"
+    "GIT_COLOR_DEFAULT"
+    "GIT_COLOR_DIRTY"
+    "GIT_COLOR_ENABLED"
+    "GIT_COLOR_UNTRACKED"
+    "POST_STATUS"
+    "PRE_STATUS"
+  )
+  local key="${1^^}"
+  local value="${2}"
+  for valid_key in "${valid_config_keys[@]}"; do 
+    if [[ "${key}" == "${valid_key}" ]] ; then
+      # add to config map
+      BGPS_CONFIG["${key}"]="${value}"
+    fi
+  done
+}
+
+#######################################
+# Get configuration from config map 
+# Globals: $BGPS_CONFIG 
+# Arguments: $key the config map key
+#######################################
+_get_config_value() {
+  local key="${1^^}"
+  echo "${BGPS_CONFIG[$key]}"
+}
+
+#######################################
+# Read file and store in global config map
+# Globals: $BGPS_CONFIG 
+# Arguments: $config_file the configuration filepath 
+#######################################
+_read_config() {
+  local config_file="${1}"
+  if _file_exists "${config_file}" ; then
+    while IFS='=' read -r key value; do
+      _set_config_value "$key" "$value"
+    done < "$config_file"
+  fi
+}
+
+#######################################
+# Set the config map by reading the values from the provided file.
+# Only read from file if md5sum is different, otherwise hit the cache.
+# Globals:
+#   $BGPS_CHECKSUM
+#   $BGPS_CONFIG 
+# Arguments: $config_file the configuration filepath 
+# Returns: 0 on success
+#######################################
+_set_config() {
+  local return_code=0
+  local config_file="${1}"
+  if _file_exists "${config_file}" ; then
+    local hash="$(md5sum ${config_file} | awk {'print $1'})"
+    if [[ "${hash}" != "${BGPS_CHECKSUM}" ]] ; then
+      BGPS_CHECKSUM="${hash}"
+      _read_config "${config_file}" 
+    fi
+  else
+    return_code=1
+  fi
+  return ${return_code}
+}
+
+
+#######################################
+# Pretty print the configuration map
+# Globals: $BGPS_CONFIG
+#######################################
+_print_config() {
+  if [[ -v BGPS_CONFIG[@] ]] ; then
+    for key in "${!BGPS_CONFIG[@]}"; do 
+      printf "%-*s = %s\n" 19 "${key}" "${BGPS_CONFIG[$key]}" 
+    done
+  fi
+}
+
+#######################################
+# Get git status format
+# Globals: $BGPS_CONFIG 
+# Returns: 0 on success
+#######################################
+_bgps_git_status() {
+  local color_enabled="$(_get_config_value 'GIT_COLOR_ENABLED')"
+  local color_clean="$(_get_config_value 'GIT_COLOR_CLEAN')"
+  local color_untracked="$(_get_config_value 'GIT_COLOR_UNTRACKED')"
+  local color_dirty="$(_get_config_value 'GIT_COLOR_DIRTY')"
+  local color_default="$(_get_config_value 'GIT_COLOR_DEFAULT')"
+  local color_conflict="$(_get_config_value 'GIT_COLOR_CONFLICT')"
+
+  local pending_changes
+  if ! pending_changes="$(git status --porcelain 2>/dev/null)" ; then
+    # not in a valid git repo
+    return 1
+  fi
+  pending_changes="$(echo ${pending_changes} | wc -w)"
+  
+  # get git branch info
+  local git_symbol=""
+  local git_color="${color_default}"
+  local commit_counts
+  commit_counts=($(git rev-list --left-right --count ...@{u} 2>/dev/null))
+  if (( $? )) ; then
+    # no upstream configured for branch
+    git_color="${color_untracked}"
+  else
+    if (( ! ${pending_changes} )) ; then
+      git_color="${color_clean}"
+    fi
+  
+    if (( ${commit_counts[0]} )) ; then
+      git_color="${color_conflict}"
+      git_symbol="↑[${commit_counts[0]}]"
+    fi
+  
+    if (( ${commit_counts[1]} )) ; then
+      git_color="${color_conflict}"
+      git_symbol="↓[${commit_counts[1]}]"
+    fi
+  
+    if (( ${commit_counts[0]} && ${commit_counts[1]} )) ; then
+      git_symbol="↕ ↑[${commit_counts[0]}] ↓[${commit_counts[1]}]"
+    fi
+  fi
+  
+  if (( ${pending_changes} )) ; then
+    git_color="${color_dirty}"
+    git_symbol="*${git_symbol}"
+  fi
+  
+  if [[ ${color_enabled} == "true" ]] ; then
+    echo -n "${git_color}"
+  fi
+  echo "%s ${git_symbol}"
+  # echo " %s $git_symbol" # TODO add git symbol
+  return 0
+}
+
+#######################################
+# Set formatted git prompt
+# Globals: $BGPS_CONFIG 
+#######################################
+_bgps_prompt() {
+  local git_prompt="false"
+  local git_prompt_path="/etc/bash_completion.d/git-prompt"
+  
+  # make sure git prompt is sourced for __git_ps1 function
+  if [[ -e "${git_prompt_path}" ]]; then
+    source "${git_prompt_path}"
+  fi
+  # only set git_prompt flag if __git_ps1 function is defined
+  if [[ -n "$(type -t __git_ps1)" ]] && \
+     [[ "$(type -t __git_ps1)" == function ]]
+  then 
+    git_prompt="true"
+  fi
+  
+  local pre_status="$(_get_config_value 'PRE_STATUS')"
+  local post_status="$(_get_config_value 'POST_STATUS')"
+  
+  if [[ "${git_prompt}" == "true" ]] ; then
+    __git_ps1 "${pre_status}" "${post_status}" "$(_bgps_git_status)"
+  else
+      PS1="${pre_status} {$post_status}"
+  fi
+}
+
+# Script Definition ###########################################################
+# Globals:
+#   BGPS_CONFIG map of config values
+#   BGPS_CHECKSUM md5sum of config file
+
+declare -A BGPS_CONFIG
 bgps_config_file="${HOME}/.bgps_config"
+list_config="false"
 
 while [[ $# > 0 ]]; do
   case "${1:2}" in
-    ls-config)
-      _print_config
+    "ls-config")
+      list_config="true"
       ;;
-    no-cache)
-      _delete_config
-      ;;
-    config-file)
+    "config-file")
       shift
       bgps_config_file="${1}"
       ;;
@@ -25,11 +232,22 @@ while [[ $# > 0 ]]; do
 done
 
 if _set_config "${bgps_config_file}" ; then
-  _bgps_prompt
+  if [[ "${list_config}" == "true" ]] ; then
+    _print_config
+  else 
+    _bgps_prompt
+  fi
 fi
 
-# clean up
-_bgps_config_unset
-_bgps_prompt_unset
+# unset variables and functions
 unset bgps_config_file
-unset script_dir
+unset list_config
+unset -f _err
+unset -f _file_exists
+unset -f _set_config_value
+unset -f _get_config_value
+unset -f _read_config
+unset -f _set_config
+unset -f _print_config
+unset -f _bgps_git_status
+unset -f _bgps_prompt
