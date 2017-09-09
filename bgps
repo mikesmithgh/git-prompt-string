@@ -69,6 +69,17 @@ _get_config_value() {
 }
 
 #######################################
+# Clear all configuration in the config map 
+# Globals: $BGPS_CONFIG 
+#######################################
+_clear_config_values() {
+  local keys=("${!BGPS_CONFIG[@]}")
+  for key in "${keys[@]}"; do
+    unset "BGPS_CONFIG[$key]"
+  done
+}
+
+#######################################
 # Read file and store in global config map
 # Globals: $BGPS_CONFIG 
 # Arguments: $config_file the configuration filepath 
@@ -98,6 +109,7 @@ _set_config() {
     local hash="$(md5sum ${config_file} | awk {'print $1'})"
     if [[ "${hash}" != "${BGPS_CHECKSUM}" ]] ; then
       BGPS_CHECKSUM="${hash}"
+      _clear_config_values
       _read_config "${config_file}" 
     fi
   else
@@ -246,6 +258,7 @@ unset -f _err
 unset -f _file_exists
 unset -f _set_config_value
 unset -f _get_config_value
+unset -f _clear_config_values
 unset -f _read_config
 unset -f _set_config
 unset -f _print_config
