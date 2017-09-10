@@ -69,13 +69,19 @@ _set_config_value() {
 }
 
 #######################################
-# Get configuration from config map 
+# Get configuration from config map.
+# If a default value is provided and there is no value in the config, then
+# return the default value
 # Globals: $BGPS_CONFIG 
-# Arguments: $key the config map key
+# Arguments:
+#   $key the config map key
+#   $default_value the default value if there is no value in the config
 #######################################
 _get_config_value() {
   local key="${1^^}"
-  echo "${BGPS_CONFIG[$key]}"
+  local default_value="${2}"
+  local value="${BGPS_CONFIG[$key]}"
+  [[ -z "${value}" ]] && echo "${default_value}" || echo "${value}"
 }
 
 #######################################
@@ -155,13 +161,13 @@ _print_config() {
 # Returns: 0 on success
 #######################################
 _bgps_git_status() {
-  local color_enabled="$(_get_config_value 'GIT_COLOR_ENABLED')"
-  local color_clean="$(_get_config_value 'GIT_COLOR_CLEAN')"
-  local color_untracked="$(_get_config_value 'GIT_COLOR_UNTRACKED')"
-  local color_dirty="$(_get_config_value 'GIT_COLOR_DIRTY')"
-  local color_default="$(_get_config_value 'GIT_COLOR_DEFAULT')"
-  local color_conflict="$(_get_config_value 'GIT_COLOR_CONFLICT')"
-  local icon="$(_get_config_value 'GIT_ICON')"
+  local color_enabled="$(_get_config_value 'GIT_COLOR_ENABLED' 'false')"
+  local color_clean="$(_get_config_value 'GIT_COLOR_CLEAN' '\033[2;92m')"
+  local color_untracked="$(_get_config_value 'GIT_COLOR_UNTRACKED' '\033[2;95m')"
+  local color_dirty="$(_get_config_value 'GIT_COLOR_DIRTY' '\033[2;91m')"
+  local color_default="$(_get_config_value 'GIT_COLOR_DEFAULT' '\033[2;97m')"
+  local color_conflict="$(_get_config_value 'GIT_COLOR_CONFLICT' '\033[0;33m')"
+  local icon="$(_get_config_value 'GIT_ICON' '')"
 
   local pending_changes
   if ! pending_changes="$(git status --porcelain 2>/dev/null)" ; then
