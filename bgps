@@ -54,6 +54,7 @@ _set_config_value() {
     "GIT_COLOR_DIRTY"
     "GIT_COLOR_ENABLED"
     "GIT_COLOR_UNTRACKED"
+    "GIT_ICON"
     "POST_STATUS"
     "PRE_STATUS"
   )
@@ -160,6 +161,7 @@ _bgps_git_status() {
   local color_dirty="$(_get_config_value 'GIT_COLOR_DIRTY')"
   local color_default="$(_get_config_value 'GIT_COLOR_DEFAULT')"
   local color_conflict="$(_get_config_value 'GIT_COLOR_CONFLICT')"
+  local icon="$(_get_config_value 'GIT_ICON')"
 
   local pending_changes
   if ! pending_changes="$(git status --porcelain 2>/dev/null)" ; then
@@ -204,8 +206,7 @@ _bgps_git_status() {
   if [[ ${color_enabled} == "true" ]] ; then
     echo -n "${git_color}"
   fi
-  echo "%s ${git_symbol}"
-  # echo " %s $git_symbol" # TODO add git symbol
+  echo "${icon:+${icon} }%s ${git_symbol}"
   return 0
 }
 
