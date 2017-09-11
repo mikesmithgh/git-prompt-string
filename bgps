@@ -128,7 +128,7 @@ _set_config() {
       # default config file does not exist so lets print a shrug face
       BGPS_CHECKSUM="¯\_(ツ)_/¯"
       _clear_config_values
-      _set_config_value "POST_STATUS" ' ${BGPS_CHECKSUM} \$ '
+      _set_config_value "POST_STATUS" " ${BGPS_CHECKSUM} \$ "
   elif _file_exists "${config_file}" ; then
     local hash="$(md5sum ${config_file} | awk {'print $1'})"
     if [[ "${hash}" != "${BGPS_CHECKSUM}" ]] ; then
@@ -242,7 +242,7 @@ _bgps_prompt() {
   if [[ "${git_prompt}" == "true" ]] ; then
     __git_ps1 "${pre_status}" "${post_status}" "$(_bgps_git_status)"
   else
-      PS1="${pre_status} {$post_status}"
+      PS1="${pre_status} ${post_status}"
   fi
 }
 
