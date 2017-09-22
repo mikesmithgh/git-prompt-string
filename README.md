@@ -4,6 +4,10 @@ A better Bash prompt for Git.
 ![demo](screenshots/demo.gif)
 
 ## Installation
+TODO
+
+## Configuration
+TODO
 
 ## Compatibilty
 BGPS has been tested with the following:
