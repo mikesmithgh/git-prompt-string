@@ -53,6 +53,13 @@ A better Bash prompt for Git.
 ## Configuration
 TODO
 
+## FAQ
+### My prompt is a shrug face `¯\_(ツ)_/¯`. What is going on?
+You are missing the BGPS configuration file `~/.bgps_config`. Make sure `~/bgps-config` exists and that it is properly configured. 
+
+### Why do I have a weird symbol `` for my git icon?
+Powerline fonts is used to display the git icon. If you are using [my](examples/mine) configuration and the icon is incorrect, then you need to install the `fonts-powerline` package.
+
 ## Compatibilty
 BGPS has been tested with the following:
 - Operating System: Linux 4.10.0-35-generic #39~16.04.1-Ubuntu
