@@ -162,11 +162,11 @@ _print_config() {
 #######################################
 _bgps_git_status() {
   local color_enabled="$(_get_config_value 'GIT_COLOR_ENABLED' 'false')"
-  local color_clean="$(_get_config_value 'GIT_COLOR_CLEAN' '\033[2;92m')"
-  local color_untracked="$(_get_config_value 'GIT_COLOR_UNTRACKED' '\033[2;95m')"
-  local color_dirty="$(_get_config_value 'GIT_COLOR_DIRTY' '\033[2;91m')"
-  local color_default="$(_get_config_value 'GIT_COLOR_DEFAULT' '\033[2;97m')"
-  local color_conflict="$(_get_config_value 'GIT_COLOR_CONFLICT' '\033[0;33m')"
+  local color_clean="$(_get_config_value 'GIT_COLOR_CLEAN' '\[\033[2;92m\]')"
+  local color_untracked="$(_get_config_value 'GIT_COLOR_UNTRACKED' '\[\033[2;95m\]')"
+  local color_dirty="$(_get_config_value 'GIT_COLOR_DIRTY' '\[\033[2;91m\]')"
+  local color_default="$(_get_config_value 'GIT_COLOR_DEFAULT' '\[\033[2;97m\]')"
+  local color_conflict="$(_get_config_value 'GIT_COLOR_CONFLICT' '\[\033[0;33m\]')"
   local icon="$(_get_config_value 'GIT_ICON' '')"
 
   local pending_changes
@@ -235,7 +235,7 @@ _bgps_prompt() {
     git_prompt="true"
   fi
   
-  local reset="\033[0m"
+  local reset="\[\033[0m\]"
   local pre_status="$(_get_config_value 'PRE_STATUS')"
   local post_status="$(_get_config_value 'POST_STATUS')${reset} "
   
