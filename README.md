@@ -1,5 +1,9 @@
 # Better Git Prompt String
-A better Bash prompt for Git.
+A better bash prompt for git. bgps provides a convenient way to customize
+the PS1 prompt and to determine information about the current git branch. 
+bgps can indicate if the branch is clean or dirty, whether or not it is 
+tracking a remote branch, and the number of commits the local branch is
+ahead or behind of the remote branch.
 
 ![demo](screenshots/demo.gif)
 
