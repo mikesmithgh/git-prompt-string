@@ -55,7 +55,6 @@ _set_config_value() {
   local valid_config_keys=(
     "GIT_COLOR_CLEAN"
     "GIT_COLOR_CONFLICT"
-    "GIT_COLOR_DEFAULT"
     "GIT_COLOR_DIRTY"
     "GIT_COLOR_ENABLED"
     "GIT_COLOR_UNTRACKED"
@@ -162,7 +161,9 @@ _print_config() {
 
 #######################################
 # Get git status format
-# Globals: $BGPS_CONFIG 
+# Globals: 
+#   $RESET_COLOR
+#   $BGPS_CONFIG 
 # Returns: 0 on success
 #######################################
 _bgps_git_status() {
@@ -170,7 +171,6 @@ _bgps_git_status() {
   local color_clean="$(_get_config_value 'GIT_COLOR_CLEAN' '\[\033[2;92m\]')"
   local color_untracked="$(_get_config_value 'GIT_COLOR_UNTRACKED' '\[\033[2;95m\]')"
   local color_dirty="$(_get_config_value 'GIT_COLOR_DIRTY' '\[\033[2;91m\]')"
-  local color_default="$(_get_config_value 'GIT_COLOR_DEFAULT' '\[\033[2;97m\]')"
   local color_conflict="$(_get_config_value 'GIT_COLOR_CONFLICT' '\[\033[0;33m\]')"
   local icon="$(_get_config_value 'GIT_ICON' '')"
 
@@ -183,7 +183,7 @@ _bgps_git_status() {
   
   # get git branch info
   local git_symbol=""
-  local git_color="${color_default}"
+  local git_color="${RESET_COLOR}"
   local commit_counts
   commit_counts=($(git rev-list --left-right --count ...@{u} 2>/dev/null))
   if (( $? )) ; then
@@ -223,7 +223,9 @@ _bgps_git_status() {
 
 #######################################
 # Set formatted git prompt
-# Globals: $BGPS_CONFIG 
+# Globals:
+#   $RESET_COLOR
+#   $BGPS_CONFIG 
 #######################################
 _bgps_prompt() {
   local git_prompt="false"
@@ -240,9 +242,8 @@ _bgps_prompt() {
     git_prompt="true"
   fi
   
-  local reset="\[\033[0m\]"
   local pre_status="$(_get_config_value 'PRE_STATUS')"
-  local post_status="$(_get_config_value 'POST_STATUS')${reset} "
+  local post_status="$(_get_config_value 'POST_STATUS')${RESET_COLOR} "
   
   if [[ "${git_prompt}" == "true" ]] ; then
     __git_ps1 "${pre_status}" "${post_status}" "$(_bgps_git_status)"
@@ -253,10 +254,12 @@ _bgps_prompt() {
 
 # Script Definition ###########################################################
 # Globals:
+#   $RESET_COLOR escape sequence to reset prompt color
 #   $BGPS_CONFIG map of config values
 #   $BGPS_CHECKSUM md5sum of config file
 #   $BGPS_DEFAULT_CONFIG default config file filepath
 
+RESET_COLOR="\[\033[0m\]"
 declare -A BGPS_CONFIG
 BGPS_DEFAULT_CONFIG="${HOME}/.bgps_config"
 bgps_config_file="${BGPS_DEFAULT_CONFIG}"
@@ -284,6 +287,7 @@ if _set_config "${bgps_config_file}" ; then
 fi
 
 # unset variables and functions
+unset RESET_COLOR
 unset bgps_config_file
 unset list_config
 unset -f _err
