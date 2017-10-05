@@ -69,7 +69,16 @@ sudo apt update && sudo apt install fonts-powerline
 then you should now see the git icon.
 
 ## Configuration
-TODO
+| Option                | Description                                                                     | Default Value             |
+|:----------------------|:--------------------------------------------------------------------------------|:--------------------------|
+| `PRE_STATUS`          | Customizable prompt section that is displayed before git section                |                           |
+| `POST_STATUS`         | Customizable prompt section that is displayed after git section                 |                           |
+| `GIT_ICON`            | Optional icon that is displayed before git section                              |                           |
+| `GIT_COLOR_ENABLED`   | If `true`, then enable color for git section                                    | `false`                   |
+| `GIT_COLOR_CLEAN`     | Color of git section when the branch has a clean working tree                   | `\[\033[2;92m\]` (green)  |
+| `GIT_COLOR_CONFLICT`  | Color of git section when the local branch is ahead or behind the remote branch | `\[\033[0;33m\]` (yellow) |
+| `GIT_COLOR_DIRTY`     | Color of git section when the branch has a dirty working tree                   | `\[\033[2;91m\]` (red)    |
+| `GIT_COLOR_UNTRACKED` | Color of git section when the local branch is not tracking a remote branch      | `\[\033[2;95m\]` (purple) |
 
 ## FAQ
 ### My prompt is a shrug face `¯\_(ツ)_/¯`. What is going on?
