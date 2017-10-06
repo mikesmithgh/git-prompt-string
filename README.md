@@ -27,7 +27,7 @@ wget -O ~/bin/bgps https://raw.githubusercontent.com/mjsmith1028/bgps/master/bgp
 sudo wget -O /usr/local/bin/bgps https://raw.githubusercontent.com/mjsmith1028/bgps/master/bgps
 ```
 ### 2. Configure bgps
-Create `~/.bgps_config`, if it does not exist. Modify it according to you 
+Create `~/.bgps_config`, if it does not exist. Modify it according to your 
 preferences. See the [configuration](#configuration) section for more information.
 
 If you like what you see in the demo, copy my configuration:
