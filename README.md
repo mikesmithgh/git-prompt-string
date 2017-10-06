@@ -30,7 +30,7 @@ sudo wget -O /usr/local/bin/bgps https://raw.githubusercontent.com/mjsmith1028/b
 Create `~/.bgps_config`, if it does not exist. Modify it according to your 
 preferences. See the [configuration](#configuration) section for more information.
 
-If you like what you see in the demo, copy my configuration:
+If you like what you see in the demo, copy [my configuration](examples/mine):
 ```bash
 wget -O ~/.bgps_config https://raw.githubusercontent.com/mjsmith1028/bgps/master/examples/mine
 ```
