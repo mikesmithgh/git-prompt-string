@@ -1,4 +1,4 @@
 PRE_STATUS="\n\[\033[0;36m\] \w \[\033[0m\]"
-POST_STATUS="$( ((${EUID})) && echo '\[\033[0;92m\]' || echo '\[\033[0;91m\]')\n \u@\h \[\033[0;36m\]\$"
+POST_STATUS="$(((${EUID})) && echo '\[\033[0;92m\]' || echo '\[\033[0;91m\]')\n \u@\h \[\033[0;36m\]\$"
 GIT_COLOR_ENABLED="true"
 GIT_ICON=""
