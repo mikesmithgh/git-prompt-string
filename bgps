@@ -107,9 +107,9 @@ _clear_config_values() {
 _read_config() {
   local config_file="${1}"
   if _file_exists "${config_file}" ; then
-    while IFS='=' read -r key value; do
-      _set_config_value "$key" "$value"
-    done < "$config_file"
+    while IFS=$'=\r\n' read -r key value; do
+      _set_config_value "${key}" "${value}"
+    done < "${config_file}"
   fi
 }
 
