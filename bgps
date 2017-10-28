@@ -167,28 +167,12 @@ _print_config() {
   fi
 }
 
-#######################################
-# Get git status format
-# Globals: 
-#   $RESET_COLOR
-#   $BGPS_CONFIG 
-# Returns: 0 on success
-#######################################
-_bgps_git_status() {
-  local color_enabled="$(_get_config_value 'GIT_COLOR_ENABLED' 'false')"
-  local color_clean="$(_get_config_value 'GIT_COLOR_CLEAN' '\[\033[2;92m\]')"
-  local color_no_upstream="$(_get_config_value 'GIT_COLOR_NO_UPSTREAM' '\[\033[2;40m\]')"
-  local color_untracked="$(_get_config_value 'GIT_COLOR_UNTRACKED' '\[\033[2;95m\]')"
-  local color_dirty="$(_get_config_value 'GIT_COLOR_DIRTY' '\[\033[2;91m\]')"
-  local color_conflict="$(_get_config_value 'GIT_COLOR_CONFLICT' '\[\033[0;33m\]')"
-  local icon="$(_get_config_value 'GIT_ICON' '')"
-
-
+_gitstring() {
   local repo_info
   local rev_parse_exit_code
 
   repo_info="$(git rev-parse --git-dir --is-inside-git-dir --is-bare-repository --is-inside-work-tree --short HEAD 2>/dev/null)"
-  rev_parse_exit_code="$?"
+  rev_parse_exit_code="${?}"
 
   if [[ -z "${repo_info}" ]] ; then
     return 1
@@ -205,63 +189,63 @@ _bgps_git_status() {
   local bare_repo="${repo_info##*$'\n'}"
   repo_info="${repo_info%$'\n'*}"
   local inside_gitdir="${repo_info##*$'\n'}"
-  local g="${repo_info%$'\n'*}"
+  local git_dir="${repo_info%$'\n'*}"
 
   local merge_status=""
   local branch=""
   local step=""
   local total=""
-  if [[ -d "${g}/rebase-merge" ]] ; then
+  if [[ -d "${git_dir}/rebase-merge" ]] ; then
 
-    __git_eread "${g}/rebase-merge/head-name" branch
-    __git_eread "${g}/rebase-merge/msgnum" step
-    __git_eread "${g}/rebase-merge/end" total
+    __git_eread "${git_dir}/rebase-merge/head-name" branch
+    __git_eread "${git_dir}/rebase-merge/msgnum" step
+    __git_eread "${git_dir}/rebase-merge/end" total
 
-    if [ -f "${g}/rebase-merge/interactive" ]; then
+    if [[ -f "${git_dir}/rebase-merge/interactive" ]]; then
       merge_status="|REBASE-i"
     else
       merge_status="|REBASE-m"
     fi
 
   else
-    if [[ -d "${g}/rebase-apply" ]] ; then
 
-      __git_eread "${g}/rebase-apply/next" step
-      __git_eread "${g}/rebase-apply/last" total
+    if [[ -d "${git_dir}/rebase-apply" ]] ; then
 
-      if [[ -f "${g}/rebase-apply/rebasing" ]] ; then
-        __git_eread "${g}/rebase-apply/head-name" branch
+      __git_eread "${git_dir}/rebase-apply/next" step
+      __git_eread "${git_dir}/rebase-apply/last" total
+
+      if [[ -f "${git_dir}/rebase-apply/rebasing" ]] ; then
+        __git_eread "${git_dir}/rebase-apply/head-name" branch
         merge_status="|REBASE"
-      elif [[ -f "${g}/rebase-apply/applying" ]] ; then
+      elif [[ -f "${git_dir}/rebase-apply/applying" ]] ; then
         merge_status="|AM"
       else
         merge_status="|AM/REBASE"
       fi
 
-    elif [[ -f "${g}/MERGE_HEAD" ]] ; then
+    elif [[ -f "${git_dir}/MERGE_HEAD" ]] ; then
       merge_status="|MERGING"
-    elif [[ -f "${g}/CHERRY_PICK_HEAD" ]] ; then
+    elif [[ -f "${git_dir}/CHERRY_PICK_HEAD" ]] ; then
       merge_status="|CHERRY-PICKING"
-    elif [[ -f "${g}/REVERT_HEAD" ]] ; then
+    elif [[ -f "${git_dir}/REVERT_HEAD" ]] ; then
       merge_status="|REVERTING"
-    elif [[ -f "${g}/BISECT_LOG" ]] ; then
+    elif [[ -f "${git_dir}/BISECT_LOG" ]] ; then
       merge_status="|BISECTING"
     fi
   
     if [[ "${branch}" ]]; then
       :
-    elif [[ -h "${g}/HEAD" ]] ; then
+    elif [[ -h "${git_dir}/HEAD" ]] ; then
       # symlink symbolic ref
       branch="$(git symbolic-ref HEAD 2>/dev/null)"
     else
       local head=""
-      if ! __git_eread "${g}/HEAD" head ; then
+      if ! __git_eread "${git_dir}/HEAD" head ; then
         return 1
       fi
       # is it a symbolic ref?
       branch="${head#ref: }"
       if [[ "${head}" == "${branch}" ]] ; then
-        detached=yes
         branch="$(git describe --tags --exact-match HEAD 2>/dev/null)" || branch="${short_sha}..."
         branch="(${branch})"
       fi
@@ -284,24 +268,38 @@ _bgps_git_status() {
   
   branch="${branch##refs/heads/}"
   
-  local gitstring="${prefix}${branch}${merge_status}"
+  echo "${prefix}${branch}${merge_status}"
+  return 0
+}
+
+#######################################
+# Get git status format
+# Globals: 
+#   $RESET_COLOR
+#   $BGPS_CONFIG 
+# Returns: 0 on success
+#######################################
+_bgps_git_status() {
+  local color_enabled="$(_get_config_value 'GIT_COLOR_ENABLED' 'false')"
+  local color_clean="$(_get_config_value 'GIT_COLOR_CLEAN' '\[\033[2;92m\]')"
+  local color_no_upstream="$(_get_config_value 'GIT_COLOR_NO_UPSTREAM' '\[\033[2;40m\]')"
+  local color_untracked="$(_get_config_value 'GIT_COLOR_UNTRACKED' '\[\033[2;95m\]')"
+  local color_dirty="$(_get_config_value 'GIT_COLOR_DIRTY' '\[\033[2;91m\]')"
+  local color_conflict="$(_get_config_value 'GIT_COLOR_CONFLICT' '\[\033[0;33m\]')"
+  local icon="$(_get_config_value 'GIT_ICON' '')"
+  local git_color="${RESET_COLOR}"
+  local git_string="$(_gitstring)"
+  local git_symbol=""
 
   git diff --no-ext-diff --quiet HEAD 2>/dev/null
-  local dirty_exit_code="$?"
+  local dirty_exit_code="${?}" # code == 0 clean working tree, code == 1 dirty working tree
 
-  local has_untracked="false"
-  if git ls-files --others --exclude-standard \
-    --directory --no-empty-directory \
-    --error-unmatch -- ':/*' >/dev/null 2>/dev/null ; then
-    has_untracked="true"
-  fi
+  git ls-files --others --exclude-standard --directory --no-empty-directory --error-unmatch -- ':/*' >/dev/null 2>/dev/null
+  local untracked_exit_code="${?}" # code == 0 untracked files exist, code > 0 no untracked files
 
-  # get git branch info
-  local git_symbol=""
-  local git_color="${RESET_COLOR}"
   local commit_counts
   commit_counts=($(git rev-list --left-right --count ...@{u} 2>/dev/null))
-  if (( $? )) ; then
+  if (( ${?} )) ; then
     # no upstream configured for branch
     git_color="${color_no_upstream}"
   else
@@ -324,7 +322,7 @@ _bgps_git_status() {
     fi
   fi
   
-  if [[ "${has_untracked}" == "true" ]] ; then
+  if (( ! ${untracked_exit_code} )) ; then
     git_color="${color_untracked}"
     git_symbol="*${git_symbol}"
   fi
@@ -337,7 +335,8 @@ _bgps_git_status() {
   if [[ ${color_enabled} == "true" ]] ; then
     echo -n "${git_color}"
   fi
-  echo "${icon:+${icon} }${gitstring} ${git_symbol}"
+
+  echo "${icon:+${icon} }${git_string} ${git_symbol}"
   return 0
 }
 
