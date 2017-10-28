@@ -9,6 +9,13 @@
 
 # Function Definitions ########################################################
 
+__git_eread ()
+{
+  local f="${1}"
+  shift
+  test -r "${f}" && read "$@" <"${f}"
+}
+
 #######################################
 # Print error message to stderr
 # Arguments: $error_message
@@ -57,6 +64,7 @@ _set_config_value() {
     "GIT_COLOR_CONFLICT"
     "GIT_COLOR_DIRTY"
     "GIT_COLOR_ENABLED"
+    "GIT_COLOR_NO_UPSTREAM"
     "GIT_COLOR_UNTRACKED"
     "GIT_ICON"
     "POST_STATUS"
@@ -169,18 +177,125 @@ _print_config() {
 _bgps_git_status() {
   local color_enabled="$(_get_config_value 'GIT_COLOR_ENABLED' 'false')"
   local color_clean="$(_get_config_value 'GIT_COLOR_CLEAN' '\[\033[2;92m\]')"
+  local color_no_upstream="$(_get_config_value 'GIT_COLOR_NO_UPSTREAM' '\[\033[2;40m\]')"
   local color_untracked="$(_get_config_value 'GIT_COLOR_UNTRACKED' '\[\033[2;95m\]')"
   local color_dirty="$(_get_config_value 'GIT_COLOR_DIRTY' '\[\033[2;91m\]')"
   local color_conflict="$(_get_config_value 'GIT_COLOR_CONFLICT' '\[\033[0;33m\]')"
   local icon="$(_get_config_value 'GIT_ICON' '')"
 
-  local pending_changes
-  if ! pending_changes="$(git status --porcelain 2>/dev/null)" ; then
-    # not in a valid git repo
+
+  local repo_info
+  local rev_parse_exit_code
+
+  repo_info="$(git rev-parse --git-dir --is-inside-git-dir --is-bare-repository --is-inside-work-tree --short HEAD 2>/dev/null)"
+  rev_parse_exit_code="$?"
+
+  if [[ -z "${repo_info}" ]] ; then
     return 1
   fi
-  pending_changes="$(echo ${pending_changes} | wc -w)"
+
+  local short_sha
+  if (( ! ${rev_parse_exit_code} )) ; then
+    short_sha="${repo_info##*$'\n'}"
+    repo_info="${repo_info%$'\n'*}"
+  fi
+
+  local inside_worktree="${repo_info##*$'\n'}"
+  repo_info="${repo_info%$'\n'*}"
+  local bare_repo="${repo_info##*$'\n'}"
+  repo_info="${repo_info%$'\n'*}"
+  local inside_gitdir="${repo_info##*$'\n'}"
+  local g="${repo_info%$'\n'*}"
+
+  local merge_status=""
+  local branch=""
+  local step=""
+  local total=""
+  if [[ -d "${g}/rebase-merge" ]] ; then
+
+    __git_eread "${g}/rebase-merge/head-name" branch
+    __git_eread "${g}/rebase-merge/msgnum" step
+    __git_eread "${g}/rebase-merge/end" total
+
+    if [ -f "${g}/rebase-merge/interactive" ]; then
+      merge_status="|REBASE-i"
+    else
+      merge_status="|REBASE-m"
+    fi
+
+  else
+    if [[ -d "${g}/rebase-apply" ]] ; then
+
+      __git_eread "${g}/rebase-apply/next" step
+      __git_eread "${g}/rebase-apply/last" total
+
+      if [[ -f "${g}/rebase-apply/rebasing" ]] ; then
+        __git_eread "${g}/rebase-apply/head-name" branch
+        merge_status="|REBASE"
+      elif [[ -f "${g}/rebase-apply/applying" ]] ; then
+        merge_status="|AM"
+      else
+        merge_status="|AM/REBASE"
+      fi
+
+    elif [[ -f "${g}/MERGE_HEAD" ]] ; then
+      merge_status="|MERGING"
+    elif [[ -f "${g}/CHERRY_PICK_HEAD" ]] ; then
+      merge_status="|CHERRY-PICKING"
+    elif [[ -f "${g}/REVERT_HEAD" ]] ; then
+      merge_status="|REVERTING"
+    elif [[ -f "${g}/BISECT_LOG" ]] ; then
+      merge_status="|BISECTING"
+    fi
   
+    if [[ "${branch}" ]]; then
+      :
+    elif [[ -h "${g}/HEAD" ]] ; then
+      # symlink symbolic ref
+      branch="$(git symbolic-ref HEAD 2>/dev/null)"
+    else
+      local head=""
+      if ! __git_eread "${g}/HEAD" head ; then
+        return 1
+      fi
+      # is it a symbolic ref?
+      branch="${head#ref: }"
+      if [[ "${head}" == "${branch}" ]] ; then
+        detached=yes
+        branch="$(git describe --tags --exact-match HEAD 2>/dev/null)" || branch="${short_sha}..."
+        branch="(${branch})"
+      fi
+    fi
+  fi
+  
+  if [[ -n "${step}" ]] && [[ -n "${total}" ]] ; then
+    merge_status="${merge_status} ${step}/${total}"
+  fi
+  
+  local prefix=""
+  
+  if [[ "${inside_gitdir}" == "true" ]] ; then
+    if [[ "${bare_repo}" == "true" ]] ; then
+      prefix="BARE:"
+    else
+      branch="GIT_DIR!"
+    fi
+  fi
+  
+  branch="${branch##refs/heads/}"
+  
+  local gitstring="${prefix}${branch}${merge_status}"
+
+  git diff --no-ext-diff --quiet HEAD 2>/dev/null
+  local dirty_exit_code="$?"
+
+  local has_untracked="false"
+  if git ls-files --others --exclude-standard \
+    --directory --no-empty-directory \
+    --error-unmatch -- ':/*' >/dev/null 2>/dev/null ; then
+    has_untracked="true"
+  fi
+
   # get git branch info
   local git_symbol=""
   local git_color="${RESET_COLOR}"
@@ -188,9 +303,9 @@ _bgps_git_status() {
   commit_counts=($(git rev-list --left-right --count ...@{u} 2>/dev/null))
   if (( $? )) ; then
     # no upstream configured for branch
-    git_color="${color_untracked}"
+    git_color="${color_no_upstream}"
   else
-    if (( ! ${pending_changes} )) ; then
+    if (( ! ${dirty_exit_code} )) ; then
       git_color="${color_clean}"
     fi
   
@@ -209,15 +324,20 @@ _bgps_git_status() {
     fi
   fi
   
-  if (( ${pending_changes} )) ; then
-    git_color="${color_dirty}"
+  if [[ "${has_untracked}" == "true" ]] ; then
+    git_color="${color_untracked}"
     git_symbol="*${git_symbol}"
+  fi
+
+  if (( ${dirty_exit_code} == 1 )) ; then
+    git_color="${color_dirty}"
+    git_symbol="*${git_symbol#\*}"
   fi
   
   if [[ ${color_enabled} == "true" ]] ; then
     echo -n "${git_color}"
   fi
-  echo "${icon:+${icon} }%s ${git_symbol}"
+  echo "${icon:+${icon} }${gitstring} ${git_symbol}"
   return 0
 }
 
@@ -228,22 +348,10 @@ _bgps_git_status() {
 #   $BGPS_CONFIG 
 #######################################
 _bgps_prompt() {
-  local git_prompt="false"
-  # only set git_prompt flag if __git_ps1 function is defined
-  if [[ -n "$(type -t __git_ps1)" ]] && \
-     [[ "$(type -t __git_ps1)" == function ]]
-  then 
-    git_prompt="true"
-  fi
-  
   local pre_status="$(_get_config_value 'PRE_STATUS')"
   local post_status="$(_get_config_value 'POST_STATUS')${RESET_COLOR} "
-  
-  if [[ "${git_prompt}" == "true" ]] ; then
-    __git_ps1 "${pre_status}" "${post_status}" "$(_bgps_git_status)"
-  else
-      PS1="${pre_status} ${post_status}"
-  fi
+  local status="$(_bgps_git_status)"
+  PS1="${pre_status}${status:+${status}}${post_status}"
 }
 
 # Script Definition ###########################################################
@@ -273,7 +381,7 @@ while [[ $# > 0 ]]; do
 done
 
 if _set_config "${bgps_config_file}" ; then
-  if [[ "${list_config}" == "true" ]] ; then
+  if [[ "true" == "${list_config}" ]] ; then
     _print_config
   else 
     _bgps_prompt
