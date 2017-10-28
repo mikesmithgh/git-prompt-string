@@ -309,16 +309,16 @@ _bgps_git_status() {
   
     if (( ${commit_counts[0]} )) ; then
       git_color="${color_conflict}"
-      git_symbol="↑[${commit_counts[0]}]"
+      git_symbol="[ahead ${commit_counts[0]}]"
     fi
   
     if (( ${commit_counts[1]} )) ; then
       git_color="${color_conflict}"
-      git_symbol="↓[${commit_counts[1]}]"
+      git_symbol="[behind ${commit_counts[1]}]"
     fi
   
     if (( ${commit_counts[0]} && ${commit_counts[1]} )) ; then
-      git_symbol="↕ ↑[${commit_counts[0]}] ↓[${commit_counts[1]}]"
+      git_symbol="[ahead ${commit_counts[0]}] [behind ${commit_counts[1]}]"
     fi
   fi
   
