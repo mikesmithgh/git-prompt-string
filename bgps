@@ -177,7 +177,11 @@ _print_config() {
   fi
 }
 
-_gitstring() {
+#######################################
+# Get current git branch and additional repository information
+# Returns: 0 on success
+#######################################
+_branch_info() {
   local repo_info
   local rev_parse_exit_code
 
@@ -304,8 +308,8 @@ _bgps_git_status() {
   local git_color="${RESET_COLOR}"
   local git_symbol=""
 
-  local git_string
-  git_string="$(_gitstring)"
+  local git_branch
+  git_branch="$(_branch_info)"
   if (( ${?} )) ; then
     return 1
   fi
@@ -360,7 +364,7 @@ _bgps_git_status() {
 
   fi
 
-  echo "${prefix:+${prefix}}${git_string}${git_symbol:+ ${git_symbol}}${postfix:+${postfix}}"
+  echo "${prefix:+${prefix}}${git_branch}${git_symbol:+ ${git_symbol}}${postfix:+${postfix}}"
   return 0
 }
 
