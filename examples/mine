@@ -4,4 +4,3 @@ GIT_PREFIX=" "
 GIT_AHEAD="↑[%s]"
 GIT_BEHIND="↓[%s]"
 GIT_DIVERGED="↕ ↑[%a] ↓[%b]"
-
