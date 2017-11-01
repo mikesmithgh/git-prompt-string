@@ -1,4 +1,5 @@
 PS1_FORMAT="\[\033[3;35m\]\t\[\033[0m\]-\[\033[3;97m\]\h:\[\033[33;1m\]\w%( %s%)\[\033[m\] -> "
+TEXT_COLOR="\[\033[0;32m\]"
 GIT_COLOR_ENABLED="true"
 GIT_COLOR_CLEAN="\[\033[1;92m\]"
 GIT_COLOR_CONFLICT="\[\033[1;43m\]"

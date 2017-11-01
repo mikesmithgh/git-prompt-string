@@ -1,3 +1,4 @@
 PS1_FORMAT="\[\033[0;34m\][\@]\[\033[0m\] \u@\h%( %s%)\[\033[0m\] \$ "
+TEXT_COLOR="\[\033[0;36m\]"
 GIT_COLOR_ENABLED="true"
 GIT_COLOR_CLEAN="\[\033[5;94m\]"

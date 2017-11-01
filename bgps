@@ -78,6 +78,7 @@ _set_config_value() {
     "GIT_POSTFIX"
     "GIT_PREFIX"
     "PS1_FORMAT"
+    "TEXT_COLOR"
   )
   local key="${1^^}"
   local value="${2}"
@@ -366,12 +367,13 @@ _bgps_git_status() {
 #   $BGPS_CONFIG 
 #######################################
 _bgps_prompt() {
-  local format="$(_get_config_value 'PS1_FORMAT')${RESET_COLOR}"
+  local format="$(_get_config_value 'PS1_FORMAT')"
+  local text_color="$(_get_config_value 'TEXT_COLOR' $(echo ${RESET_COLOR}))"
   local status="$(_bgps_git_status)"
   if [[ -z "${status}" ]] ; then
     format="${format/\%(*\%s*\%)/}"
     format="${format/\%s/}"
-    PS1="${format}"
+    PS1="${format}${text_color}"
   else
     local placeholder
     if [[ "${format}" =~ \%\(.*\%s.*\%\) ]] ; then
@@ -379,7 +381,7 @@ _bgps_prompt() {
       placeholder="${placeholder%\%\)}"
       format="${format/\%(*\%s*\%)/${placeholder}}"
     fi
-    PS1="${format/\%s/${status}}"
+    PS1="${format/\%s/${status}}${text_color}"
   fi
 }
 
