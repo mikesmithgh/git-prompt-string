@@ -66,12 +66,15 @@ _remove_quotes() {
 #######################################
 _set_config_value() {
   local valid_config_keys=(
+    "GIT_AHEAD"
+    "GIT_BEHIND"
     "GIT_COLOR_CLEAN"
     "GIT_COLOR_CONFLICT"
     "GIT_COLOR_DIRTY"
     "GIT_COLOR_ENABLED"
     "GIT_COLOR_NO_UPSTREAM"
     "GIT_COLOR_UNTRACKED"
+    "GIT_DIVERGED"
     "GIT_POSTFIX"
     "GIT_PREFIX"
     "PS1_FORMAT"
@@ -294,6 +297,9 @@ _bgps_git_status() {
   local color_conflict="$(_get_config_value 'GIT_COLOR_CONFLICT' '\[\033[0;33m\]')"
   local prefix="$(_get_config_value 'GIT_PREFIX' '')"
   local postfix="$(_get_config_value 'GIT_POSTFIX' '')"
+  local git_ahead="$(_get_config_value 'GIT_AHEAD' '[ahead %s]')"
+  local git_behind="$(_get_config_value 'GIT_BEHIND' '[behind %s]')"
+  local git_diverged="$(_get_config_value 'GIT_DIVERGED' '[ahead %a] [behind %b]')"
   local git_color="${RESET_COLOR}"
   local git_symbol=""
 
@@ -321,16 +327,17 @@ _bgps_git_status() {
   
     if (( ${commit_counts[0]} )) ; then
       git_color="${color_conflict}"
-      git_symbol="[ahead ${commit_counts[0]}]"
+      git_symbol="${git_ahead/\%s/${commit_counts[0]}}"
     fi
   
     if (( ${commit_counts[1]} )) ; then
       git_color="${color_conflict}"
-      git_symbol="[behind ${commit_counts[1]}]"
+      git_symbol="${git_behind/\%s/${commit_counts[1]}}"
     fi
   
     if (( ${commit_counts[0]} && ${commit_counts[1]} )) ; then
-      git_symbol="[ahead ${commit_counts[0]}] [behind ${commit_counts[1]}]"
+      git_symbol="${git_diverged/\%a/${commit_counts[0]}}"
+      git_symbol="${git_symbol/\%b/${commit_counts[1]}}"
     fi
   fi
   
