@@ -1,3 +1,3 @@
-PRE_STATUS="\[\033[0;34m\][\@]\[\033[0m\] \u@\h \$ "
+PS1_FORMAT="\[\033[0;34m\][\@]\[\033[0m\] \u@\h \$%( %s%) "
 GIT_COLOR_ENABLED="true"
 GIT_COLOR_CLEAN="\[\033[5;94m\]"

@@ -1,1 +1,1 @@
-POST_STATUS=" \$ "
+PS1_FORMAT="%(%s %)\$ "

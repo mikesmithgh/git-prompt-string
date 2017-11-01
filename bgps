@@ -73,8 +73,7 @@ _set_config_value() {
     "GIT_COLOR_NO_UPSTREAM"
     "GIT_COLOR_UNTRACKED"
     "GIT_ICON"
-    "POST_STATUS"
-    "PRE_STATUS"
+    "PS1_FORMAT"
   )
   local key="${1^^}"
   local value="${2}"
@@ -146,7 +145,7 @@ _set_config() {
       # default config file does not exist so lets print a shrug face
       BGPS_CHECKSUM="¯\_(ツ)_/¯"
       _clear_config_values
-      _set_config_value "POST_STATUS" " ${BGPS_CHECKSUM} \$ "
+      _set_config_value "PS1_FORMAT" "${BGPS_CHECKSUM} %(%s %)\$ "
   elif _file_exists "${config_file}" ; then
     local hash="$(md5sum ${config_file} | awk {'print $1'})"
     if [[ "${hash}" != "${BGPS_CHECKSUM}" ]] ; then
@@ -294,8 +293,13 @@ _bgps_git_status() {
   local color_conflict="$(_get_config_value 'GIT_COLOR_CONFLICT' '\[\033[0;33m\]')"
   local icon="$(_get_config_value 'GIT_ICON' '')"
   local git_color="${RESET_COLOR}"
-  local git_string="$(_gitstring)"
   local git_symbol=""
+
+  local git_string
+  git_string="$(_gitstring)"
+  if (( ${?} )) ; then
+    return 1
+  fi
 
   git diff --no-ext-diff --quiet HEAD 2>/dev/null
   local dirty_exit_code="${?}" # code == 0 clean working tree, code == 1 dirty working tree
@@ -353,10 +357,21 @@ _bgps_git_status() {
 #   $BGPS_CONFIG 
 #######################################
 _bgps_prompt() {
-  local pre_status="$(_get_config_value 'PRE_STATUS')"
-  local post_status="$(_get_config_value 'POST_STATUS')${RESET_COLOR} "
+  local format="$(_get_config_value 'PS1_FORMAT')${RESET_COLOR}"
   local status="$(_bgps_git_status)"
-  PS1="${pre_status}${status:+${status}}${post_status}"
+  if [[ -z "${status}" ]] ; then
+    format="${format/\%(*\%s*\%)/}"
+    format="${format/\%s/}"
+    PS1="${format}"
+  else
+    local placeholder
+    if [[ "${format}" =~ \%\(.*\%s.*\%\) ]] ; then
+      placeholder="${BASH_REMATCH[0]#\%\(}"
+      placeholder="${placeholder%\%\)}"
+      format="${format/\%(*\%s*\%)/${placeholder}}"
+    fi
+    PS1="${format/\%s/${status}}"
+  fi
 }
 
 # Script Definition ###########################################################
