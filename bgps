@@ -72,7 +72,8 @@ _set_config_value() {
     "GIT_COLOR_ENABLED"
     "GIT_COLOR_NO_UPSTREAM"
     "GIT_COLOR_UNTRACKED"
-    "GIT_ICON"
+    "GIT_POSTFIX"
+    "GIT_PREFIX"
     "PS1_FORMAT"
   )
   local key="${1^^}"
@@ -291,7 +292,8 @@ _bgps_git_status() {
   local color_untracked="$(_get_config_value 'GIT_COLOR_UNTRACKED' '\[\033[2;95m\]')"
   local color_dirty="$(_get_config_value 'GIT_COLOR_DIRTY' '\[\033[2;91m\]')"
   local color_conflict="$(_get_config_value 'GIT_COLOR_CONFLICT' '\[\033[0;33m\]')"
-  local icon="$(_get_config_value 'GIT_ICON' '')"
+  local prefix="$(_get_config_value 'GIT_PREFIX' '')"
+  local postfix="$(_get_config_value 'GIT_POSTFIX' '')"
   local git_color="${RESET_COLOR}"
   local git_symbol=""
 
@@ -346,7 +348,7 @@ _bgps_git_status() {
     echo -n "${git_color}"
   fi
 
-  echo "${icon:+${icon} }${git_string} ${git_symbol}"
+  echo "${prefix:+${prefix}}${git_string} ${git_symbol}${postfix:+${postfix}}"
   return 0
 }
 
