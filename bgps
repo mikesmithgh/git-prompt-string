@@ -313,47 +313,51 @@ _bgps_git_status() {
   git diff --no-ext-diff --quiet HEAD 2>/dev/null
   local dirty_exit_code="${?}" # code == 0 clean working tree, code == 1 dirty working tree
 
-  git ls-files --others --exclude-standard --directory --no-empty-directory --error-unmatch -- ':/*' >/dev/null 2>/dev/null
-  local untracked_exit_code="${?}" # code == 0 untracked files exist, code > 0 no untracked files
+  if (( "${dirty_exit_code}" == 0 || "${dirty_exit_code}" == 1 )) ; then
 
-  local commit_counts
-  commit_counts=($(git rev-list --left-right --count ...@{u} 2>/dev/null))
-  if (( ${?} )) ; then
-    # no upstream configured for branch
-    git_color="${color_no_upstream}"
-  else
-    if (( ! ${dirty_exit_code} )) ; then
-      git_color="${color_clean}"
+    git ls-files --others --exclude-standard --directory --no-empty-directory --error-unmatch -- ':/*' >/dev/null 2>/dev/null
+    local untracked_exit_code="${?}" # code == 0 untracked files exist, code > 0 no untracked files
+  
+    local commit_counts
+    commit_counts=($(git rev-list --left-right --count ...@{u} 2>/dev/null))
+    if (( ${?} )) ; then
+      # no upstream configured for branch
+      git_color="${color_no_upstream}"
+    else
+      if (( ! ${dirty_exit_code} )) ; then
+        git_color="${color_clean}"
+      fi
+    
+      if (( ${commit_counts[0]} )) ; then
+        git_color="${color_conflict}"
+        git_symbol="${git_ahead/\%s/${commit_counts[0]}}"
+      fi
+    
+      if (( ${commit_counts[1]} )) ; then
+        git_color="${color_conflict}"
+        git_symbol="${git_behind/\%s/${commit_counts[1]}}"
+      fi
+    
+      if (( ${commit_counts[0]} && ${commit_counts[1]} )) ; then
+        git_symbol="${git_diverged/\%a/${commit_counts[0]}}"
+        git_symbol="${git_symbol/\%b/${commit_counts[1]}}"
+      fi
+    fi
+    
+    if (( ! ${untracked_exit_code} )) ; then
+      git_color="${color_untracked}"
+      git_symbol="*${git_symbol}"
     fi
   
-    if (( ${commit_counts[0]} )) ; then
-      git_color="${color_conflict}"
-      git_symbol="${git_ahead/\%s/${commit_counts[0]}}"
+    if (( ${dirty_exit_code} == 1 )) ; then
+      git_color="${color_dirty}"
+      git_symbol="*${git_symbol#\*}"
     fi
-  
-    if (( ${commit_counts[1]} )) ; then
-      git_color="${color_conflict}"
-      git_symbol="${git_behind/\%s/${commit_counts[1]}}"
+    
+    if [[ ${color_enabled} == "true" ]] ; then
+      echo -n "${git_color}"
     fi
-  
-    if (( ${commit_counts[0]} && ${commit_counts[1]} )) ; then
-      git_symbol="${git_diverged/\%a/${commit_counts[0]}}"
-      git_symbol="${git_symbol/\%b/${commit_counts[1]}}"
-    fi
-  fi
-  
-  if (( ! ${untracked_exit_code} )) ; then
-    git_color="${color_untracked}"
-    git_symbol="*${git_symbol}"
-  fi
 
-  if (( ${dirty_exit_code} == 1 )) ; then
-    git_color="${color_dirty}"
-    git_symbol="*${git_symbol#\*}"
-  fi
-  
-  if [[ ${color_enabled} == "true" ]] ; then
-    echo -n "${git_color}"
   fi
 
   echo "${prefix:+${prefix}}${git_string}${git_symbol:+ ${git_symbol}}${postfix:+${postfix}}"
