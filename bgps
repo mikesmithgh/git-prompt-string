@@ -1,11 +1,30 @@
 #!/bin/bash
 #
+# Copyright (C) 2017 Michael Smith <mjsmith1028@gmail.com>
+# Copyright (C) 2006,2007 Shawn O. Pearce <spearce@spearce.org>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
 # A better bash prompt for git. bgps provides a convenient way to customize
 # the PS1 prompt and to determine information about the current git branch. 
 # bgps can indicate if the branch has a clean or dirty working tree, whether
 # or not it is tracking a remote branch, and the number of commits the local
-# branch is ahead or behind the remote branch.
-# 
+# branch is ahead or behind the remote branch. 
+#
+# Parts of this program were copied and modified from 
+# <https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh>
+#
 
 # Function Definitions ########################################################
 
