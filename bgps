@@ -121,7 +121,7 @@ _set_config_value() {
 _get_config_value() {
   local key="${1^^}"
   local default_value="${2}"
-  local value="${BGPS_CONFIG[$key]}"
+  local value="${BGPS_CONFIG[${key}]}"
   [[ -z "${value}" ]] && echo "${default_value}" || echo "${value}"
 }
 
@@ -162,24 +162,44 @@ _read_config() {
 #######################################
 _set_config() {
   local return_code=0
-  local config_file="${1}"
-  if [[ "${config_file}" == "${BGPS_DEFAULT_CONFIG}" ]] && \
-     ! _file_exists "${config_file}" 2>/dev/null
-  then
+  local global_config="/etc/bgps_config"
+  local user_config="${HOME}/.bgps_config"
+  local hash_code=""
+  local configs=()
+  if [[ -n "${1}" ]] ; then
+    local param_config="${1}"
+    if _file_exists "${param_config}" ; then
+      configs+=("${param_config}")
+    else
+      return_code=1
+    fi
+  else
+    if _file_exists "${global_config}" 2>/dev/null ; then
+      configs+=("${global_config}")
+    fi
+    if _file_exists "${user_config}" 2>/dev/null ; then
+      configs+=("${user_config}")
+    fi
+    if (( ! "${#configs[@]}" )) ; then
       # default config file does not exist so lets print a shrug face
       BGPS_CHECKSUM="¯\_(ツ)_/¯"
       _clear_config_values
       _set_config_value "PS1_FORMAT" "${BGPS_CHECKSUM}%( %s%) \$ "
-  elif _file_exists "${config_file}" ; then
-    local hash="$(md5sum ${config_file} | awk {'print $1'})"
-    if [[ "${hash}" != "${BGPS_CHECKSUM}" ]] ; then
-      BGPS_CHECKSUM="${hash}"
-      _clear_config_values
-      _read_config "${config_file}" 
     fi
-  else
-    return_code=1
   fi
+
+  for config in "${configs[@]}" ; do
+    hash_code+="$(md5sum ${config} | awk {'print $1'})"
+  done
+
+  if [[ -n "${hash_code}" ]] && [[ "${hash_code}" != "${BGPS_CHECKSUM}" ]] ; then
+    BGPS_CHECKSUM="${hash_code}"
+    _clear_config_values 
+    for config in "${configs[@]}" ; do
+      _read_config "${config}"
+    done
+  fi
+
   return ${return_code}
 }
 
@@ -190,7 +210,7 @@ _set_config() {
 #######################################
 _print_config() {
   if [[ -v BGPS_CONFIG[@] ]] ; then
-    for key in "${!BGPS_CONFIG[@]}"; do 
+    for key in "${!BGPS_CONFIG[@]}" ; do 
       printf "%-*s = %s\n" 19 "${key}" "${BGPS_CONFIG[$key]}" 
     done
   fi
@@ -394,8 +414,8 @@ _bgps_git_status() {
 #   $BGPS_CONFIG 
 #######################################
 _bgps_prompt() {
-  local format="$(_get_config_value 'PS1_FORMAT')"
-  local text_color="$(_get_config_value 'TEXT_COLOR' $(echo ${RESET_COLOR}))"
+  local format="$(_get_config_value 'PS1_FORMAT' "%(%s %)${RESET_COLOR}\$ ")"
+  local text_color="$(_get_config_value 'TEXT_COLOR' "${RESET_COLOR}")"
   local status="$(_bgps_git_status)"
   if [[ -z "${status}" ]] ; then
     format="${format/\%(*\%s*\%)/}"
@@ -421,8 +441,6 @@ _bgps_prompt() {
 
 RESET_COLOR="\[\033[0m\]"
 declare -A BGPS_CONFIG
-BGPS_DEFAULT_CONFIG="${HOME}/.bgps_config"
-bgps_config_file="${BGPS_DEFAULT_CONFIG}"
 list_config="false"
 
 while [[ $# > 0 ]]; do
