@@ -156,14 +156,13 @@ _read_config() {
 # Globals:
 #   $BGPS_CHECKSUM
 #   $BGPS_CONFIG 
-#   $BGPS_DEFAULT_CONFIG
+#   $BGPS_GLOBAL_CONFIG
+#   $BGPS_USER_CONFIG
 # Arguments: $config_file the configuration filepath 
 # Returns: 0 on success
 #######################################
 _set_config() {
   local return_code=0
-  local global_config="/etc/bgps_config"
-  local user_config="${HOME}/.bgps_config"
   local hash_code=""
   local configs=()
   if [[ -n "${1}" ]] ; then
@@ -174,12 +173,8 @@ _set_config() {
       return_code=1
     fi
   else
-    if _file_exists "${global_config}" 2>/dev/null ; then
-      configs+=("${global_config}")
-    fi
-    if _file_exists "${user_config}" 2>/dev/null ; then
-      configs+=("${user_config}")
-    fi
+    _file_exists "${BGPS_GLOBAL_CONFIG}" 2>/dev/null && configs+=("${BGPS_GLOBAL_CONFIG}")
+    _file_exists "${BGPS_USER_CONFIG}" 2>/dev/null && configs+=("${BGPS_USER_CONFIG}")
     if (( ! "${#configs[@]}" )) ; then
       # default config file does not exist so lets print a shrug face
       BGPS_CHECKSUM="¯\_(ツ)_/¯"
@@ -188,9 +183,9 @@ _set_config() {
     fi
   fi
 
-  for config in "${configs[@]}" ; do
-    hash_code+="$(md5sum ${config} | awk {'print $1'})"
-  done
+  if (( "${#configs[@]}" )) ; then
+    hash_code="$(md5sum "${configs[@]}" | awk {'print $1'} ORS="")"
+  fi
 
   if [[ -n "${hash_code}" ]] && [[ "${hash_code}" != "${BGPS_CHECKSUM}" ]] ; then
     BGPS_CHECKSUM="${hash_code}"
@@ -203,6 +198,20 @@ _set_config() {
   return ${return_code}
 }
 
+_bgps_globals() {
+  local valid_globals=(
+    "BGPS_GLOBAL_CONFIG"
+    "BGPS_USER_CONFIG"
+    "BGPS_CHECKSUM"
+  )
+  echo "${valid_globals[@]}"
+}
+
+_print_config_value() {
+  local key="${1}"
+  local value="${2}"
+  printf "  %-*s = %s\n" 19 "${key}" "${value}" 
+}
 
 #######################################
 # Pretty print the configuration map
@@ -210,10 +219,16 @@ _set_config() {
 #######################################
 _print_config() {
   if [[ -v BGPS_CONFIG[@] ]] ; then
+    echo "BGPS Configuration:"
     for key in "${!BGPS_CONFIG[@]}" ; do 
-      printf "%-*s = %s\n" 19 "${key}" "${BGPS_CONFIG[$key]}" 
+      _print_config_value "${key}" "${BGPS_CONFIG[$key]}" 
     done
   fi
+  local bgps_globals=($(_bgps_globals))
+  echo "BGPS Environment Variables:"
+  for key in "${bgps_globals[@]}" ; do 
+    _print_config_value "${key}" "${!key}" 
+  done
 }
 
 #######################################
@@ -437,11 +452,12 @@ _bgps_prompt() {
 #   $RESET_COLOR escape sequence to reset prompt color
 #   $BGPS_CONFIG map of config values
 #   $BGPS_CHECKSUM md5sum of config file
-#   $BGPS_DEFAULT_CONFIG default config file filepath
 
 RESET_COLOR="\[\033[0m\]"
 declare -A BGPS_CONFIG
 list_config="false"
+BGPS_GLOBAL_CONFIG="${BGPS_GLOBAL_CONFIG-/etc/bgps_config}"
+BGPS_USER_CONFIG="${BGPS_USER_CONFIG-${HOME}/.bgps_config}"
 
 while [[ $# > 0 ]]; do
   case "${1:2}" in

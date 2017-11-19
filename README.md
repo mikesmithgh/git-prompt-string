@@ -86,6 +86,12 @@ then you should now see the git icon.
 | `GIT_COLOR_NO_UPSTREAM` | Color of git section when the local branch is not tracking a remote branch.      | `\[\033[2;40m\]` (gray)   |
 | `TEXT_COLOR`            | Color of text after PS1.                                                         | `\[\033[0m\]`    (reset)  |
 
+## Environment Variables
+| Environment Variable | Description                                                 | Default Value      |
+|:---------------------|:------------------------------------------------------------|:-------------------|
+| `BGPS_GLOBAL_CONFIG` | Global configuration file that is shared between all users. | `/etc/bgps_config` |
+| `BGPS_USER_CONFIG`   | User-specific configuration file.                           | `~/.bgps_config`   |
+
 ## FAQ
 ### My prompt is a shrug face `¯\_(ツ)_/¯`. What is going on?
 You are missing the bgps configuration file `~/.bgps_config`. Make sure 
