@@ -84,24 +84,10 @@ _remove_quotes() {
 #   $value the config map value
 #######################################
 _set_config_value() {
-  local valid_config_keys=(
-    "GIT_AHEAD"
-    "GIT_BEHIND"
-    "GIT_COLOR_CLEAN"
-    "GIT_COLOR_CONFLICT"
-    "GIT_COLOR_DIRTY"
-    "GIT_COLOR_ENABLED"
-    "GIT_COLOR_NO_UPSTREAM"
-    "GIT_COLOR_UNTRACKED"
-    "GIT_DIVERGED"
-    "GIT_POSTFIX"
-    "GIT_PREFIX"
-    "PS1_FORMAT"
-    "TEXT_COLOR"
-  )
+  local valid_config_keys=($(_bgps_config_keys))
   local key="${1^^}"
   local value="${2}"
-  for valid_key in "${valid_config_keys[@]}"; do 
+  for valid_key in "${valid_config_keys[@]}" ; do 
     if [[ "${key}" == "${valid_key}" ]] ; then
       # add to config map
       BGPS_CONFIG["${key}"]=$(_remove_quotes "${value}")
@@ -154,10 +140,10 @@ _read_config() {
 # Set the config map by reading the values from the provided file.
 # Only read from file if md5sum is different, otherwise hit the cache.
 # Globals:
-#   $BGPS_CHECKSUM
-#   $BGPS_CONFIG 
+#   $BGPS_CONFIG
 #   $BGPS_GLOBAL_CONFIG
 #   $BGPS_USER_CONFIG
+#   $BGPS_CHECKSUM
 # Arguments: $config_file the configuration filepath 
 # Returns: 0 on success
 #######################################
@@ -198,8 +184,12 @@ _set_config() {
   return ${return_code}
 }
 
+#######################################
+# Retrieve the list of valid bgps environment variables
+#######################################
 _bgps_globals() {
   local valid_globals=(
+    "BGPS_CONFIG"
     "BGPS_GLOBAL_CONFIG"
     "BGPS_USER_CONFIG"
     "BGPS_CHECKSUM"
@@ -207,27 +197,55 @@ _bgps_globals() {
   echo "${valid_globals[@]}"
 }
 
+#######################################
+# Retrieve the list of valid keys for the environment variable $BGPS_CONFIG
+#######################################
+_bgps_config_keys() {
+  local valid_config_keys=(
+    "GIT_AHEAD"
+    "GIT_BEHIND"
+    "GIT_COLOR_CLEAN"
+    "GIT_COLOR_CONFLICT"
+    "GIT_COLOR_DIRTY"
+    "GIT_COLOR_ENABLED"
+    "GIT_COLOR_NO_UPSTREAM"
+    "GIT_COLOR_UNTRACKED"
+    "GIT_DIVERGED"
+    "GIT_POSTFIX"
+    "GIT_PREFIX"
+    "PS1_FORMAT"
+    "TEXT_COLOR"
+  )
+  echo "${valid_config_keys[@]}"
+}
+
 _print_config_value() {
   local key="${1}"
   local value="${2}"
-  printf "  %-*s = %s\n" 19 "${key}" "${value}" 
+  printf "  %-*s = %s\n" 22 "${key}" "${value}" 
 }
 
 #######################################
-# Pretty print the configuration map
-# Globals: $BGPS_CONFIG
+# Pretty print bgps enfironment variables and bgps configuration map
+# Globals:
+#   $BGPS_CONFIG
+#   $BGPS_GLOBAL_CONFIG
+#   $BGPS_USER_CONFIG
+#   $BGPS_CHECKSUM
 #######################################
 _print_config() {
-  if [[ -v BGPS_CONFIG[@] ]] ; then
-    echo "BGPS Configuration:"
-    for key in "${!BGPS_CONFIG[@]}" ; do 
-      _print_config_value "${key}" "${BGPS_CONFIG[$key]}" 
-    done
-  fi
   local bgps_globals=($(_bgps_globals))
+  local bgps_config_keys=($(_bgps_config_keys))
   echo "BGPS Environment Variables:"
   for key in "${bgps_globals[@]}" ; do 
-    _print_config_value "${key}" "${!key}" 
+    # exclude BGPS_CONFIG because it is an associative array      
+    if [[ "${key}" != "BGPS_CONFIG" ]] ; then
+      _print_config_value "${key}" "${!key}" 
+    fi
+  done
+  echo "BGPS Configuration:"
+  for key in "${bgps_config_keys[@]}" ; do 
+    _print_config_value "${key}" "${BGPS_CONFIG[${key}]}" 
   done
 }
 
