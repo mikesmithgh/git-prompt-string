@@ -92,6 +92,12 @@ then you should now see the git icon.
 | `BGPS_GLOBAL_CONFIG` | Global configuration file that is shared between all users. | `/etc/bgps_config` |
 | `BGPS_USER_CONFIG`   | User-specific configuration file.                           | `~/.bgps_config`   |
 
+## Command-line Options
+| Option          | Description                                               | Value Type |
+|:----------------|:----------------------------------------------------------|:-----------|
+| `--config-file` | Path of the desired configuration file. Specifying the configuration file will override and ignore all configurations referenced in `BGPS_GLOBAL_CONFIG` and `BGPS_USER_CONFIG`. | File Path   |
+| `--ls-config`   | List the current configuration and environment variables. | N/A        |
+
 ## FAQ
 ### My prompt is a shrug face `¯\_(ツ)_/¯`. What is going on?
 You are missing the bgps configuration file `~/.bgps_config`. Make sure 
