@@ -28,14 +28,24 @@ wget -O ~/bin/bgps https://raw.githubusercontent.com/mjsmith1028/bgps/master/bgp
 sudo wget -O /usr/local/bin/bgps https://raw.githubusercontent.com/mjsmith1028/bgps/master/bgps
 ```
 ### 2. Configure bgps
-TODO: add common config info
+#### 2a. Only for yourself, add user configuration to your home directory.
 Create `~/.bgps_config`, if it does not exist. Modify it according to your 
-preferences. See the [configuration](#configuration) section for more information.
+preferences. See the [configuration](#configuration) section for more
+information.
 
 If you like what you see in the demo, copy [my configuration](examples/mine):
 ```bash
 wget -O ~/.bgps_config https://raw.githubusercontent.com/mjsmith1028/bgps/master/examples/mine
 ```
+#### 2b. All users, add global configuration to the etc directory.
+Create `/etc/bgps_config`, if it does not exist. Modify it according to your 
+preferences. See the [configuration](#configuration) section for more 
+information.
+
+Note: configurations in the user configuration file, `~/.bgps_config`, will take
+precedence over the configurations in the global configuration file,
+`/etc/bgps_config`.  
+
 ### 3. Update `${PROMPT_COMMAND}`
 Modify `PROMPT_COMMAND` environment variable in startup file.  I prefer to 
 source my `~/.bashrc` file from my `~/.bash_profile` file. Then, modify the
