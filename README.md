@@ -70,33 +70,59 @@ sudo apt update && sudo apt install fonts-powerline
 then you should now see the git icon.
 
 ## Configuration
-| Option                  | Description                                                                      | Default Value             |
-|:------------------------|:---------------------------------------------------------------------------------|:--------------------------|
-| `PS1_FORMAT`            | Format of PS1. `%s` is replaced with the contents of the git section. `%(` and `%)` provide additional formatting when `%s` is within the parentheses. Formatting within the parentheses is only applied to the PS1 when the current working directory is in a git repository. | `%(%s %)\[\033[0m\]\$ ` |
-| `GIT_AHEAD`             | Format of section that indicates the local branch is ahead of the remote branch. `%s` is replaced with the number of commits that the local branch has not yet merged into the remote branch. | `[ahead %s]` |
-| `GIT_BEHIND`            | Format of section that indicates the local branch is behind the remote branch. `%s` is replaced with the number of commits that the remote branch has not yet merged into the local branch. | `[behind %s]` |
-| `GIT_DIVERGED`          | Format of section that indicates the local branch has diverged from the remote branch. `%a` is replaced with the number of commits that the local branch has not yet merged into the remote branch. `%b` is replaced with the number of commits that the remote branch has not yet merged into the local branch. | `[ahead %a] [behind %b]` |
-| `GIT_POSTFIX`           | Optional section that is displayed before git section.                           |                           |
-| `GIT_PREFIX`            | Optional section that is displayed after git section.                            |                           |
-| `GIT_COLOR_ENABLED`     | If `true`, then enable color for git section.                                    | `false`                   |
-| `GIT_COLOR_CLEAN`       | Color of git section when the branch has a clean working tree.                   | `\[\033[2;92m\]` (green)  |
-| `GIT_COLOR_CONFLICT`    | Color of git section when the local branch is ahead or behind the remote branch. | `\[\033[0;33m\]` (yellow) |
-| `GIT_COLOR_DIRTY`       | Color of git section when the branch has a dirty working tree.                   | `\[\033[2;91m\]` (red)    |
-| `GIT_COLOR_UNTRACKED`   | Color of git section when the branch has untracked files.                        | `\[\033[2;95m\]` (purple) |
-| `GIT_COLOR_NO_UPSTREAM` | Color of git section when the local branch is not tracking a remote branch.      | `\[\033[2;40m\]` (gray)   |
-| `TEXT_COLOR`            | Color of text after PS1.                                                         | `\[\033[0m\]`    (reset)  |
+- `PS1_FORMAT`
+  - Format of PS1. `%s` is replaced with the contents of the git section. `%(` and `%)` provide additional formatting when `%s` is within the parentheses. Formatting within the parentheses is only applied to the PS1 when the current working directory is in a git repository.
+  - **Default Value:** `%(%s %)\[\033[0m\]\$ `
+- `GIT_AHEAD`
+  - Format of section that indicates the local branch is ahead of the remote branch. `%s` is replaced with the number of commits that the local branch has not yet merged into the remote branch.
+  - **Default Value:** `[ahead %s]`
+- `GIT_BEHIND`
+  - Format of section that indicates the local branch is behind the remote branch. `%s` is replaced with the number of commits that the remote branch has not yet merged into the local branch.
+  - **Default Value:** `[behind %s]`
+- `GIT_DIVERGED`
+  - Format of section that indicates the local branch has diverged from the remote branch. `%a` is replaced with the number of commits that the local branch has not yet merged into the remote branch. `%b` is replaced with the number of commits that the remote branch has not yet merged into the local branch.
+  - **Default Value:** `[ahead %a] [behind %b]`
+- `GIT_POSTFIX`
+  - Optional section that is displayed before git section.                          
+- `GIT_PREFIX`
+  - Optional section that is displayed after git section.                           
+- `GIT_COLOR_ENABLED`
+  - If `true`, then enable color for git section.                                   
+  - **Default Value:** `false`
+- `GIT_COLOR_CLEAN`
+  - Color of git section when the branch has a clean working tree.                  
+  - **Default Value:** `\[\033[2;92m\]` (green)
+- `GIT_COLOR_CONFLICT`
+  - Color of git section when the local branch is ahead or behind the remote branch.
+  - **Default Value:** `\[\033[0;33m\]` (yellow)
+- `GIT_COLOR_DIRTY`
+  - Color of git section when the branch has a dirty working tree.                  
+  - **Default Value:** `\[\033[2;91m\]` (red)
+- `GIT_COLOR_UNTRACKED`
+  - Color of git section when the branch has untracked files.                       
+  - **Default Value:** `\[\033[2;95m\]` (purple)
+- `GIT_COLOR_NO_UPSTREAM`
+  - Color of git section when the local branch is not tracking a remote branch.     
+  - **Default Value:** `\[\033[2;40m\]` (gray)
+- `TEXT_COLOR`
+  - Color of text after PS1.                                                        
+  - **Default Value:** `\[\033[0m\]` (reset)
 
 ## Environment Variables
-| Environment Variable | Description                                                 | Default Value      |
-|:---------------------|:------------------------------------------------------------|:-------------------|
-| `BGPS_GLOBAL_CONFIG` | Global configuration file that is shared between all users. | `/etc/bgps_config` |
-| `BGPS_USER_CONFIG`   | User-specific configuration file.                           | `~/.bgps_config`   |
+- `BGPS_GLOBAL_CONFIG`
+  - Global configuration file that is shared between all users.
+  - **Default Value:** `/etc/bgps_config`
+- `BGPS_USER_CONFIG`
+  - User-specific configuration file.                          
+  - **Default Value:** `~/.bgps_config`
 
 ## Command-line Options
-| Option          | Description                                               | Value Type |
-|:----------------|:----------------------------------------------------------|:-----------|
-| `--config-file` | Path of the desired configuration file. Specifying the configuration file will override and ignore all configurations referenced in `BGPS_GLOBAL_CONFIG` and `BGPS_USER_CONFIG`. | File Path   |
-| `--ls-config`   | List the current configuration and environment variables. | N/A        |
+- `--config-file`
+  - Path of the desired configuration file. Specifying the configuration file will override and ignore all configurations referenced in `BGPS_GLOBAL_CONFIG` and `BGPS_USER_CONFIG`.
+  - **Example:** `source bgps --config-file "/path/to/config/file"`
+- `--ls-config`
+  - List the current configuration and environment variables.
+  - **Example:** `source bgps --ls-config`
 
 ## FAQ
 ### My prompt is a shrug face `¯\_(ツ)_/¯`. What is going on?
