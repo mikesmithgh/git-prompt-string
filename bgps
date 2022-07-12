@@ -170,7 +170,11 @@ _set_config() {
   fi
 
   if (( "${#configs[@]}" )) ; then
-    hash_code="$(md5sum "${configs[@]}" | awk {'print $1'} ORS="")"
+    if [[ $OSTYPE == darwin* ]]; then  # OSX does not have md5sum binary by default
+      hash_code="$(md5 -r "${configs[@]}" | awk {'print $1'} ORS="")"
+    else
+      hash_code="$(md5sum "${configs[@]}" | awk {'print $1'} ORS="")"
+    fi
   fi
 
   if [[ -n "${hash_code}" ]] && [[ "${hash_code}" != "${BGPS_CHECKSUM}" ]] ; then
