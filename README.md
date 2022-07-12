@@ -149,6 +149,6 @@ install the `fonts-powerline` package. See the
 
 ## Compatibilty
 bgps has been tested with the following:
-- Operating System: Linux 4.10.0-35-generic #39~16.04.1-Ubuntu
-- Bash: 4.3.48(1)-release
-- Git: 2.7.4
+- Operating System: 20.6.0 Darwin Kernel Version 20.6.0
+- Bash: 5.1.16(1)-release (x86_64-apple-darwin20.6.0)
+- Git: 2.37.0
