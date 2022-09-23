@@ -17,12 +17,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 # A better bash prompt for git. bgps provides a convenient way to customize
-# the PS1 prompt and to determine information about the current git branch. 
+# the PS1 prompt and to determine information about the current git branch.
 # bgps can indicate if the branch has a clean or dirty working tree, whether
 # or not it is tracking a remote branch, and the number of commits the local
-# branch is ahead or behind the remote branch. 
+# branch is ahead or behind the remote branch.
 #
-# Parts of this program were copied and modified from 
+# Parts of this program were copied and modified from
 # <https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh>
 #
 
@@ -30,7 +30,7 @@
 
 #######################################
 # Read contents of file to variables
-# Arguments: 
+# Arguments:
 #   $filepath the path of the file to read
 #   $variable_names... the name of the variables to store the contents
 #######################################
@@ -78,7 +78,7 @@ _remove_quotes() {
 
 #######################################
 # Add configuration to config map
-# Globals: $BGPS_CONFIG 
+# Globals: $BGPS_CONFIG
 # Arguments:
 #   $key the config map key
 #   $value the config map value
@@ -87,7 +87,7 @@ _set_config_value() {
   local valid_config_keys=($(_bgps_config_keys))
   local key="${1^^}"
   local value="${2}"
-  for valid_key in "${valid_config_keys[@]}" ; do 
+  for valid_key in "${valid_config_keys[@]}" ; do
     if [[ "${key}" == "${valid_key}" ]] ; then
       # add to config map
       BGPS_CONFIG["${key}"]=$(_remove_quotes "${value}")
@@ -99,7 +99,7 @@ _set_config_value() {
 # Get configuration from config map.
 # If a default value is provided and there is no value in the config, then
 # return the default value
-# Globals: $BGPS_CONFIG 
+# Globals: $BGPS_CONFIG
 # Arguments:
 #   $key the config map key
 #   $default_value the default value if there is no value in the config
@@ -112,8 +112,8 @@ _get_config_value() {
 }
 
 #######################################
-# Clear all configuration in the config map 
-# Globals: $BGPS_CONFIG 
+# Clear all configuration in the config map
+# Globals: $BGPS_CONFIG
 #######################################
 _clear_config_values() {
   local keys=("${!BGPS_CONFIG[@]}")
@@ -124,8 +124,8 @@ _clear_config_values() {
 
 #######################################
 # Read file and store in global config map
-# Globals: $BGPS_CONFIG 
-# Arguments: $config_file the configuration filepath 
+# Globals: $BGPS_CONFIG
+# Arguments: $config_file the configuration filepath
 #######################################
 _read_config() {
   local config_file="${1}"
@@ -144,7 +144,7 @@ _read_config() {
 #   $BGPS_GLOBAL_CONFIG
 #   $BGPS_USER_CONFIG
 #   $BGPS_CHECKSUM
-# Arguments: $config_file the configuration filepath 
+# Arguments: $config_file the configuration filepath
 # Returns: 0 on success
 #######################################
 _set_config() {
@@ -179,7 +179,7 @@ _set_config() {
 
   if [[ -n "${hash_code}" ]] && [[ "${hash_code}" != "${BGPS_CHECKSUM}" ]] ; then
     BGPS_CHECKSUM="${hash_code}"
-    _clear_config_values 
+    _clear_config_values
     for config in "${configs[@]}" ; do
       _read_config "${config}"
     done
@@ -226,7 +226,7 @@ _bgps_config_keys() {
 _print_config_value() {
   local key="${1}"
   local value="${2}"
-  printf "  %-*s = %s\n" 22 "${key}" "${value}" 
+  printf "  %-*s = %s\n" 22 "${key}" "${value}"
 }
 
 #######################################
@@ -241,15 +241,15 @@ _print_config() {
   local bgps_globals=($(_bgps_globals))
   local bgps_config_keys=($(_bgps_config_keys))
   echo "BGPS Environment Variables:"
-  for key in "${bgps_globals[@]}" ; do 
-    # exclude BGPS_CONFIG because it is an associative array      
+  for key in "${bgps_globals[@]}" ; do
+    # exclude BGPS_CONFIG because it is an associative array
     if [[ "${key}" != "BGPS_CONFIG" ]] ; then
-      _print_config_value "${key}" "${!key}" 
+      _print_config_value "${key}" "${!key}"
     fi
   done
   echo "BGPS Configuration:"
-  for key in "${bgps_config_keys[@]}" ; do 
-    _print_config_value "${key}" "${BGPS_CONFIG[${key}]}" 
+  for key in "${bgps_config_keys[@]}" ; do
+    _print_config_value "${key}" "${BGPS_CONFIG[${key}]}"
   done
 }
 
@@ -322,7 +322,7 @@ _branch_info() {
     elif [[ -f "${git_dir}/BISECT_LOG" ]] ; then
       merge_status="|BISECTING"
     fi
-  
+
     if [[ "${branch}" ]]; then
       :
     elif [[ -h "${git_dir}/HEAD" ]] ; then
@@ -341,13 +341,13 @@ _branch_info() {
       fi
     fi
   fi
-  
+
   if [[ -n "${step}" ]] && [[ -n "${total}" ]] ; then
     merge_status="${merge_status} ${step}/${total}"
   fi
-  
+
   local prefix=""
-  
+
   if [[ "${inside_gitdir}" == "true" ]] ; then
     if [[ "${bare_repo}" == "true" ]] ; then
       prefix="BARE:"
@@ -355,18 +355,18 @@ _branch_info() {
       branch="GIT_DIR!"
     fi
   fi
-  
+
   branch="${branch##refs/heads/}"
-  
+
   echo "${prefix}${branch}${merge_status}"
   return 0
 }
 
 #######################################
 # Get git status format
-# Globals: 
+# Globals:
 #   $RESET_COLOR
-#   $BGPS_CONFIG 
+#   $BGPS_CONFIG
 # Returns: 0 on success
 #######################################
 _bgps_git_status() {
@@ -397,7 +397,7 @@ _bgps_git_status() {
 
     git ls-files --others --exclude-standard --directory --no-empty-directory --error-unmatch -- ':/*' >/dev/null 2>/dev/null
     local untracked_exit_code="${?}" # code == 0 untracked files exist, code > 0 no untracked files
-  
+
     local commit_counts
     commit_counts=($(git rev-list --left-right --count ...@{u} 2>/dev/null))
     if (( ${?} )) ; then
@@ -407,33 +407,33 @@ _bgps_git_status() {
       if (( ! ${dirty_exit_code} )) ; then
         git_color="${color_clean}"
       fi
-    
+
       if (( ${commit_counts[0]} )) ; then
         git_color="${color_conflict}"
         git_symbol="${git_ahead/\%s/${commit_counts[0]}}"
       fi
-    
+
       if (( ${commit_counts[1]} )) ; then
         git_color="${color_conflict}"
         git_symbol="${git_behind/\%s/${commit_counts[1]}}"
       fi
-    
+
       if (( ${commit_counts[0]} && ${commit_counts[1]} )) ; then
         git_symbol="${git_diverged/\%a/${commit_counts[0]}}"
         git_symbol="${git_symbol/\%b/${commit_counts[1]}}"
       fi
     fi
-    
+
     if (( ! ${untracked_exit_code} )) ; then
       git_color="${color_untracked}"
       git_symbol="*${git_symbol}"
     fi
-  
+
     if (( ${dirty_exit_code} == 1 )) ; then
       git_color="${color_dirty}"
       git_symbol="*${git_symbol#\*}"
     fi
-    
+
     if [[ ${color_enabled} == "true" ]] ; then
       echo -n "${git_color}"
     fi
@@ -448,7 +448,7 @@ _bgps_git_status() {
 # Set formatted git prompt
 # Globals:
 #   $RESET_COLOR
-#   $BGPS_CONFIG 
+#   $BGPS_CONFIG
 #######################################
 _bgps_prompt() {
   local format="$(_get_config_value 'PS1_FORMAT' "%(%s %)${RESET_COLOR}\$ ")"
@@ -497,7 +497,7 @@ done
 if _set_config "${bgps_config_file}" ; then
   if [[ "true" == "${list_config}" ]] ; then
     _print_config
-  else 
+  else
     _bgps_prompt
   fi
 fi
