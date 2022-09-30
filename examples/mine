@@ -1,6 +1,6 @@
-PS1_FORMAT="\n\[\033[0;36m\] \w \[\033[0m\]%s\n$(((${EUID})) && echo '\[\033[0;92m\]' || echo '\[\033[0;91m\]') \u@\h \[\033[0;36m\]\$ "
+PS1_FORMAT="\n\[$(iterm2_prompt_mark)\]\[\033[0;36m\] \w\[\033[0m\]\[\033[3;33m\]$(_py_ps1)\[\033[0m\]\[\033[5;94m\]$(_kube_ps1)%s\n$(((${EUID})) && echo '\[\033[0;92m\]' || echo '\[\033[0;91m\]') \u@\h \[\033[0;36m\]\$ "
 GIT_COLOR_ENABLED="true"
-GIT_PREFIX=" "
+GIT_PREFIX="  "
 GIT_AHEAD="↑[%s]"
 GIT_BEHIND="↓[%s]"
 GIT_DIVERGED="↕ ↑[%a] ↓[%b]"
