@@ -1,6 +1,12 @@
-PS1_FORMAT="\n\[$(iterm2_prompt_mark)\]\[\033[0;36m\] \w\[\033[0m\]\[\033[3;33m\]$(_py_ps1)\[\033[0m\]\[\033[5;94m\]$(_kube_ps1)%s\n$(((${EUID})) && echo '\[\033[0;92m\]' || echo '\[\033[0;91m\]') \u@\h \[\033[0;36m\]\$ "
+PS1_FORMAT="$(_bgps_ps1 -u \u -h \h -D \D{%Y-%m-%dT%T} -s \s -V \V -w \w)\[\033[0m\]%BGPS_GIT_STATUS $(_code_ps1)\n$([[ $(type -t iterm2_prompt_mark) == 'function' ]] && echo \[$(iterm2_prompt_mark)\])$(((${EUID})) && echo '\[\033[0;92m\]' || echo '\[\033[0;91m\]')$(printf "\x1b[%s;2;%sm" '38' '167;192;128')\u@\h $(printf "\x1b[%s;2;%sm" '38' '131;165;152')\$ "
+# PS1_FORMAT="$ "
 GIT_COLOR_ENABLED="true"
 GIT_PREFIX="  "
 GIT_AHEAD="↑[%s]"
 GIT_BEHIND="↓[%s]"
 GIT_DIVERGED="↕ ↑[%a] ↓[%b]"
+GIT_COLOR_CLEAN=$(printf "\x1b[%s;2;%sm" '38' '167;192;128')
+GIT_COLOR_NO_UPSTREAM=$(printf "\x1b[%s;2;%sm" '38' '146;131;116')"
+GIT_COLOR_UNTRACKED=$(printf "\x1b[%s;2;%sm" '38' '211;134;155')
+GIT_COLOR_DIRTY=$(printf "\x1b[%s;2;%sm" '38' '255;105;97')
+GIT_COLOR_CONFLICT=$(printf "\x1b[%s;2;%sm" '38' '219;188;95')
