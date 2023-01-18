@@ -390,17 +390,30 @@ _bgps_git_status() {
     return 1
   fi
 
-  git diff --no-ext-diff --quiet HEAD 2>/dev/null
+  local diff_error
+  diff_error=$(git diff --no-ext-diff --quiet HEAD 2>&1)
   local dirty_exit_code="${?}" # code == 0 clean working tree, code == 1 dirty working tree
 
-  if (( "${dirty_exit_code}" == 0 || "${dirty_exit_code}" == 1 )) ; then
+  # TODO: move logic to function
+  local empty_git_error="ambiguous argument 'HEAD'"
+  local no_upstream=0
+  if [[ "${diff_error}" == *"${empty_git_error}"* ]]; then
+    no_upstream=1
+  fi
 
-    git ls-files --others --exclude-standard --directory --no-empty-directory --error-unmatch -- ':/*' >/dev/null 2>/dev/null
-    local untracked_exit_code="${?}" # code == 0 untracked files exist, code > 0 no untracked files
+  # allow no upstream error to passthrough to apply coloring and formatting
+  if (( "${dirty_exit_code}" == 0 )) || (( "${dirty_exit_code}" == 1 )) || (( "${no_upstream}" )); then
 
-    local commit_counts
-    commit_counts=($(git rev-list --left-right --count ...@{u} 2>/dev/null))
-    if (( ${?} )) ; then
+    if ((! ${no_upstream})); then
+      git ls-files --others --exclude-standard --directory --no-empty-directory --error-unmatch -- ':/*' >/dev/null 2>/dev/null
+      local untracked_exit_code="${?}" # code == 0 untracked files exist, code > 0 no untracked files
+
+      local commit_counts
+      commit_counts=($(git rev-list --left-right --count ...@{u} 2>/dev/null))
+      local commit_counts_exit_code="${?}"
+    fi
+
+    if ((${no_upstream})) || (( ${commit_counts_exit_code} )) ; then
       # no upstream configured for branch
       git_color="${color_no_upstream}"
     else
@@ -422,25 +435,34 @@ _bgps_git_status() {
         git_symbol="${git_diverged/\%a/${commit_counts[0]}}"
         git_symbol="${git_symbol/\%b/${commit_counts[1]}}"
       fi
-    fi
 
-    if (( ! ${untracked_exit_code} )) ; then
-      git_color="${color_untracked}"
-      git_symbol="*${git_symbol}"
-    fi
+      if (( ! ${untracked_exit_code} )) ; then
+        git_color="${color_untracked}"
+        git_symbol="*${git_symbol}"
+      fi
 
-    if (( ${dirty_exit_code} == 1 )) ; then
-      git_color="${color_dirty}"
-      git_symbol="*${git_symbol#\*}"
+      if (( ${dirty_exit_code} == 1 )) ; then
+        git_color="${color_dirty}"
+        git_symbol="*${git_symbol#\*}"
+      fi
     fi
 
     if [[ ${color_enabled} == "true" ]] ; then
-      echo -n "${git_color}"
+      printf "%s" "${git_color}"
     fi
 
+    echo "${prefix:+${prefix}}${git_branch}${git_symbol:+ ${git_symbol}}${postfix:+${postfix}}"
+  else
+    if [[ ${color_enabled} == "true" ]] ; then
+      printf "%s" "${color_dirty}"
+    fi
+    local state_dir="${HOME}/.local/state/bgps"
+    local log_file="${state_dir}/log"
+    mkdir -p "${state_dir}"
+    echo "$(date +%FT%T):" "${diff_error}" >> "${log_file}"
+    printf "[bgps: error see %s for information]" "${log_file}"
   fi
 
-  echo "${prefix:+${prefix}}${git_branch}${git_symbol:+ ${git_symbol}}${postfix:+${postfix}}"
   return 0
 }
 
@@ -456,7 +478,7 @@ _bgps_prompt() {
   local status="$(_bgps_git_status)"
   if [[ -z "${status}" ]] ; then
     format="${format/\%(*\%s*\%)/}"
-    format="${format/\%s/}"
+    format="${format/\%BGPS_GIT_STATUS/}"
     PS1="${format}${text_color}"
   else
     local placeholder
@@ -465,7 +487,7 @@ _bgps_prompt() {
       placeholder="${placeholder%\%\)}"
       format="${format/\%(*\%s*\%)/${placeholder}}"
     fi
-    PS1="${format/\%s/${status}}${text_color}"
+    PS1="${format/\%BGPS_GIT_STATUS/${status}}${text_color}"
   fi
 }
 
