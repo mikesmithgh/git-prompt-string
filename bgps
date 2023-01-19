@@ -436,15 +436,19 @@ _bgps_git_status() {
         git_symbol="${git_symbol/\%b/${commit_counts[1]}}"
       fi
 
-      if (( ! ${untracked_exit_code} )) ; then
-        git_color="${color_untracked}"
-        git_symbol="*${git_symbol}"
-      fi
+    fi
 
-      if (( ${dirty_exit_code} == 1 )) ; then
-        git_color="${color_dirty}"
-        git_symbol="*${git_symbol#\*}"
-      fi
+    # continue to check for untracked and dirty because
+    # it is still possible even without an upstream
+
+    if (( ! ${untracked_exit_code} )) ; then
+      git_color="${color_untracked}"
+      git_symbol="*${git_symbol}"
+    fi
+
+    if (( ${dirty_exit_code} == 1 )) ; then
+      git_color="${color_dirty}"
+      git_symbol="*${git_symbol#\*}"
     fi
 
     if [[ ${color_enabled} == "true" ]] ; then
