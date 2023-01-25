@@ -46,7 +46,7 @@ _eread ()
 # Arguments: $error_message
 #######################################
 _err() {
-  echo "bgps: ${1}" >&2
+  printf -- "bgps: ${1}" >&2
 }
 
 #######################################
@@ -73,7 +73,7 @@ _file_exists() {
 #######################################
 _remove_quotes() {
   local no_quote="${1%\"}"
-  echo "${no_quote#\"}"
+  printf -- "%s" "${no_quote#\"}"
 }
 
 #######################################
@@ -108,7 +108,7 @@ _get_config_value() {
   local key="${1^^}"
   local default_value="${2}"
   local value="${BGPS_CONFIG[${key}]}"
-  [[ -z "${value}" ]] && echo "${default_value}" || echo "${value}"
+  [[ -z "${value}" ]] && printf -- "%s" "${default_value}" || printf -- "%s" "${value}"
 }
 
 #######################################
@@ -198,7 +198,7 @@ _bgps_globals() {
     "BGPS_USER_CONFIG"
     "BGPS_CHECKSUM"
   )
-  echo "${valid_globals[@]}"
+  printf -- "%s " "${valid_globals[@]}"
 }
 
 #######################################
@@ -220,13 +220,13 @@ _bgps_config_keys() {
     "PS1_FORMAT"
     "TEXT_COLOR"
   )
-  echo "${valid_config_keys[@]}"
+  printf -- "%s " "${valid_config_keys[@]}"
 }
 
 _print_config_value() {
   local key="${1}"
   local value="${2}"
-  printf "  %-*s = %s\n" 22 "${key}" "${value}"
+  printf -- "  %-*s = %s\n" 22 "${key}" "${value}"
 }
 
 #######################################
@@ -240,14 +240,14 @@ _print_config_value() {
 _print_config() {
   local bgps_globals=($(_bgps_globals))
   local bgps_config_keys=($(_bgps_config_keys))
-  echo "BGPS Environment Variables:"
+  printf -- "BGPS Environment Variables:"
   for key in "${bgps_globals[@]}" ; do
     # exclude BGPS_CONFIG because it is an associative array
     if [[ "${key}" != "BGPS_CONFIG" ]] ; then
       _print_config_value "${key}" "${!key}"
     fi
   done
-  echo "BGPS Configuration:"
+  printf -- "BGPS Configuration:"
   for key in "${bgps_config_keys[@]}" ; do
     _print_config_value "${key}" "${BGPS_CONFIG[${key}]}"
   done
@@ -358,7 +358,7 @@ _branch_info() {
 
   branch="${branch##refs/heads/}"
 
-  echo "${prefix}${branch}${merge_status}"
+  printf -- "%s%s%s" "${prefix}" "${branch}" "${merge_status}"
   return 0
 }
 
@@ -452,19 +452,19 @@ _bgps_git_status() {
     fi
 
     if [[ ${color_enabled} == "true" ]] ; then
-      printf "%s" "${git_color}"
+      printf -- "%s" "${git_color}"
     fi
 
-    echo "${prefix:+${prefix}}${git_branch}${git_symbol:+ ${git_symbol}}${postfix:+${postfix}}"
+    printf -- "%s%s%s%s" "${prefix:+${prefix}}" "${git_branch}" "${git_symbol:+ ${git_symbol}}" "${postfix:+${postfix}}"
   else
     if [[ ${color_enabled} == "true" ]] ; then
-      printf "%s" "${color_dirty}"
+      printf -- "%s" "${color_dirty}"
     fi
     local state_dir="${HOME}/.local/state/bgps"
     local log_file="${state_dir}/log"
     mkdir -p "${state_dir}"
-    echo "$(date +%FT%T):" "${diff_error}" >> "${log_file}"
-    printf "[bgps: error see %s for information]" "${log_file}"
+    printf -- "%s: %s" "$(date +%FT%T)" "${diff_error}" >> "${log_file}"
+    printf -- "[bgps: error see %s for information]" "${log_file}"
   fi
 
   return 0
@@ -503,35 +503,16 @@ _bgps_prompt() {
 
 RESET_COLOR="\[\033[0m\]"
 declare -A BGPS_CONFIG
-list_config="false"
 BGPS_GLOBAL_CONFIG="${BGPS_GLOBAL_CONFIG-/etc/bgps_config}"
 BGPS_USER_CONFIG="${BGPS_USER_CONFIG-${HOME}/.bgps_config}"
 
-while [[ $# > 0 ]]; do
-  case "${1:2}" in
-    "ls-config")
-      list_config="true"
-      ;;
-    "config-file")
-      shift
-      bgps_config_file="${1}"
-      ;;
-  esac
-  shift
-done
-
 if _set_config "${bgps_config_file}" ; then
-  if [[ "true" == "${list_config}" ]] ; then
-    _print_config
-  else
-    _bgps_prompt
-  fi
+  _bgps_prompt
 fi
 
 # unset variables and functions
 unset RESET_COLOR
 unset bgps_config_file
-unset list_config
 unset -f _err
 unset -f _file_exists
 unset -f _remove_quotes
