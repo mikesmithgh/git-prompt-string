@@ -217,6 +217,7 @@ _bgps_config_keys() {
     "GIT_DIVERGED"
     "GIT_POSTFIX"
     "GIT_PREFIX"
+    "GIT_BARE"
     "PS1_FORMAT"
     "TEXT_COLOR"
   )
@@ -367,6 +368,8 @@ _bgps_git_status() {
   git_behind="$(_get_config_value 'GIT_BEHIND' '[behind %s]')"
   local git_diverged
   git_diverged="$(_get_config_value 'GIT_DIVERGED' '[ahead %a] [behind %b]')"
+  local git_bare
+  git_bare="$(_get_config_value 'GIT_BARE' '')"
   local git_color="${stop_color}"
   local git_symbol=""
 
@@ -375,11 +378,22 @@ _bgps_git_status() {
     return 1
   fi
 
+  if [[ "$(git rev-parse --is-bare-repository)" == "true" ]]; then
+    git_color="${color_no_upstream}"
+    git_symbol="${git_bare}"
+    if [[ ${color_enabled} == "true" ]] ; then
+      printf -- "%s" "${git_color}"
+    fi
+    printf -- "%s%s%s%s" "${prefix:+${prefix}}" "${git_branch}" "${git_symbol:+ ${git_symbol}}" "${postfix:+${postfix}}"
+    return 0
+  fi
+
   local diff_error
   diff_error=$(git diff --no-ext-diff --quiet HEAD 2>&1)
   local dirty_exit_code="${?}" # code == 0 clean working tree, code == 1 dirty working tree
 
   # TODO: move logic to function
+  # TODO: look in HEAD vs @{u} for bare repo vs normal repo. showing green after commit on bare repo should not
   local empty_git_error="ambiguous argument 'HEAD'"
   local no_upstream_git_error="no upstream configured"
   local no_such_branch_git_error="no such branch"
@@ -458,7 +472,7 @@ _bgps_git_status() {
     local state_dir="${HOME}/.local/state/bgps"
     local log_file="${state_dir}/log"
     mkdir -p "${state_dir}"
-    printf -- "%s: %s" "$(date +%FT%T)" "${diff_error}" >> "${log_file}"
+    printf -- "%s: %s\n" "$(date +%FT%T)" "${diff_error}" >> "${log_file}"
     printf -- "[bgps: error see %s for information]" "${log_file}"
   fi
 

@@ -1,12 +1,23 @@
-PS1_FORMAT="$(_bgps_ps1 -u \u -h \h -D \D{%Y-%m-%dT%T} -s \s -V \V -w \w)\[\033[0m\]%BGPS_GIT_STATUS $(_code_ps1)\n$([[ $(type -t iterm2_prompt_mark) == 'function' ]] && echo \[$(iterm2_prompt_mark)\])$(((${EUID})) && echo '\[\033[0;92m\]' || echo '\[\033[0;91m\]')$(printf "\x1b[%s;2;%sm" '38' '167;192;128')\u@\h $(printf "\x1b[%s;2;%sm" '38' '131;165;152')\$ "
-# PS1_FORMAT="$ "
+# main version
+PS1_FORMAT="$(_bgps_ps1 -u '\u' -h '\h' -D '\D{%Y-%m-%dT%T}' -s '\s' -V '\V' -w '\w')\[\033[0m\]%BGPS_GIT_STATUS $(_code_ps1)\n$(((${EUID})) && printf "\[\x1b[%s;2;%sm\]" '38' '167;192;128' || printf "\[\x1b[%s;2;%sm\]" '38' '255;105;97')\u@\h $(printf "\[\x1b[%s;2;%sm\]" '38' '131;165;152')\$$(printf '%b' \[\033[0m)\] "
+
+# short version safe for screenshare
+# PS1_FORMAT="$(printf "\[\x1b[%s;2;%sm\]" '38' '167;192;128')\w $(_code_ps1)\n$(((${EUID})) && printf "\[\x1b[%s;2;%sm\]" '38' '167;192;128' || printf "\[\x1b[%s;2;%sm\]" '38' '255;105;97')\u $(printf "\[\x1b[%s;2;%sm\]" '38' '131;165;152')\$ "
+
+# super short
+# PS1_FORMAT="\$ "
+
 GIT_COLOR_ENABLED="true"
 GIT_PREFIX="  "
+GIT_BARE="󱣻"
 GIT_AHEAD="↑[%s]"
 GIT_BEHIND="↓[%s]"
 GIT_DIVERGED="↕ ↑[%a] ↓[%b]"
+# GIT_COLOR_CLEAN="\[\033[2;92m\]"
 GIT_COLOR_CLEAN=$(printf "\x1b[%s;2;%sm" '38' '167;192;128')
-GIT_COLOR_NO_UPSTREAM=$(printf "\x1b[%s;2;%sm" '38' '146;131;116')"
+GIT_COLOR_NO_UPSTREAM=$(printf "\x1b[%s;2;%sm" '38' '146;131;116')
 GIT_COLOR_UNTRACKED=$(printf "\x1b[%s;2;%sm" '38' '211;134;155')
 GIT_COLOR_DIRTY=$(printf "\x1b[%s;2;%sm" '38' '255;105;97')
 GIT_COLOR_CONFLICT=$(printf "\x1b[%s;2;%sm" '38' '219;188;95')
+# idea add fg/bg jobs to prompt
+
