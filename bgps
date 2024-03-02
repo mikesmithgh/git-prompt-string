@@ -349,15 +349,15 @@ _bgps_git_status() {
   local color_enabled
   color_enabled="$(_get_config_value 'GIT_COLOR_ENABLED' 'false')"
   local color_clean
-  color_clean="$(_get_config_value 'GIT_COLOR_CLEAN' '\[\033[2;92m\]')"
+  color_clean="$(_get_config_value 'GIT_COLOR_CLEAN' '\033[2;92m')"
   local color_no_upstream
-  color_no_upstream="$(_get_config_value 'GIT_COLOR_NO_UPSTREAM' '\[\033[2;40m\]')"
+  color_no_upstream="$(_get_config_value 'GIT_COLOR_NO_UPSTREAM' '\033[2;40m')"
   local color_untracked
-  color_untracked="$(_get_config_value 'GIT_COLOR_UNTRACKED' '\[\033[2;95m\]')"
+  color_untracked="$(_get_config_value 'GIT_COLOR_UNTRACKED' '\033[2;95m')"
   local color_dirty
-  color_dirty="$(_get_config_value 'GIT_COLOR_DIRTY' '\[\033[2;91m\]')"
+  color_dirty="$(_get_config_value 'GIT_COLOR_DIRTY' '\033[2;91m')"
   local color_conflict
-  color_conflict="$(_get_config_value 'GIT_COLOR_CONFLICT' '\[\033[0;33m\]')"
+  color_conflict="$(_get_config_value 'GIT_COLOR_CONFLICT' '\033[0;33m')"
   local prefix
   prefix="$(_get_config_value 'GIT_PREFIX' '')"
   local postfix
@@ -475,6 +475,7 @@ _bgps_git_status() {
     printf -- "%s: %s\n" "$(date +%FT%T)" "${diff_error}" >> "${log_file}"
     printf -- "[bgps: error see %s for information]" "${log_file}"
   fi
+  printf -- ''
 
   return 0
 }
@@ -491,20 +492,20 @@ _bgps_prompt() {
   local text_color=
   text_color="$(_get_config_value 'TEXT_COLOR' "${stop_color}")"
   local status
-  status="$(_bgps_git_status)"
-  if [[ -z "${status}" ]] ; then
-    format="${format/\%(*\%s*\%)/}"
-    format="${format/\%BGPS_GIT_STATUS/}"
-    PS1="${format}${text_color}"
-  else
-    local placeholder
-    if [[ "${format}" =~ \%\(.*\%s.*\%\) ]] ; then
-      placeholder="${BASH_REMATCH[0]#\%\(}"
-      placeholder="${placeholder%\%\)}"
-      format="${format/\%(*\%s*\%)/${placeholder}}"
-    fi
-    PS1="${format/\%BGPS_GIT_STATUS/${status}}${text_color}"
-  fi
+  echo -e "$(_bgps_git_status)$stop_color"
+  # if [[ -z "${status}" ]] ; then
+  #   format="${format/\%(*\%s*\%)/}"
+  #   format="${format/\%BGPS_GIT_STATUS/}"
+  #   PS1="${format}${text_color}"
+  # else
+  #   local placeholder
+  #   if [[ "${format}" =~ \%\(.*\%s.*\%\) ]] ; then
+  #     placeholder="${BASH_REMATCH[0]#\%\(}"
+  #     placeholder="${placeholder%\%\)}"
+  #     format="${format/\%(*\%s*\%)/${placeholder}}"
+  #   fi
+  #   PS1="${format/\%BGPS_GIT_STATUS/${status}}${text_color}"
+  # fi
 }
 
 # Script Definition ###########################################################
