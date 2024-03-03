@@ -53,6 +53,7 @@ _branch_info() {
   local inside_worktree="$4"
   local short_sha="$5"
 
+  local is_detached="false"
   local merge_status=""
   local branch=""
   local step=""
@@ -105,10 +106,10 @@ _branch_info() {
       if ! _eread "${git_dir}/HEAD" head ; then
         return 1
       fi
-      # is it a symbolic ref?
       branch="${head#ref: }"
       if [[ "${head}" == "${branch}" ]] ; then
-        branch="$(git describe --tags --exact-match HEAD 2>/dev/null)" || branch="${short_sha}..."
+        is_detached="true"
+        branch="$(git describe --tags --exact-match HEAD 2>/dev/null)" || branch="${head:0:9}..."
         branch="(${branch})"
       fi
     fi
@@ -131,6 +132,11 @@ _branch_info() {
   branch="${branch##refs/heads/}"
 
   printf -- "%s%s%s" "${prefix}" "${branch}" "${merge_status}"
+
+  if [[ "$is_detached" == "true" ]]; then
+    return 2
+  fi
+
   return 0
 }
 
@@ -160,7 +166,7 @@ _bgps_git_status() {
   local git_symbol=""
 
   local repo_info
-  repo_info="$(git rev-parse --git-dir --is-inside-git-dir --is-bare-repository --is-inside-work-tree --short HEAD 2>/dev/null)"
+  repo_info="$(git rev-parse --git-dir --is-inside-git-dir --is-bare-repository --is-inside-work-tree --short '@{upstream}' 2>/dev/null)"
 
   local repo_info_arr
   readarray -t repo_info_arr <<<"$repo_info"
@@ -170,8 +176,15 @@ _bgps_git_status() {
   local inside_worktree="${repo_info_arr[3]}"
   local short_sha="${repo_info_arr[4]}"
 
+  local is_detached="false"
+  local git_branch_exit
   local git_branch
-  if ! git_branch=$(_branch_info "$git_dir" "$inside_gitdir" "$bare_repo" "$inside_worktree" "$short_sha"); then
+  git_branch=$(_branch_info "$git_dir" "$inside_gitdir" "$bare_repo" "$inside_worktree" "$short_sha")
+  git_branch_exit="$?"
+
+  if (("$git_branch_exit" == 2)); then
+    is_detached="true"
+  elif (("$git_branch_exit")); then
     return 1
   fi
 
@@ -191,12 +204,13 @@ _bgps_git_status() {
   diff_error=$(git diff --no-ext-diff --quiet HEAD 2>&1)
   local dirty_exit_code="${?}" # code == 0 clean working tree, code == 1 dirty working tree
 
-  # TODO: move logic to function
-  # TODO: look in HEAD vs @{u} for bare repo vs normal repo. showing green after commit on bare repo should not
   local empty_git_error="ambiguous argument 'HEAD'"
   local no_upstream_git_error="no upstream configured"
   local no_such_branch_git_error="no such branch"
   local no_upstream=0
+  if [[ "$short_sha" == "" ]]; then
+    no_upstream=1
+  fi
   if [[ "${diff_error}" == *"${empty_git_error}"* ]] || [[ "${diff_error}" == *"${no_upstream_git_error}"* ]] || [[ "${diff_error}" == *"${no_such_branch_git_error}"* ]]; then
     no_upstream=1
     # there is no upstream so compare against staging area
@@ -212,14 +226,15 @@ _bgps_git_status() {
     untracked_exit_code="${?}" # code == 0 untracked files exist, code > 0 no untracked files
 
     local commit_counts
-    local commit_counts_exit_code
-    if ((no_upstream)); then
+    local commit_counts_exit_code=1
+    if [[ "$is_detached" == "true" ]]; then
+      commit_counts=(0 0)
+    elif ((no_upstream)); then
       ahead_count="$(git rev-list --count HEAD 2>/dev/null)"
       commit_counts=("$ahead_count" 0)
-      commit_counts_exit_code="${?}"
     else
       IFS=$'\t' read -r -a commit_counts <<< "$(git rev-list --left-right --count ...'@{u}' 2>/dev/null)"
-      commit_counts_exit_code="${?}" # TODO: double check refactor on line above doesn't break this
+      commit_counts_exit_code="$?"
     fi
 
     if ((!dirty_exit_code)) ; then
