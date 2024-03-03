@@ -1,5 +1,5 @@
 # Better Git Prompt String
 
-> [!WARNING]\ 
+> [!WARNING]\
 > Under construction
 
