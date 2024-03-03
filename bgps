@@ -107,11 +107,13 @@ _branch_info() {
         return 1
       fi
       branch="${head#ref: }"
+      local upstream_info
+      upstream_info="$(git rev-parse --abbrev-ref '@{upstream}' 2>/dev/null)"
       if [[ "${head}" == "${branch}" ]] ; then
         is_detached="true"
         branch="$(git describe --tags --exact-match HEAD 2>/dev/null)" || branch="${head:0:9}..."
         branch="(${branch})"
-      elif ! git show-branch refs/remotes/origin/"${branch##refs/heads/}" >/dev/null 2>/dev/null; then
+      elif [[ "$upstream_info" == '' ]]; then
         is_detached="true"
       fi
     fi
