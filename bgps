@@ -113,7 +113,7 @@ _branch_info() {
         is_detached="true"
         branch="$(git describe --tags --exact-match HEAD 2>/dev/null)" || branch="${head:0:9}..."
         branch="(${branch})"
-      elif [[ "$upstream_info" == '' ]]; then
+      elif [[ "$upstream_info" == '@{upstream}' ]] || [[ "$upstream_info" == '' ]]; then
         is_detached="true"
       fi
     fi
