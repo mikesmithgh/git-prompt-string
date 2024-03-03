@@ -148,7 +148,6 @@ _branch_info() {
 # Returns: 0 on success
 #######################################
 _bgps_git_status() {
-  local color_enabled='true'
   local color_clean='\x1b[38;2;167;192;128m'
 
   local color_no_upstream='\x1b[38;2;146;131;116m'
@@ -193,9 +192,7 @@ _bgps_git_status() {
   fi
   if [[ "$bare_repo" == "true" ]] || [[ "$inside_gitdir" == "true" ]] ; then
     git_color="${color_no_upstream}"
-    if [[ ${color_enabled} == "true" ]] ; then
-      printf -- "%s" "${git_color}"
-    fi
+    printf -- "%s" "${git_color}"
     printf -- "%s%s%s%s" "${prefix:+${prefix}}" "${git_branch}" "${git_symbol:+ ${git_symbol}}" "${postfix:+${postfix}}"
     return 0
   fi
@@ -274,34 +271,23 @@ _bgps_git_status() {
       git_symbol="*${git_symbol#\*}"
     fi
 
-    if [[ ${color_enabled} == "true" ]] ; then
-      printf -- "%s" "${git_color}"
-    fi
-
+    printf -- "%s" "${git_color}"
     printf -- "%s%s%s%s" "${prefix:+${prefix}}" "${git_branch}" "${git_symbol:+ ${git_symbol}}" "${postfix:+${postfix}}"
   else
-    if [[ ${color_enabled} == "true" ]] ; then
-      printf -- "%s" "${color_dirty}"
-    fi
-    local state_dir="${HOME}/.local/state/bgps"
-    local log_file="${state_dir}/log"
-    mkdir -p "${state_dir}"
-    printf -- "%s: %s\n" "$(date +%FT%T)" "${diff_error}" >> "${log_file}"
-    printf -- "[bgps: error see %s for information]" "${log_file}"
+    printf -- "%s" "${color_dirty}"
+    printf -- "ERROR(bgps): %s" "${diff_error}"
   fi
   printf -- ''
 
   return 0
 }
 
-# Script Definition ###########################################################
-# Globals:
-#   $stop_color escape sequence to reset prompt color
-
-stop_color="\[\033[0m\]"
-echo -e "$(_bgps_git_status)$stop_color"
+stop_color="\033[0m"
+# shellcheck disable=SC2059
+printf -- "$(_bgps_git_status)$stop_color"
 
 # unset variables and functions
 unset stop_color
 unset -f _bgps_git_status
 unset -f _branch_info
+unset -f _eread
