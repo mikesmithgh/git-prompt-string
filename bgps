@@ -54,6 +54,7 @@ _branch_info() {
 
   local is_detached="false"
   local merge_status=""
+  local sparse=""
   local branch=""
   local step=""
   local total=""
@@ -134,7 +135,10 @@ _branch_info() {
 
   branch="${branch##refs/heads/}"
 
-  printf -- "%s%s%s" "${prefix}" "${branch}" "${merge_status}"
+	if [[ "$(git config --bool core.sparseCheckout)" == "true" ]]; then
+		sparse="|SPARSE"
+	fi
+  printf -- "%s%s%s%s" "${prefix}" "${branch}" "${sparse}" "${merge_status}"
 
   if [[ "$is_detached" == "true" ]]; then
     return 2
