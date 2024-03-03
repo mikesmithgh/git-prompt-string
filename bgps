@@ -26,8 +26,6 @@
 # <https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh>
 #
 
-# Function Definitions ########################################################
-
 #######################################
 # Read contents of file to variables
 # Arguments:
@@ -44,6 +42,7 @@ _eread ()
 #######################################
 # Get current git branch and additional repository information
 # Returns: 0 on success
+# Returns: 2 on success and in a detached head state
 #######################################
 _branch_info() {
 
@@ -141,10 +140,9 @@ _branch_info() {
 }
 
 #######################################
-# Get git status format
+# Get formatted git status
 # Globals:
 #   $stop_color
-#   $BGPS_CONFIG
 # Returns: 0 on success
 #######################################
 _bgps_git_status() {
