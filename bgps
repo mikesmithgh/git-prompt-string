@@ -118,6 +118,10 @@ _branch_info() {
     merge_status="${merge_status} ${step}/${total}"
   fi
 
+  if [[ "$merge_status" ]]  && [[ $(git ls-files --unmerged 2>/dev/null) ]]; then
+		merge_status="$merge_status|CONFLICT"
+	fi
+
   local prefix=""
 
   if [[ "${inside_gitdir}" == "true" ]] ; then
