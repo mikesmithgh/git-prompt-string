@@ -111,6 +111,8 @@ _branch_info() {
         is_detached="true"
         branch="$(git describe --tags --exact-match HEAD 2>/dev/null)" || branch="${head:0:9}..."
         branch="(${branch})"
+      elif ! git show-branch refs/remotes/origin/"${branch##refs/heads/}" >/dev/null 2>/dev/null; then
+        is_detached="true"
       fi
     fi
   fi
@@ -236,7 +238,7 @@ _bgps_git_status() {
       ahead_count="$(git rev-list --count HEAD 2>/dev/null)"
       commit_counts=("$ahead_count" 0)
     else
-      IFS=$'\t' read -r -a commit_counts <<< "$(git rev-list --left-right --count ...'@{u}' 2>/dev/null)"
+      IFS=$'\t' read -r -a commit_counts <<< "$(git rev-list --left-right --count ...'@{upstream}' 2>/dev/null)"
       commit_counts_exit_code="$?"
     fi
 
