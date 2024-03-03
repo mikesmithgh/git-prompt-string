@@ -42,220 +42,16 @@ _eread ()
 }
 
 #######################################
-# Print error message to stderr
-# Arguments: $error_message
-#######################################
-_err() {
-  printf -- "bgps: %s" "${1}" >&2
-}
-
-#######################################
-# Check if file exists and if file is a regular file
-# Arguments: $filepath the path of the file to check
-# Returns: 0 on success
-#######################################
-_file_exists() {
-  local return_code=0
-  local filepath="${1}"
-  if [[ ! -e "${filepath}" ]]; then
-    _err "cannot access '${filepath}': No such file"
-    return_code=1
-  elif [[ ! -f "${filepath}" ]]; then
-    _err "cannot access '${filepath}': Not a regular file"
-    return_code=1
-  fi
-  return ${return_code}
-}
-
-#######################################
-# Remove first and last double quotes from string, if they exist
-# Arguments: $no_quote the string to remove quotes from
-#######################################
-_remove_quotes() {
-  local no_quote="${1%\"}"
-  printf -- "%s" "${no_quote#\"}"
-}
-
-#######################################
-# Add configuration to config map
-# Globals: $BGPS_CONFIG
-# Arguments:
-#   $key the config map key
-#   $value the config map value
-#######################################
-_set_config_value() {
-  IFS=" " read -r -a valid_config_keys <<< "$(_bgps_config_keys)"
-  local key="${1^^}"
-  local value="${2}"
-  for valid_key in "${valid_config_keys[@]}" ; do
-    if [[ "${key}" == "${valid_key}" ]] ; then
-      # add to config map
-      BGPS_CONFIG["${key}"]=$(_remove_quotes "${value}")
-    fi
-  done
-}
-
-#######################################
-# Get configuration from config map.
-# If a default value is provided and there is no value in the config, then
-# return the default value
-# Globals: $BGPS_CONFIG
-# Arguments:
-#   $key the config map key
-#   $default_value the default value if there is no value in the config
-#######################################
-_get_config_value() {
-  local key="${1^^}"
-  local default_value="${2}"
-  local value="${BGPS_CONFIG[${key}]}"
-  [[ -z "${value}" ]] && printf -- "%s" "${default_value}" || printf -- "%s" "${value}"
-}
-
-#######################################
-# Clear all configuration in the config map
-# Globals: $BGPS_CONFIG
-#######################################
-_clear_config_values() {
-  local keys=("${!BGPS_CONFIG[@]}")
-  for key in "${keys[@]}"; do
-    unset "BGPS_CONFIG[$key]"
-  done
-}
-
-#######################################
-# Read file and store in global config map
-# Globals: $BGPS_CONFIG
-# Arguments: $config_file the configuration filepath
-#######################################
-_read_config() {
-  local config_file="${1}"
-  if _file_exists "${config_file}" ; then
-    while IFS=$'=\r\n' read -r key value; do
-      _set_config_value "${key}" "${value}"
-    done < "${config_file}"
-  fi
-}
-
-#######################################
-# Set the config map by reading the values from the provided file.
-# Only read from file if md5sum is different, otherwise hit the cache.
-# Globals:
-#   $BGPS_CONFIG
-#   $BGPS_GLOBAL_CONFIG
-#   $BGPS_USER_CONFIG
-#   $BGPS_CHECKSUM
-# Arguments: $config_file the configuration filepath
-# Returns: 0 on success
-#######################################
-_set_config() {
-  local return_code=0
-  local hash_code=""
-  local configs=()
-  if [[ -n "${1}" ]] ; then
-    local param_config="${1}"
-    if _file_exists "${param_config}" ; then
-      configs+=("${param_config}")
-    else
-      return_code=1
-    fi
-  else
-    _file_exists "${BGPS_GLOBAL_CONFIG}" 2>/dev/null && configs+=("${BGPS_GLOBAL_CONFIG}")
-    _file_exists "${BGPS_USER_CONFIG}" 2>/dev/null && configs+=("${BGPS_USER_CONFIG}")
-    if (( ! "${#configs[@]}" )) ; then
-      # default config file does not exist so lets print a shrug face
-      BGPS_CHECKSUM="¯\_(ツ)_/¯"
-      _clear_config_values
-      _set_config_value "PS1_FORMAT" "${BGPS_CHECKSUM}%( %s%) \$ "
-    fi
-  fi
-
-  if (( "${#configs[@]}" )) ; then
-    if [[ $OSTYPE == darwin* ]]; then  # OSX does not have md5sum binary by default
-      hash_code="$(md5 -r "${configs[@]}" | awk '{print $1}' ORS="")"
-    else
-      hash_code="$(md5sum "${configs[@]}" | awk '{print $1}' ORS="")"
-    fi
-  fi
-
-  if [[ -n "${hash_code}" ]] && [[ "${hash_code}" != "${BGPS_CHECKSUM}" ]] ; then
-    BGPS_CHECKSUM="${hash_code}"
-    _clear_config_values
-    for config in "${configs[@]}" ; do
-      _read_config "${config}"
-    done
-  fi
-
-  return ${return_code}
-}
-
-#######################################
-# Retrieve the list of valid bgps environment variables
-#######################################
-_bgps_globals() {
-  local valid_globals=(
-    "BGPS_CONFIG"
-    "BGPS_GLOBAL_CONFIG"
-    "BGPS_USER_CONFIG"
-    "BGPS_CHECKSUM"
-  )
-  printf -- "%s " "${valid_globals[@]}"
-}
-
-#######################################
-# Retrieve the list of valid keys for the environment variable $BGPS_CONFIG
-#######################################
-_bgps_config_keys() {
-  local valid_config_keys=(
-    "GIT_AHEAD"
-    "GIT_BEHIND"
-    "GIT_COLOR_CLEAN"
-    "GIT_COLOR_CONFLICT"
-    "GIT_COLOR_DIRTY"
-    "GIT_COLOR_ENABLED"
-    "GIT_COLOR_NO_UPSTREAM"
-    "GIT_COLOR_UNTRACKED"
-    "GIT_DIVERGED"
-    "GIT_POSTFIX"
-    "GIT_PREFIX"
-    "GIT_BARE"
-    "PS1_FORMAT"
-    "TEXT_COLOR"
-  )
-  printf -- "%s " "${valid_config_keys[@]}"
-}
-
-_print_config_value() {
-  local key="${1}"
-  local value="${2}"
-  printf -- "  %-*s = %s\n" 22 "${key}" "${value}"
-}
-
-#######################################
 # Get current git branch and additional repository information
 # Returns: 0 on success
 #######################################
 _branch_info() {
-  local repo_info
-  local rev_parse_exit_code
 
-  repo_info="$(git rev-parse --git-dir --is-inside-git-dir --is-bare-repository --is-inside-work-tree --short HEAD 2>/dev/null)"
-  rev_parse_exit_code="${?}"
-
-  if [[ -z "${repo_info}" ]] ; then
-    return 1
-  fi
-
-  local short_sha
-  if (( !rev_parse_exit_code )) ; then
-    short_sha="${repo_info##*$'\n'}"
-    repo_info="${repo_info%$'\n'*}"
-  fi
-
-  repo_info="${repo_info%$'\n'*}"
-  local bare_repo="${repo_info##*$'\n'}"
-  repo_info="${repo_info%$'\n'*}"
-  local inside_gitdir="${repo_info##*$'\n'}"
-  local git_dir="${repo_info%$'\n'*}"
+  local git_dir="$1"
+  local inside_gitdir="$2"
+  local bare_repo="$3"
+  local inside_worktree="$4"
+  local short_sha="$5"
 
   local merge_status=""
   local branch=""
@@ -346,41 +142,44 @@ _branch_info() {
 # Returns: 0 on success
 #######################################
 _bgps_git_status() {
-  local color_enabled
-  color_enabled="$(_get_config_value 'GIT_COLOR_ENABLED' 'false')"
-  local color_clean
-  color_clean="$(_get_config_value 'GIT_COLOR_CLEAN' '\033[2;92m')"
-  local color_no_upstream
-  color_no_upstream="$(_get_config_value 'GIT_COLOR_NO_UPSTREAM' '\033[2;40m')"
-  local color_untracked
-  color_untracked="$(_get_config_value 'GIT_COLOR_UNTRACKED' '\033[2;95m')"
-  local color_dirty
-  color_dirty="$(_get_config_value 'GIT_COLOR_DIRTY' '\033[2;91m')"
-  local color_conflict
-  color_conflict="$(_get_config_value 'GIT_COLOR_CONFLICT' '\033[0;33m')"
-  local prefix
-  prefix="$(_get_config_value 'GIT_PREFIX' '')"
-  local postfix
-  postfix="$(_get_config_value 'GIT_POSTFIX' '')"
-  local git_ahead
-  git_ahead="$(_get_config_value 'GIT_AHEAD' '[ahead %s]')"
-  local git_behind
-  git_behind="$(_get_config_value 'GIT_BEHIND' '[behind %s]')"
-  local git_diverged
-  git_diverged="$(_get_config_value 'GIT_DIVERGED' '[ahead %a] [behind %b]')"
-  local git_bare
-  git_bare="$(_get_config_value 'GIT_BARE' '')"
+  local color_enabled='true'
+  local color_clean='\x1b[38;2;167;192;128m'
+
+  local color_no_upstream='\x1b[38;2;146;131;116m'
+  local color_untracked='\x1b[38;2;211;134;155m'
+  local color_dirty='\x1b[38;2;255;105;97m'
+  local color_conflict='\x1b[38;2;219;188;95m'
+  local prefix='  '
+  local postfix=''
+  local git_ahead='↑[%s]'
+  local git_behind='↓[%s]'
+  local git_diverged='↕ ↑[%a] ↓[%b]'
+  local git_bare='󱣻'
   local git_color="${stop_color}"
+
   local git_symbol=""
 
+  local repo_info
+  repo_info="$(git rev-parse --git-dir --is-inside-git-dir --is-bare-repository --is-inside-work-tree --short HEAD 2>/dev/null)"
+
+  local repo_info_arr
+  readarray -t repo_info_arr <<<"$repo_info"
+  local git_dir="${repo_info_arr[0]}"
+  local inside_gitdir="${repo_info_arr[1]}"
+  local bare_repo="${repo_info_arr[2]}"
+  local inside_worktree="${repo_info_arr[3]}"
+  local short_sha="${repo_info_arr[4]}"
+
   local git_branch
-  if ! git_branch="$(_branch_info)"; then
+  if ! git_branch=$(_branch_info "$git_dir" "$inside_gitdir" "$bare_repo" "$inside_worktree" "$short_sha"); then
     return 1
   fi
 
-  if [[ "$(git rev-parse --is-bare-repository)" == "true" ]]; then
-    git_color="${color_no_upstream}"
+  if [[ "$bare_repo" == "true" ]]; then
     git_symbol="${git_bare}"
+  fi
+  if [[ "$bare_repo" == "true" ]] || [[ "$inside_gitdir" == "true" ]] ; then
+    git_color="${color_no_upstream}"
     if [[ ${color_enabled} == "true" ]] ; then
       printf -- "%s" "${git_color}"
     fi
@@ -480,60 +279,14 @@ _bgps_git_status() {
   return 0
 }
 
-#######################################
-# Set formatted git prompt
-# Globals:
-#   $stop_color
-#   $BGPS_CONFIG
-#######################################
-_bgps_prompt() {
-  local format
-  format="$(_get_config_value 'PS1_FORMAT' "%(%s %)${stop_color}\$ ")"
-  local text_color=
-  text_color="$(_get_config_value 'TEXT_COLOR' "${stop_color}")"
-  local status
-  echo -e "$(_bgps_git_status)$stop_color"
-  # if [[ -z "${status}" ]] ; then
-  #   format="${format/\%(*\%s*\%)/}"
-  #   format="${format/\%BGPS_GIT_STATUS/}"
-  #   PS1="${format}${text_color}"
-  # else
-  #   local placeholder
-  #   if [[ "${format}" =~ \%\(.*\%s.*\%\) ]] ; then
-  #     placeholder="${BASH_REMATCH[0]#\%\(}"
-  #     placeholder="${placeholder%\%\)}"
-  #     format="${format/\%(*\%s*\%)/${placeholder}}"
-  #   fi
-  #   PS1="${format/\%BGPS_GIT_STATUS/${status}}${text_color}"
-  # fi
-}
-
 # Script Definition ###########################################################
 # Globals:
 #   $stop_color escape sequence to reset prompt color
-#   $BGPS_CONFIG map of config values
-#   $BGPS_CHECKSUM md5sum of config file
 
 stop_color="\[\033[0m\]"
-declare -A BGPS_CONFIG
-BGPS_GLOBAL_CONFIG="${BGPS_GLOBAL_CONFIG-/etc/bgps_config}"
-BGPS_USER_CONFIG="${BGPS_USER_CONFIG-${HOME}/.bgps_config}"
-
-if _set_config "$@" ; then
-  _bgps_prompt
-fi
+echo -e "$(_bgps_git_status)$stop_color"
 
 # unset variables and functions
 unset stop_color
-unset bgps_config_file
-unset -f _err
-unset -f _file_exists
-unset -f _remove_quotes
-unset -f _set_config_value
-unset -f _get_config_value
-unset -f _clear_config_values
-unset -f _read_config
-unset -f _set_config
-unset -f _print_config
 unset -f _bgps_git_status
-unset -f _bgps_prompt
+unset -f _branch_info
