@@ -512,7 +512,7 @@ func main() {
 		if gitSymbol != "" {
 			gitSymbol = " " + gitSymbol
 		}
-		c.Printf("%s%s%s%s", prefix, branchInfo, " "+gitSymbol, suffix)
+		c.Printf("%s%s%s%s", prefix, branchInfo, gitSymbol, suffix)
 		return
 	}
 
