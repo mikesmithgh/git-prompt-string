@@ -374,6 +374,13 @@ func GitSparseCheckout() (bool, error) {
 	return isSparseCheckout, nil
 }
 
+func IsNoUpstreamErr(msg string) bool {
+	amiguiousHead := "ambiguous argument 'HEAD'"
+	noUpstream := "no upstream configured"
+	noBranch := "no such branch"
+	return strings.Contains(msg, amiguiousHead) || strings.Contains(msg, noUpstream) || strings.Contains(msg, noBranch)
+}
+
 func (g *GitRepo) GitHasCleanWorkingTree() (bool, error) {
 	exitCode := 0
 	cmd := exec.Command(
@@ -389,10 +396,7 @@ func (g *GitRepo) GitHasCleanWorkingTree() (bool, error) {
 			exitCode = exitError.ExitCode()
 		}
 		stderr := string(stdCombined)
-		amiguiousHead := "ambiguous argument 'HEAD'"
-		noUpstream := "no upstream configured"
-		noBranch := "no such branch"
-		if strings.Contains(stderr, amiguiousHead) || strings.Contains(stderr, noUpstream) || strings.Contains(stderr, noBranch) {
+		if IsNoUpstreamErr(stderr) {
 			exitCode = 0
 			// there is no upstream so compare against staging area
 			cachedCmd := exec.Command(
@@ -478,7 +482,7 @@ func main() {
 		if strings.Contains(string(stderr), "not a git repository") {
 			os.Exit(0)
 		}
-		errMsg("rev parse", errors.Join(err, errors.New(string(stderr))), 1)
+		// allow other errors to pass through, the git repo may not have upstream
 	}
 
 	branchInfo, err := gitRepo.BranchInfo()
