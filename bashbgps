@@ -95,6 +95,8 @@ _branch_info() {
     elif [[ -f "${git_dir}/BISECT_LOG" ]] ; then
       merge_status="|BISECTING"
     fi
+  
+    # TODO stopped here
 
     if [[ "${branch}" ]]; then
       :
@@ -111,7 +113,7 @@ _branch_info() {
       upstream_info="$(git rev-parse --abbrev-ref '@{upstream}' 2>/dev/null)"
       if [[ "${head}" == "${branch}" ]] ; then
         is_detached="true"
-        branch="$(git describe --tags --exact-match HEAD 2>/dev/null)" || branch="${head:0:9}..."
+        branch="$(git describe --tags --exact-match HEAD 2>/dev/null)" || branch="${head:0:7}..." # was short
         branch="(${branch})"
       elif [[ "$upstream_info" == '@{upstream}' ]] || [[ "$upstream_info" == '' ]]; then
         is_detached="true"
