@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"log"
 	"os"
 	"os/exec"
 	"strconv"
@@ -20,8 +19,8 @@ type GitRepo struct {
 	IsInWorkTree               bool
 	IsInBareRepo               bool
 	IsInShallowRepo            bool
-	IsDetached                 bool
 	IsSparseCheckout           bool
+	Tag                        string
 	AbbrevRef                  string
 	ShortSha                   string
 	PromptMergeStatus          string
@@ -242,18 +241,16 @@ func (g *GitRepo) BranchInfo() (string, error) {
 				ref = strings.TrimPrefix(head, "ref: ")
 
 				if head == ref {
-					g.IsDetached = true
 					tag, err := GitDescribeTag("HEAD")
 					if err == nil {
 						ref = tag
+						g.Tag = ref
 					} else if g.ShortSha == "" && len(head) > 7 {
 						ref = head[:7]
 					} else {
 						ref = g.ShortSha
 					}
 					ref = fmt.Sprintf("(%s)", ref)
-				} else if g.AbbrevRef == "" {
-					g.IsDetached = true
 				}
 			}
 		}
@@ -284,7 +281,7 @@ func (g *GitRepo) BranchInfo() (string, error) {
 	if checkSparse {
 		g.IsSparseCheckout, err = GitSparseCheckout()
 		if err != nil {
-			log.Fatal(err)
+			errMsg("sparse checkout", err, 0)
 		}
 
 		if g.IsSparseCheckout {
@@ -377,9 +374,8 @@ func GitSparseCheckout() (bool, error) {
 	return isSparseCheckout, nil
 }
 
-func (g *GitRepo) GitHasUpstreamAndCleanWorkingTree() (bool, bool, error) {
+func (g *GitRepo) GitHasCleanWorkingTree() (bool, error) {
 	exitCode := 0
-	hasUpstream := g.ShortSha != ""
 	cmd := exec.Command(
 		"git",
 		"diff",
@@ -398,7 +394,6 @@ func (g *GitRepo) GitHasUpstreamAndCleanWorkingTree() (bool, bool, error) {
 		noBranch := "no such branch"
 		if strings.Contains(stderr, amiguiousHead) || strings.Contains(stderr, noUpstream) || strings.Contains(stderr, noBranch) {
 			exitCode = 0
-			hasUpstream = false
 			// there is no upstream so compare against staging area
 			cachedCmd := exec.Command(
 				"git",
@@ -416,10 +411,10 @@ func (g *GitRepo) GitHasUpstreamAndCleanWorkingTree() (bool, bool, error) {
 		}
 	}
 	if exitCode != 0 && exitCode != 1 {
-		return false, false, err
+		return false, err
 	}
 
-	return hasUpstream, exitCode == 0, nil
+	return exitCode == 0, nil
 }
 
 func GitHasUntracked() (bool, error) {
@@ -447,21 +442,6 @@ func GitHasUntracked() (bool, error) {
 	return exitCode == 0, nil
 }
 
-func GitCommitCountsNoUpstream() (int, int, error) {
-	cmd := exec.Command(
-		"git",
-		"rev-list",
-		"--count",
-		"HEAD",
-	)
-	stdCombined, err := cmd.CombinedOutput()
-	if err != nil {
-		return 0, 0, err
-	}
-	ahead, _ := strconv.Atoi(strings.TrimSuffix(string(stdCombined), "\n"))
-	return ahead, 0, nil
-}
-
 func GitCommitCounts() (int, int, error) {
 	cmd := exec.Command(
 		"git",
@@ -483,19 +463,27 @@ func GitCommitCounts() (int, int, error) {
 	return ahead, behind, nil
 }
 
+func errMsg(hint string, e error, exitCode int) {
+	color.New(color.FgHiRed).Printf(" bgps error(%s): %s", hint, strings.ReplaceAll(e.Error(), "\n", ""))
+	os.Exit(exitCode)
+}
+
 func main() {
 	color.NoColor = false
 
 	gitRepo := GitRepo{}
 
 	stderr, err := gitRepo.RevParse()
-	if err != nil && gitRepo.GitDir == "" {
-		log.Fatalf("%s%s", stderr, err)
+	if err != nil {
+		if strings.Contains(string(stderr), "not a git repository") {
+			os.Exit(0)
+		}
+		errMsg("rev parse", errors.Join(err, errors.New(string(stderr))), 1)
 	}
 
 	branchInfo, err := gitRepo.BranchInfo()
 	if err != nil {
-		log.Fatal(err)
+		errMsg("branch info", err, 0)
 	}
 
 	prefix := "  "
@@ -516,65 +504,58 @@ func main() {
 		return
 	}
 
-	upstreamExists, cleanWorkingTree, err := gitRepo.GitHasUpstreamAndCleanWorkingTree()
+	cleanWorkingTree, err := gitRepo.GitHasCleanWorkingTree()
 	if err != nil {
-		log.Fatal(err)
+		errMsg("clean working tree", err, 0)
+	}
+	hasUntracked, err := GitHasUntracked()
+	if err != nil {
+		color.Red("%s", err)
+		os.Exit(0)
 	}
 
-	if err == nil || !upstreamExists {
-		hasUntracked, err := GitHasUntracked()
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		ahead, behind := 0, 0
-
-		if !gitRepo.IsDetached {
-			if !upstreamExists {
-				ahead, behind, err = GitCommitCountsNoUpstream()
-			} else {
-				ahead, behind, err = GitCommitCounts()
-			}
-			if err != nil {
-				log.Fatal(err)
-			}
-		}
-
-		c := color.New()
-		if cleanWorkingTree {
-			c = color.New(color.FgGreen)
-		}
-
-		if ahead > 0 {
-			c = color.New(color.FgYellow)
-			gitSymbol = fmt.Sprintf("↑[%d]", ahead)
-		}
-		if behind > 0 {
-			c = color.New(color.FgYellow)
-			gitSymbol = fmt.Sprintf("↓[%d]", behind)
-		}
-
-		if ahead > 0 && behind > 0 {
-			gitSymbol = fmt.Sprintf("↕ ↑[%d] ↓[%d]", ahead, behind)
-		}
-
-		if !upstreamExists {
-			c = color.New(color.FgHiBlack)
-		}
-
-		if hasUntracked {
-			c = color.New(color.FgMagenta)
-			gitSymbol = fmt.Sprintf("*%s", gitSymbol)
-		}
-
-		if !cleanWorkingTree && !hasUntracked {
-			c = color.New(color.FgRed)
-			gitSymbol = fmt.Sprintf("*%s", gitSymbol)
-		}
-		if gitSymbol != "" {
-			gitSymbol = " " + gitSymbol
-		}
-		c.Printf("%s%s%s%s", prefix, branchInfo, gitSymbol, suffix)
-
+	ahead, behind := 0, 0
+	if gitRepo.Tag == "" && gitRepo.ShortSha != "" {
+		ahead, behind, err = GitCommitCounts()
 	}
+	if err != nil {
+		color.New(color.FgRed).Printf("%s", err)
+		os.Exit(0)
+	}
+
+	c := color.New()
+	if cleanWorkingTree {
+		c = color.New(color.FgGreen)
+	}
+
+	if ahead > 0 {
+		c = color.New(color.FgYellow)
+		gitSymbol = fmt.Sprintf("↑[%d]", ahead)
+	}
+	if behind > 0 {
+		c = color.New(color.FgYellow)
+		gitSymbol = fmt.Sprintf("↓[%d]", behind)
+	}
+
+	if ahead > 0 && behind > 0 {
+		gitSymbol = fmt.Sprintf("↕ ↑[%d] ↓[%d]", ahead, behind)
+	}
+
+	if gitRepo.ShortSha == "" {
+		c = color.New(color.FgHiBlack)
+	}
+
+	if hasUntracked {
+		c = color.New(color.FgMagenta)
+		gitSymbol = fmt.Sprintf("*%s", gitSymbol)
+	}
+
+	if !cleanWorkingTree && !hasUntracked {
+		c = color.New(color.FgRed)
+		gitSymbol = fmt.Sprintf("*%s", gitSymbol)
+	}
+	if gitSymbol != "" {
+		gitSymbol = " " + gitSymbol
+	}
+	c.Printf("%s%s%s%s", prefix, branchInfo, gitSymbol, suffix)
 }
