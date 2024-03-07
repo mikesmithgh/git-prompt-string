@@ -192,7 +192,7 @@ func (g *GitRepo) BranchStatus(cfg config.BgpsConfig) (string, string, error) {
 	statusColor := ""
 
 	if g.IsInBareRepo || g.IsInGitDir {
-		c, _ := color.Color("bright-white")
+		c, _ := color.Color(strings.Split(cfg.ColorNoUpstream, " ")...)
 		return status, c, nil
 	}
 
@@ -214,15 +214,15 @@ func (g *GitRepo) BranchStatus(cfg config.BgpsConfig) (string, string, error) {
 	}
 
 	if cleanWorkingTree {
-		statusColor, _ = color.Color("green")
+		statusColor, _ = color.Color(strings.Split(cfg.ColorClean, " ")...)
 	}
 
 	if ahead > 0 {
-		statusColor, _ = color.Color("yellow")
+		statusColor, _ = color.Color(strings.Split(cfg.ColorConflict, " ")...)
 		status = fmt.Sprintf(cfg.AheadFormat, ahead)
 	}
 	if behind > 0 {
-		statusColor, _ = color.Color("yellow")
+		statusColor, _ = color.Color(strings.Split(cfg.ColorConflict, " ")...)
 		status = fmt.Sprintf(cfg.BehindFormat, behind)
 	}
 
@@ -231,16 +231,16 @@ func (g *GitRepo) BranchStatus(cfg config.BgpsConfig) (string, string, error) {
 	}
 
 	if g.ShortSha == "" {
-		statusColor, _ = color.Color("bright-black")
+		statusColor, _ = color.Color(strings.Split(cfg.ColorNoUpstream, " ")...)
 	}
 
 	if hasUntracked {
-		statusColor, _ = color.Color("magenta")
+		statusColor, _ = color.Color(strings.Split(cfg.ColorUntracked, " ")...)
 		status = fmt.Sprintf("*%s", status)
 	}
 
 	if !cleanWorkingTree && !hasUntracked {
-		statusColor, _ = color.Color("red")
+		statusColor, _ = color.Color(strings.Split(cfg.ColorDirty, " ")...)
 		status = fmt.Sprintf("*%s", status)
 	}
 	if status != "" {

@@ -16,11 +16,16 @@ import (
 func main() {
 
 	cfg := config.BgpsConfig{
-		PromptPrefix:   "  ",
-		PromptSuffix:   "",
-		AheadFormat:    "↑[%d]",
-		BehindFormat:   "↓[%d]",
-		DivergedFormat: "↕ ↑[%d] ↓[%d]",
+		PromptPrefix:    "  ",
+		PromptSuffix:    "",
+		AheadFormat:     "↑[%d]",
+		BehindFormat:    "↓[%d]",
+		DivergedFormat:  "↕ ↑[%d] ↓[%d]",
+		ColorClean:      "green",
+		ColorConflict:   "yellow",
+		ColorDirty:      "red",
+		ColorUntracked:  "magenta",
+		ColorNoUpstream: "bright-black",
 	}
 
 	xdgConfigHome := os.Getenv("XDG_CONFIG_HOME")
