@@ -6,6 +6,7 @@ type BgpsConfig struct {
 	AheadFormat     string `toml:"ahead_format"`
 	BehindFormat    string `toml:"behind_format"`
 	DivergedFormat  string `toml:"diverged_format"`
+	ColorEnabled    bool   `toml:"color_enabled"`
 	ColorClean      string `toml:"color_clean"`
 	ColorConflict   string `toml:"color_conflict"`
 	ColorDirty      string `toml:"color_dirty"`

@@ -7,6 +7,7 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/mikesmithgh/bgps/pkg/color"
 	"github.com/mikesmithgh/bgps/pkg/config"
 	"github.com/mikesmithgh/bgps/pkg/git"
 	"github.com/mikesmithgh/bgps/pkg/util"
@@ -21,6 +22,7 @@ func main() {
 		AheadFormat:     "↑[%d]",
 		BehindFormat:    "↓[%d]",
 		DivergedFormat:  "↕ ↑[%d] ↓[%d]",
+		ColorEnabled:    true,
 		ColorClean:      "green",
 		ColorConflict:   "yellow",
 		ColorDirty:      "red",
@@ -28,28 +30,37 @@ func main() {
 		ColorNoUpstream: "bright-black",
 	}
 
-	xdgConfigHome := os.Getenv("XDG_CONFIG_HOME")
-	if xdgConfigHome == "" {
-		home, err := os.UserHomeDir()
+	bgpsConfigPath := os.Getenv("BGPS_CONFIG")
+	if bgpsConfigPath == "" {
+		xdgConfigHome := os.Getenv("XDG_CONFIG_HOME")
+		if xdgConfigHome == "" {
+			home, err := os.UserHomeDir()
+			if err != nil {
+				util.ErrMsg("user home", err, 0)
+			}
+			if runtime.GOOS == "windows" {
+				xdgConfigHome = path.Join(home, "AppData", "Local")
+			} else {
+				xdgConfigHome = path.Join(home, ".config")
+			}
+		}
+		bgpsConfigPath = path.Join(xdgConfigHome, "bgps", "config.toml")
+	}
+
+	if bgpsConfigPath != "NONE" {
+		bgpsConfigRaw, err := os.ReadFile(bgpsConfigPath)
+		if err != nil && !os.IsNotExist(err) {
+			util.ErrMsg("read config", err, 0)
+		}
+
+		err = toml.Unmarshal(bgpsConfigRaw, &cfg)
 		if err != nil {
-			util.ErrMsg("user home", err, 0)
-		}
-		if runtime.GOOS == "windows" {
-			xdgConfigHome = path.Join(home, "AppData", "Local")
-		} else {
-			xdgConfigHome = path.Join(home, ".config")
+			util.ErrMsg("unmarshal config", err, 0)
 		}
 	}
-	bgpsConfigPath := path.Join(xdgConfigHome, "bgps.toml")
 
-	bgpsConfigRaw, err := os.ReadFile(bgpsConfigPath)
-	if err != nil && !os.IsNotExist(err) {
-		util.ErrMsg("read config", err, 0)
-	}
-
-	err = toml.Unmarshal(bgpsConfigRaw, &cfg)
-	if err != nil {
-		util.ErrMsg("unmarshal config", err, 0)
+	if !cfg.ColorEnabled {
+		color.Disable()
 	}
 
 	gitRepo, stderr, err := git.RevParse()

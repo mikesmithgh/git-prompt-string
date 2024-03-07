@@ -10,6 +10,8 @@ const (
 	esc = "\x1b"
 )
 
+var enabled bool = true
+
 func codeToEscapeSequence(n int) string {
 	return fmt.Sprintf("%s[%dm", esc, n)
 }
@@ -107,8 +109,15 @@ func rgbToEscapeSequence(r, g, b int, isBg bool) string {
 	return fmt.Sprintf("\x1b[%s;2;%d;%d;%dm", colorType, r, g, b)
 }
 
+func Disable() {
+	enabled = false
+}
+
 func Color(colors ...string) (string, error) {
 	seq := ""
+	if !enabled {
+		return seq, nil
+	}
 	for _, color := range colors {
 		if strings.HasPrefix(color, "#") || strings.HasPrefix(color, "bg:#") {
 			r, g, b, err := hexToRGB(strings.TrimPrefix(color, "bg:"))
