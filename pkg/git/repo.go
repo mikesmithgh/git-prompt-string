@@ -168,17 +168,13 @@ func (g *GitRepo) BranchInfo(cfg config.BgpsConfig) (string, error) {
 
 	g.PromptBranch = strings.TrimPrefix(ref, "refs/heads/")
 
-	// TODO: put behind a variable, default to false for perf
-	checkSparse := true
-	if checkSparse {
-		g.IsSparseCheckout, err = SparseCheckout()
-		if err != nil {
-			return "", err
-		}
+	g.IsSparseCheckout, err = SparseCheckout()
+	if err != nil {
+		return "", err
+	}
 
-		if g.IsSparseCheckout {
-			g.PromptSparseCheckoutStatus = "|SPARSE"
-		}
+	if g.IsSparseCheckout {
+		g.PromptSparseCheckoutStatus = "|SPARSE"
 	}
 
 	prompt := fmt.Sprintf("%s%s%s%s", g.PromptBareRepoStatus, g.PromptBranch, g.PromptSparseCheckoutStatus, g.PromptMergeStatus)
