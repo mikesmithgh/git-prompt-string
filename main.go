@@ -17,7 +17,7 @@ import (
 
 var (
 	configPath      = flag.String("config", "", "")
-	promptPrefix    = flag.String("prompt-prefix", "  ", "")
+	promptPrefix    = flag.String("prompt-prefix", " \ue0a0 ", "")
 	promptSuffix    = flag.String("prompt-suffix", "", "")
 	aheadFormat     = flag.String("ahead-format", "↑[%d]", "")
 	behindFormat    = flag.String("behind-format", "↓[%d]", "")
