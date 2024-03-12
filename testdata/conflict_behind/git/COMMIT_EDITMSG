@@ -1,0 +1,25 @@
+chore: add test commit 1
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# Date:      Tue Mar 12 09:18:48 2024 -0400
+#
+# On branch main
+# Your branch is ahead of 'origin/main' by 1 commit.
+#   (use "git push" to publish your local commits)
+#
+# Changes to be committed:
+#	modified:   README.md
+#
+# ------------------------ >8 ------------------------
+# Do not modify or remove the line above.
+# Everything below it will be ignored.
+diff --git a/README.md b/README.md
+index a8cdb91..0ef5caa 100644
+--- a/README.md
++++ b/README.md
+@@ -1 +1,3 @@
+ # Test Repo
++
++Repo is for testing.

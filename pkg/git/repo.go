@@ -177,7 +177,7 @@ func (g *GitRepo) BranchInfo(cfg config.BgpsConfig) (string, error) {
 		g.PromptSparseCheckoutStatus = "|SPARSE"
 	}
 
-	if g.Tag == "" && g.ShortSha == "" {
+	if g.Tag == "" && g.ShortSha == "" && g.PromptMergeStatus == "" {
 		branch_remote, err := BranchRemote(g.PromptBranch)
 		var branch_merge string
 		if err == nil {
@@ -246,6 +246,11 @@ func (g *GitRepo) BranchStatus(cfg config.BgpsConfig) (string, string, error) {
 
 	if g.ShortSha == "" {
 		statusColor, _ = color.Color(strings.Split(cfg.ColorNoUpstream, " ")...)
+	}
+
+	if g.PromptMergeStatus != "" {
+		// TODO: do not hardcode, add a config option
+		statusColor, _ = color.Color(strings.Split("blue", " ")...)
 	}
 
 	if hasUntracked {

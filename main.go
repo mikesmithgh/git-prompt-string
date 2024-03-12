@@ -51,8 +51,9 @@ func main() {
 	flag.Parse()
 
 	var bgpsConfigPath string
+	bgpsConfigEnv := os.Getenv("BGPS_CONFIG")
 	if *configPath == "" {
-		bgpsConfigPath = os.Getenv("BGPS_CONFIG")
+		bgpsConfigPath = bgpsConfigEnv
 	} else {
 		bgpsConfigPath = *configPath
 	}
@@ -75,6 +76,10 @@ func main() {
 	if bgpsConfigPath != "NONE" {
 		bgpsConfigRaw, err := os.ReadFile(bgpsConfigPath)
 		if err != nil && !os.IsNotExist(err) {
+			util.ErrMsg("read config exists", err, 0)
+		}
+
+		if err != nil && (*configPath != "" || bgpsConfigEnv != "") {
 			util.ErrMsg("read config", err, 0)
 		}
 
@@ -112,10 +117,10 @@ func main() {
 			cfg.ColorUntracked = f.Value.String()
 		}
 	})
-
 	if !cfg.ColorEnabled {
 		color.Disable()
 	}
+	clearColor, _ := color.Color("none")
 
 	gitRepo, stderr, err := git.RevParse()
 	if err != nil {
@@ -129,10 +134,10 @@ func main() {
 	if err != nil {
 		util.ErrMsg("branch info", err, 0)
 	}
-	branchStatus, color, err := gitRepo.BranchStatus(cfg)
+	branchStatus, promptColor, err := gitRepo.BranchStatus(cfg)
 	if err != nil {
 		util.ErrMsg("branch status", err, 0)
 	}
 
-	fmt.Printf("%s%s%s%s%s", color, cfg.PromptPrefix, branchInfo, branchStatus, cfg.PromptSuffix)
+	fmt.Printf("%s%s%s%s%s%s", promptColor, cfg.PromptPrefix, branchInfo, branchStatus, cfg.PromptSuffix, clearColor)
 }
