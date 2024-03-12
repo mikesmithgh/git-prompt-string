@@ -16,34 +16,36 @@ import (
 )
 
 var (
-	configPath      = flag.String("config", "", "")
-	promptPrefix    = flag.String("prompt-prefix", " \ue0a0 ", "")
-	promptSuffix    = flag.String("prompt-suffix", "", "")
-	aheadFormat     = flag.String("ahead-format", "↑[%d]", "")
-	behindFormat    = flag.String("behind-format", "↓[%d]", "")
-	divergedFormat  = flag.String("diverged-format", "↕ ↑[%d] ↓[%d]", "")
-	colorEnabled    = flag.Bool("color-enabled", true, "")
-	colorClean      = flag.String("color-clean", "green", "")
-	colorConflict   = flag.String("color-conflict", "yellow", "")
-	colorDirty      = flag.String("color-dirty", "red", "")
-	colorUntracked  = flag.String("color-untracked", "magenta", "")
-	colorNoUpstream = flag.String("color-no-upstream", "bright-black", "")
+	configPath             = flag.String("config", "", "")
+	promptPrefix           = flag.String("prompt-prefix", " \ue0a0 ", "")
+	promptSuffix           = flag.String("prompt-suffix", "", "")
+	aheadFormat            = flag.String("ahead-format", "↑[%d]", "")
+	behindFormat           = flag.String("behind-format", "↓[%d]", "")
+	divergedFormat         = flag.String("diverged-format", "↕ ↑[%d] ↓[%d]", "")
+	noUpstreamRemoteFormat = flag.String("no-upstream-remote-format", " → %s/%s", "")
+	colorEnabled           = flag.Bool("color-enabled", true, "")
+	colorClean             = flag.String("color-clean", "green", "")
+	colorConflict          = flag.String("color-conflict", "yellow", "")
+	colorDirty             = flag.String("color-dirty", "red", "")
+	colorUntracked         = flag.String("color-untracked", "magenta", "")
+	colorNoUpstream        = flag.String("color-no-upstream", "bright-black", "")
 )
 
 func main() {
 
 	cfg := config.BgpsConfig{
-		PromptPrefix:    *promptPrefix,
-		PromptSuffix:    *promptSuffix,
-		AheadFormat:     *aheadFormat,
-		BehindFormat:    *behindFormat,
-		DivergedFormat:  *divergedFormat,
-		ColorEnabled:    *colorEnabled,
-		ColorClean:      *colorClean,
-		ColorConflict:   *colorConflict,
-		ColorDirty:      *colorDirty,
-		ColorUntracked:  *colorUntracked,
-		ColorNoUpstream: *colorNoUpstream,
+		PromptPrefix:           *promptPrefix,
+		PromptSuffix:           *promptSuffix,
+		AheadFormat:            *aheadFormat,
+		BehindFormat:           *behindFormat,
+		DivergedFormat:         *divergedFormat,
+		NoUpstreamRemoteFormat: *noUpstreamRemoteFormat,
+		ColorEnabled:           *colorEnabled,
+		ColorClean:             *colorClean,
+		ColorConflict:          *colorConflict,
+		ColorDirty:             *colorDirty,
+		ColorUntracked:         *colorUntracked,
+		ColorNoUpstream:        *colorNoUpstream,
 	}
 
 	flag.Parse()
@@ -94,6 +96,8 @@ func main() {
 			cfg.BehindFormat = f.Value.String()
 		case "diverged-format":
 			cfg.DivergedFormat = f.Value.String()
+		case "no-upstream-remote-format":
+			cfg.NoUpstreamRemoteFormat = f.Value.String()
 		case "color-enabled":
 			cfg.ColorEnabled = f.Value.String() == f.DefValue
 		case "color-clean":

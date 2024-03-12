@@ -256,3 +256,31 @@ func HasCleanWorkingTree() (bool, error) {
 
 	return exitCode == 0, nil
 }
+
+func BranchRemote(branch string) (string, error) {
+	cmd := exec.Command(
+		"git",
+		"config",
+		fmt.Sprintf("branch.%s.remote", branch),
+	)
+	stdCombined, err := cmd.CombinedOutput()
+	if err != nil {
+		return "", err
+	}
+
+	return strings.TrimSuffix(string(stdCombined), "\n"), nil
+}
+
+func BranchMerge(branch string) (string, error) {
+	cmd := exec.Command(
+		"git",
+		"config",
+		fmt.Sprintf("branch.%s.merge", branch),
+	)
+	stdCombined, err := cmd.CombinedOutput()
+	if err != nil {
+		return "", err
+	}
+
+	return strings.TrimSuffix(string(stdCombined), "\n"), nil
+}

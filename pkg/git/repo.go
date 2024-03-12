@@ -177,6 +177,24 @@ func (g *GitRepo) BranchInfo(cfg config.BgpsConfig) (string, error) {
 		g.PromptSparseCheckoutStatus = "|SPARSE"
 	}
 
+	if g.Tag == "" && g.ShortSha == "" {
+		branch_remote, err := BranchRemote(g.PromptBranch)
+		var branch_merge string
+		if err == nil {
+			branch_merge, err = BranchMerge(g.PromptBranch)
+		}
+		if err == nil {
+			remoteParts := strings.SplitN(branch_remote, ":", 2)
+			if len(remoteParts) == 2 {
+				branch_remote = strings.TrimSuffix(remoteParts[1], ".git")
+			}
+
+			if branch_merge != "" {
+				g.PromptBranch += fmt.Sprintf(cfg.NoUpstreamRemoteFormat, branch_remote, strings.TrimPrefix(branch_merge, "refs/heads/"))
+			}
+		}
+	}
+
 	prompt := fmt.Sprintf("%s%s%s%s", g.PromptBareRepoStatus, g.PromptBranch, g.PromptSparseCheckoutStatus, g.PromptMergeStatus)
 
 	return prompt, nil
