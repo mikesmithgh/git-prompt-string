@@ -47,8 +47,8 @@ func TestMain(m *testing.M) {
 			panic(fmt.Sprintf("failed to read test data file: %s", err))
 		}
 		for _, test_dir_file := range test_dir_files {
-			if test_dir_file.Name() == "git" {
-				err = os.Rename(filepath.Join(test_dir_path, "git"), filepath.Join(test_dir_path, ".git"))
+			if test_dir_file.Name() == "dot_git" {
+				err = os.Rename(filepath.Join(test_dir_path, "dot_git"), filepath.Join(test_dir_path, ".git"))
 				if err != nil {
 					panic(fmt.Sprintf("failed to rename test data git dir: %s", err))
 				}
