@@ -29,6 +29,7 @@ var (
 	colorDirty             = flag.String("color-dirty", "red", "")
 	colorUntracked         = flag.String("color-untracked", "magenta", "")
 	colorNoUpstream        = flag.String("color-no-upstream", "bright-black", "")
+	colorMerging           = flag.String("color-merging", "blue", "")
 )
 
 func main() {
@@ -46,6 +47,7 @@ func main() {
 		ColorDirty:             *colorDirty,
 		ColorUntracked:         *colorUntracked,
 		ColorNoUpstream:        *colorNoUpstream,
+		ColorMerging:           *colorMerging,
 	}
 
 	flag.Parse()
@@ -115,12 +117,17 @@ func main() {
 			cfg.ColorUntracked = f.Value.String()
 		case "color-no-upstream":
 			cfg.ColorUntracked = f.Value.String()
+		case "color-merging":
+			cfg.ColorMerging = f.Value.String()
 		}
 	})
 	if !cfg.ColorEnabled {
 		color.Disable()
 	}
-	clearColor, _ := color.Color("none")
+	clearColor, err := color.Color("none")
+	if err != nil {
+		util.ErrMsg("color none", err, 0)
+	}
 
 	gitRepo, stderr, err := git.RevParse()
 	if err != nil {

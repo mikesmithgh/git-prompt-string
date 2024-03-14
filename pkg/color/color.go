@@ -82,6 +82,10 @@ func hexToRGB(hex string) (int, int, int, error) {
 
 	hex = strings.TrimPrefix(hex, "#")
 
+	if len(hex) != 6 {
+		return 0, 0, 0, fmt.Errorf("hex must be 6 digits, got %s", hex)
+	}
+
 	// Parse the hex string into RGB components
 	r, err := strconv.ParseInt(hex[0:2], 16, 32)
 	if err != nil {

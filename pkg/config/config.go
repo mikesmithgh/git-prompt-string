@@ -13,4 +13,5 @@ type BgpsConfig struct {
 	ColorDirty             string `toml:"color_dirty"`
 	ColorUntracked         string `toml:"color_untracked"`
 	ColorNoUpstream        string `toml:"color_no_upstream"`
+	ColorMerging           string `toml:"color_merging"`
 }
