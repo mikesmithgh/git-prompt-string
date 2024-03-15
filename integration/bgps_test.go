@@ -38,6 +38,7 @@ func TestBGPS(t *testing.T) {
 		{"cherry_pick", []string{"--config=NONE"}, "\x1b[35m \ue0a0 main|CHERRY-PICKING *↕ ↑[1] ↓[1]\x1b[0m", nil},
 		{"revert_conflict", []string{"--config=NONE"}, "\x1b[31m \ue0a0 main|REVERTING|CONFLICT *↕ ↑[2] ↓[1]\x1b[0m", nil},
 		{"revert", []string{"--config=NONE"}, "\x1b[34m \ue0a0 main|REVERTING ↕ ↑[2] ↓[1]\x1b[0m", nil},
+		{"bisect", []string{"--config=NONE"}, "\x1b[34m \ue0a0 main|BISECTING ↓[1]\x1b[0m", nil},
 
 		{"clean", []string{"--config=NONE", "--color-enabled=false"}, " \ue0a0 main", nil},
 		{"clean", []string{"--config=NONE", "--color-enabled=false", "--prompt-prefix= start "}, " start main", nil},
