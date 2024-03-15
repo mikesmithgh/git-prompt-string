@@ -21,6 +21,7 @@ func TestBGPS(t *testing.T) {
 		{"tag", []string{"--config=NONE"}, "\x1b[90m \ue0a0 (v1.0.0)\x1b[0m", nil},
 		{"commit", []string{"--config=NONE"}, "\x1b[90m \ue0a0 (24afc95)\x1b[0m", nil},
 		{"dirty", []string{"--config=NONE"}, "\x1b[31m \ue0a0 main *\x1b[0m", nil},
+		{"dirty_staged", []string{"--config=NONE"}, "\x1b[31m \ue0a0 main *\x1b[0m", nil},
 		{"conflict_ahead", []string{"--config=NONE"}, "\x1b[33m \ue0a0 main ↑[1]\x1b[0m", nil},
 		{"conflict_behind", []string{"--config=NONE"}, "\x1b[33m \ue0a0 main ↓[1]\x1b[0m", nil},
 		{"conflict_diverged", []string{"--config=NONE"}, "\x1b[33m \ue0a0 main ↕ ↑[1] ↓[1]\x1b[0m", nil},
@@ -35,6 +36,7 @@ func TestBGPS(t *testing.T) {
 		{"merge", []string{"--config=NONE"}, "\x1b[35m \ue0a0 main|MERGING *↕ ↑[1] ↓[1]\x1b[0m", nil},
 		{"cherry_pick_conflict", []string{"--config=NONE"}, "\x1b[31m \ue0a0 main|CHERRY-PICKING|CONFLICT *↕ ↑[1] ↓[1]\x1b[0m", nil},
 		{"cherry_pick", []string{"--config=NONE"}, "\x1b[35m \ue0a0 main|CHERRY-PICKING *↕ ↑[1] ↓[1]\x1b[0m", nil},
+		// revert is failing,  see TODO in HasCleanWorkingTree
 		{"revert_conflict", []string{"--config=NONE"}, "\x1b[31m \ue0a0 main|REVERTING|CONFLICT *↕ ↑[2] ↓[1]\x1b[0m", nil},
 		{"revert", []string{"--config=NONE"}, "\x1b[34m \ue0a0 main|REVERTING ↕ ↑[2] ↓[1]\x1b[0m", nil},
 		{"bisect", []string{"--config=NONE"}, "\x1b[34m \ue0a0 main|BISECTING ↓[1]\x1b[0m", nil},
