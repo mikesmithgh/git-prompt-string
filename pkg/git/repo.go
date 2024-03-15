@@ -41,7 +41,7 @@ func (g *GitRepo) GitDirFileExists(name string) (bool, error) {
 func (g *GitRepo) GitDirFileExistsExitOnError(name string) bool {
 	exists, err := g.GitDirFileExists(name)
 	if err != nil {
-		util.ErrMsg(fmt.Sprintf("read %s", name), err, 0)
+		util.ErrMsg(fmt.Sprintf("dir exists %s", name), err, 0)
 	}
 	return exists
 }
@@ -58,8 +58,16 @@ func (g *GitRepo) GitDirPath(path string) string {
 	return fmt.Sprintf("%s/%s", g.GitDir, path)
 }
 
-func (g *GitRepo) ReadGirDirFile(name string) (string, error) {
+func (g *GitRepo) ReadGitDirFile(name string) (string, error) {
 	return util.ReadFileTrimNewline(g.GitDirPath(name))
+}
+
+func (g *GitRepo) ReadGitDirFileExitOnError(name string) string {
+	content, err := g.ReadGitDirFile(name)
+	if err != nil {
+		util.ErrMsg(fmt.Sprintf("read file %s", name), err, 0)
+	}
+	return content
 }
 
 func (g *GitRepo) BranchInfo(cfg config.BgpsConfig) (string, error) {
@@ -69,15 +77,9 @@ func (g *GitRepo) BranchInfo(cfg config.BgpsConfig) (string, error) {
 	total := ""
 
 	if g.IsGitDir("rebase-merge") {
-		if ref, err = g.ReadGirDirFile("rebase-merge/head-name"); err != nil {
-			return "", err
-		}
-		if step, err = g.ReadGirDirFile("rebase-merge/msgnum"); err != nil {
-			return "", err
-		}
-		if total, err = g.ReadGirDirFile("rebase-merge/end"); err != nil {
-			return "", err
-		}
+		ref = g.ReadGitDirFileExitOnError("rebase-merge/head-name")
+		step = g.ReadGitDirFileExitOnError("rebase-merge/msgnum")
+		total = g.ReadGitDirFileExitOnError("rebase-merge/end")
 		g.PromptMergeStatus = "|REBASE-m"
 		if g.GitDirFileExistsExitOnError("rebase-merge/interactive") {
 			g.PromptMergeStatus = "|REBASE-i"
@@ -85,19 +87,10 @@ func (g *GitRepo) BranchInfo(cfg config.BgpsConfig) (string, error) {
 	} else {
 		if g.IsGitDir("rebase-apply") {
 
-			step, err = g.ReadGirDirFile("rebase-apply/next")
-			if err != nil {
-				return "", err
-			}
-			total, err = g.ReadGirDirFile("rebase-apply/last")
-			if err != nil {
-				return "", err
-			}
+			step = g.ReadGitDirFileExitOnError("rebase-apply/next")
+			total = g.ReadGitDirFileExitOnError("rebase-apply/last")
 			if g.GitDirFileExistsExitOnError("rebase-apply/rebasing") {
-				ref, err = g.ReadGirDirFile("rebase-apply/head-name")
-				if err != nil {
-					return "", err
-				}
+				ref = g.ReadGitDirFileExitOnError("rebase-apply/head-name")
 				g.PromptMergeStatus = "|REBASE"
 			} else if g.GitDirFileExistsExitOnError("rebase-apply/applying") {
 				g.PromptMergeStatus = "|AM"
@@ -120,12 +113,8 @@ func (g *GitRepo) BranchInfo(cfg config.BgpsConfig) (string, error) {
 					return "", err
 				}
 			} else {
-				head := ""
-				if head, err = g.ReadGirDirFile("HEAD"); err != nil {
-					return "", err
-				}
+				head := g.ReadGitDirFileExitOnError("HEAD")
 				ref = strings.TrimPrefix(head, "ref: ")
-
 				if head == ref {
 					tag, err := DescribeTag("HEAD")
 					if err == nil {
