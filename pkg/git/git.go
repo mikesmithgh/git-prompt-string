@@ -224,7 +224,6 @@ func HasCleanWorkingTree() (bool, error) {
 		"diff",
 		"--no-ext-diff",
 		"--quiet",
-		"HEAD",
 	)
 	stdCombined, err := cmd.CombinedOutput()
 	if err != nil {
