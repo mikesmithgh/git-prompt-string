@@ -34,6 +34,7 @@ func TestBGPS(t *testing.T) {
 		{"rebase", []string{"--config=NONE"}, "\x1b[34m \ue0a0 main|REBASE 1/1\x1b[0m", nil},
 		{"merge_conflict", []string{"--config=NONE"}, "\x1b[31m \ue0a0 main|MERGING|CONFLICT *↕ ↑[1] ↓[1]\x1b[0m", nil},
 		{"merge", []string{"--config=NONE"}, "\x1b[35m \ue0a0 main|MERGING *↕ ↑[1] ↓[1]\x1b[0m", nil},
+		{"cherry_pick_conflict", []string{"--config=NONE"}, "\x1b[31m \ue0a0 main|CHERRY-PICKING|CONFLICT *↕ ↑[1] ↓[1]\x1b[0m", nil},
 
 		{"clean", []string{"--config=NONE", "--color-enabled=false"}, " \ue0a0 main", nil},
 		{"clean", []string{"--config=NONE", "--color-enabled=false", "--prompt-prefix= start "}, " start main", nil},
