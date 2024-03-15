@@ -95,8 +95,6 @@ _branch_info() {
 			merge_status="|BISECTING"
 		fi
 
-		# TODO stopped here
-
 		if [[ "${branch}" ]]; then
 			:
 		elif [[ -L "${git_dir}/HEAD" ]]; then

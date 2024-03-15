@@ -86,13 +86,6 @@ func DescribeTag(ref string) (string, error) {
 	return strings.TrimSuffix(string(stdCombined), "\n"), err
 }
 
-func IsNoUpstreamErr(msg string) bool {
-	amiguiousHead := "ambiguous argument 'HEAD'"
-	noUpstream := "no upstream configured"
-	noBranch := "no such branch"
-	return strings.Contains(msg, amiguiousHead) || strings.Contains(msg, noUpstream) || strings.Contains(msg, noBranch)
-}
-
 func HasUntracked() (bool, error) {
 	exitCode := 0
 	cmd := exec.Command(
@@ -224,37 +217,34 @@ func HasCleanWorkingTree() (bool, error) {
 		"diff",
 		"--no-ext-diff",
 		"--quiet",
-		"HEAD", // TODO: investigate this with reverting failures
+		"HEAD",
 	)
-	stdCombined, err := cmd.CombinedOutput()
+	err := cmd.Run()
 	if err != nil {
 		if exitError, ok := err.(*exec.ExitError); ok {
 			exitCode = exitError.ExitCode()
 		}
-		stderr := string(stdCombined)
-		if IsNoUpstreamErr(stderr) {
-			exitCode = 0
-			// there is no upstream so compare against staging area
-			cachedCmd := exec.Command(
-				"git",
-				"diff",
-				"--cached",
-				"--no-ext-diff",
-				"--quiet",
-			)
-			err = cachedCmd.Run()
-			if err != nil {
-				if exitError, ok := err.(*exec.ExitError); ok {
-					exitCode = exitError.ExitCode()
-				}
-			}
+	}
+	cachedExitCode := 0
+	cachedCmd := exec.Command(
+		"git",
+		"diff",
+		"--cached",
+		"--no-ext-diff",
+		"--quiet",
+	)
+	cachedErr := cachedCmd.Run()
+	if cachedErr != nil {
+		if exitError, ok := cachedErr.(*exec.ExitError); ok {
+			cachedExitCode = exitError.ExitCode()
 		}
 	}
-	if exitCode != 0 && exitCode != 1 {
-		return false, err
+
+	if exitCode != 0 && exitCode != 1 && cachedExitCode != 0 && cachedExitCode != 1 {
+		return false, errors.Join(err, cachedErr)
 	}
 
-	return exitCode == 0, nil
+	return exitCode != 1 && cachedExitCode != 1, nil
 }
 
 func BranchRemote(branch string) (string, error) {
