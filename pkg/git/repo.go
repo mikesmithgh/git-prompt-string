@@ -38,6 +38,14 @@ func (g *GitRepo) GitDirFileExists(name string) (bool, error) {
 	return true, nil
 }
 
+func (g *GitRepo) GitDirFileExistsExitOnError(name string) bool {
+	exists, err := g.GitDirFileExists(name)
+	if err != nil {
+		util.ErrMsg(fmt.Sprintf("read %s", name), err, 0)
+	}
+	return exists
+}
+
 func (g *GitRepo) IsGitDir(name string) bool {
 	return util.IsDir(g.GitDirPath(name))
 }
@@ -71,12 +79,9 @@ func (g *GitRepo) BranchInfo(cfg config.BgpsConfig) (string, error) {
 			return "", err
 		}
 		g.PromptMergeStatus = "|REBASE-m"
-		if exists, exists_err := g.GitDirFileExists("rebase-merge/interactive"); exists {
+		if g.GitDirFileExistsExitOnError("rebase-merge/interactive") {
 			g.PromptMergeStatus = "|REBASE-i"
-		} else if exists_err != nil {
-			return "", exists_err
 		}
-
 	} else {
 		if g.IsGitDir("rebase-apply") {
 
@@ -88,35 +93,24 @@ func (g *GitRepo) BranchInfo(cfg config.BgpsConfig) (string, error) {
 			if err != nil {
 				return "", err
 			}
-			rebasing, err := g.GitDirFileExists("rebase-apply/rebasing")
-			if err != nil {
-				return "", err
-			}
-			if rebasing {
+			if g.GitDirFileExistsExitOnError("rebase-apply/rebasing") {
 				ref, err = g.ReadGirDirFile("rebase-apply/head-name")
 				if err != nil {
 					return "", err
 				}
 				g.PromptMergeStatus = "|REBASE"
+			} else if g.GitDirFileExistsExitOnError("rebase-apply/applying") {
+				g.PromptMergeStatus = "|AM"
 			} else {
-				// TODO: check if we need to get branch name here, bgps was not doing it
-				applying, err := g.GitDirFileExists("rebase-apply/applying")
-				if err != nil {
-					return "", err
-				}
-				if applying {
-					g.PromptMergeStatus = "|AM"
-				} else {
-					g.PromptMergeStatus = "|AM/REBASE"
-				}
+				g.PromptMergeStatus = "|AM/REBASE"
 			}
-		} else if g.IsGitDir("MERGE_HEAD") {
+		} else if g.GitDirFileExistsExitOnError("MERGE_HEAD") {
 			g.PromptMergeStatus = "|MERGING"
-		} else if g.IsGitDir("CHERRY_PICK_HEAD") {
+		} else if g.GitDirFileExistsExitOnError("CHERRY_PICK_HEAD") {
 			g.PromptMergeStatus = "|CHERRY-PICKING"
-		} else if g.IsGitDir("REVERT_HEAD") {
+		} else if g.GitDirFileExistsExitOnError("REVERT_HEAD") {
 			g.PromptMergeStatus = "|REVERTING"
-		} else if g.IsGitDir("BISECT_LOG") {
+		} else if g.GitDirFileExistsExitOnError("BISECT_LOG") {
 			g.PromptMergeStatus = "|BISECTING"
 		}
 
@@ -153,7 +147,11 @@ func (g *GitRepo) BranchInfo(cfg config.BgpsConfig) (string, error) {
 	}
 
 	if g.PromptMergeStatus != "" {
-		if _, err = LsFilesUnmerged(); err != nil {
+		unmerged, err := LsFilesUnmerged()
+		if err != nil {
+			return "", err
+		}
+		if unmerged != "" {
 			g.PromptMergeStatus += "|CONFLICT"
 		}
 	}

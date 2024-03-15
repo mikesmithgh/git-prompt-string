@@ -36,6 +36,12 @@ func ReadFileTrimNewline(name string) (string, error) {
 func ErrMsg(hint string, e error, exitCode int) {
 	errorColor, _ := color.Color("red")
 	clearColor, _ := color.Color("none")
-	fmt.Printf("%s bgps error(%s): %s%s", errorColor, hint, strings.ReplaceAll(e.Error(), "\n", ""), clearColor)
+	var error_msg string
+	if e == nil {
+		error_msg = "no error message provided"
+	} else {
+		error_msg = strings.ReplaceAll(e.Error(), "\n", "")
+	}
+	fmt.Printf("%s bgps error(%s): %s%s", errorColor, hint, error_msg, clearColor)
 	os.Exit(exitCode)
 }
