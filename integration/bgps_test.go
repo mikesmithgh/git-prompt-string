@@ -61,6 +61,8 @@ func TestBGPS(t *testing.T) {
 		// TODO: add test env var config doesn't exist
 		// TODO: add test bad toml
 		{"clean", []string{"--config=/does/not/exist"}, "\x1b[31m bgps error(read config): open /does/not/exist: no such file or directory\x1b[0m", nil},
+
+		{"norepo", []string{"--config=NONE"}, "", nil},
 	}
 
 	for _, test := range tests {
