@@ -1,4 +1,12 @@
 # Better Git Prompt String
+
+> [!WARNING]\
+> 03/16/2024: bgps is actively undergoing a major rewrite in Go (v2.0.0)
+>
+> This is a breaking change that will simplify and improve maintainability
+>
+> If you prefer to keep using legacy bgps, then use the tag v1.0.0
+
 A better bash prompt for git. bgps provides a convenient way to customize
 the PS1 prompt and to determine information about the current git branch. 
 bgps can indicate if the branch has a clean or dirty working tree, whether
