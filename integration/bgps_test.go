@@ -27,6 +27,7 @@ func TestBGPS(t *testing.T) {
 		{"conflict_diverged", []string{"--config=NONE"}, "\x1b[33m \ue0a0 main ↕ ↑[1] ↓[1]\x1b[0m", nil},
 		{"untracked", []string{"--config=NONE"}, "\x1b[35m \ue0a0 main *\x1b[0m", nil},
 		{"sparse", []string{"--config=NONE"}, "\x1b[32m \ue0a0 main|SPARSE\x1b[0m", nil},
+		{"sparse_merge_conflict", []string{"--config=NONE"}, "\x1b[31m \ue0a0 main|SPARSE|MERGING|CONFLICT *↕ ↑[1] ↓[1]\x1b[0m", nil},
 
 		// rebase merge
 		{"rebase_i", []string{"--config=NONE"}, "\x1b[34m \ue0a0 main|REBASE-i 1/1\x1b[0m", nil},
