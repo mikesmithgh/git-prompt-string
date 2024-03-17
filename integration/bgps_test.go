@@ -26,18 +26,25 @@ func TestBGPS(t *testing.T) {
 		{"conflict_behind", []string{"--config=NONE"}, "\x1b[33m \ue0a0 main ↓[1]\x1b[0m", nil},
 		{"conflict_diverged", []string{"--config=NONE"}, "\x1b[33m \ue0a0 main ↕ ↑[1] ↓[1]\x1b[0m", nil},
 		{"untracked", []string{"--config=NONE"}, "\x1b[35m \ue0a0 main *\x1b[0m", nil},
+		{"sparse", []string{"--config=NONE"}, "\x1b[32m \ue0a0 main|SPARSE\x1b[0m", nil},
 
+		// rebase merge
 		{"rebase_i", []string{"--config=NONE"}, "\x1b[34m \ue0a0 main|REBASE-i 1/1\x1b[0m", nil},
 		{"rebase_m", []string{"--config=NONE"}, "\x1b[34m \ue0a0 main|REBASE-m 1/1\x1b[0m", nil},
+		// rebase apply
 		{"am_rebase", []string{"--config=NONE"}, "\x1b[34m \ue0a0 (b69e688)|AM/REBASE 1/1\x1b[0m", nil},
 		{"am", []string{"--config=NONE"}, "\x1b[34m \ue0a0 (b69e688)|AM 1/1\x1b[0m", nil},
 		{"rebase", []string{"--config=NONE"}, "\x1b[34m \ue0a0 main|REBASE 1/1\x1b[0m", nil},
+		// merge
 		{"merge_conflict", []string{"--config=NONE"}, "\x1b[31m \ue0a0 main|MERGING|CONFLICT *↕ ↑[1] ↓[1]\x1b[0m", nil},
 		{"merge", []string{"--config=NONE"}, "\x1b[35m \ue0a0 main|MERGING *↕ ↑[1] ↓[1]\x1b[0m", nil},
+		// cherry pick
 		{"cherry_pick_conflict", []string{"--config=NONE"}, "\x1b[31m \ue0a0 main|CHERRY-PICKING|CONFLICT *↕ ↑[1] ↓[1]\x1b[0m", nil},
 		{"cherry_pick", []string{"--config=NONE"}, "\x1b[35m \ue0a0 main|CHERRY-PICKING *↕ ↑[1] ↓[1]\x1b[0m", nil},
+		// revert
 		{"revert_conflict", []string{"--config=NONE"}, "\x1b[31m \ue0a0 main|REVERTING|CONFLICT *↕ ↑[2] ↓[1]\x1b[0m", nil},
 		{"revert", []string{"--config=NONE"}, "\x1b[31m \ue0a0 main|REVERTING *↕ ↑[2] ↓[1]\x1b[0m", nil},
+		// bisect
 		{"bisect", []string{"--config=NONE"}, "\x1b[34m \ue0a0 main|BISECTING ↓[1]\x1b[0m", nil},
 
 		{"clean", []string{"--config=NONE", "--color-enabled=false"}, " \ue0a0 main", nil},
