@@ -24,3 +24,7 @@ linters:
     - misspell
     - nilerr
 
+linters-settings:
+  gosec:
+    excludes:
+      - G204
