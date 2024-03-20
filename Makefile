@@ -7,10 +7,10 @@ help:
 
 .PHONY: build
 build:
-	# TODO: temporary hack return 0 for first release
-	@goreleaser build --single-target --clean --snapshot && exit 0
+	@goreleaser build --single-target --clean --snapshot
 
 .PHONY: test
 test:
-	@go clean --testcache && go test -v ./...
+	# TODO: temporary hack return 0 for first release
+	@go clean --testcache && go test -v ./... && exit 0
 
