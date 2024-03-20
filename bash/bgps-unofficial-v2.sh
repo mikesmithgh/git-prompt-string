@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+
+# this is a temporary bash script that will be removed
+# this is an intermediate rewrite of bgps before the go rewrite
+#
 #
 # Copyright (C) 2017 Michael Smith <nvimmike@gmail.com>
 # Copyright (C) 2006,2007 Shawn O. Pearce <spearce@spearce.org>
