@@ -1,6 +1,7 @@
 package integration
 
 import (
+	"os"
 	"os/exec"
 	"path/filepath"
 	"testing"
@@ -11,7 +12,7 @@ func TestBGPS(t *testing.T) {
 		dir      string
 		input    []string
 		expected string
-		err      error
+		environ  []string
 	}{
 		{"bare", []string{"--config=NONE"}, "\x1b[90m \ue0a0 BARE:main\x1b[0m", nil},
 		{"no_upstream", []string{"--config=NONE"}, "\x1b[90m \ue0a0 main\x1b[0m", nil},
@@ -48,6 +49,7 @@ func TestBGPS(t *testing.T) {
 		// bisect
 		{"bisect", []string{"--config=NONE"}, "\x1b[34m \ue0a0 main|BISECTING ↓[1]\x1b[0m", nil},
 
+		// formatting
 		{"clean", []string{"--config=NONE", "--color-enabled=false"}, " \ue0a0 main", nil},
 		{"clean", []string{"--config=NONE", "--color-enabled=false", "--prompt-prefix= start "}, " start main", nil},
 		{"clean", []string{"--config=NONE", "--color-enabled=false", "--prompt-suffix= stop"}, " \ue0a0 main stop", nil},
@@ -56,11 +58,19 @@ func TestBGPS(t *testing.T) {
 		{"conflict_diverged", []string{"--config=NONE", "--color-enabled=false", "--diverged-format=ahead by %d behind by %d"}, " \ue0a0 main ahead by 1 behind by 1", nil},
 		{"no_upstream_remote", []string{"--config=NONE", "--color-enabled=false", "--no-upstream-remote-format= upstream=[repo: %s branch: %s]"}, " \ue0a0 main upstream=[repo: mikesmithgh/test branch: main]", nil},
 
-		// TODO: add tests for color overrides
+		// color overrides
+		{"clean", []string{"--config=../configs/color_overrides.toml"}, "\x1b[38;2;230;238;4m \ue0a0 main\x1b[0m", nil},
+		{"no_upstream", []string{"--config=../configs/color_overrides.toml"}, "\x1b[30m\x1b[47m \ue0a0 main\x1b[0m", nil},
+		{"dirty", []string{"--config=../configs/color_overrides.toml"}, "\x1b[48;2;179;5;89m \ue0a0 main *\x1b[0m", nil},
+		{"conflict_ahead", []string{"--config=../configs/color_overrides.toml"}, "\x1b[38;2;252;183;40m \ue0a0 main ↑[1]\x1b[0m", nil},
+		{"untracked", []string{"--config=../configs/color_overrides.toml"}, "\x1b[38;2;255;0;0m\x1b[48;2;22;242;170m \ue0a0 main *\x1b[0m", nil},
+		{"bisect", []string{}, "\x1b[48;2;204;204;255m\x1b[35m \ue0a0 main|BISECTING ↓[1]\x1b[0m", []string{"BGPS_CONFIG=../configs/color_overrides.toml"}},
 
-		// TODO: add test env var config doesn't exist
-		// TODO: add test bad toml
-		{"clean", []string{"--config=/does/not/exist"}, "\x1b[31m bgps error(read config): open /does/not/exist: no such file or directory\x1b[0m", nil},
+		// config errors
+		{"clean", []string{"--config=/fromparam/does/not/exist"}, "\x1b[31m bgps error(read config): open /fromparam/does/not/exist: no such file or directory\x1b[0m", nil},
+		{"configs", []string{}, "\x1b[31m bgps error(read config): open /fromenvvar/does/not/exist: no such file or directory\x1b[0m", []string{"BGPS_CONFIG=/fromenvvar/does/not/exist"}},
+		{"configs", []string{"--config=invalid_syntax.toml"}, "\x1b[31m bgps error(unmarshal config): toml: expected character =\x1b[0m", nil},
+		{"configs", []string{}, "\x1b[31m bgps error(unmarshal config): toml: expected character =\x1b[0m", []string{"BGPS_CONFIG=invalid_syntax.toml"}},
 
 		{"norepo", []string{"--config=NONE"}, "", nil},
 	}
@@ -68,9 +78,13 @@ func TestBGPS(t *testing.T) {
 	for _, test := range tests {
 		cmd := exec.Command(builtBinaryPath, test.input...)
 		cmd.Dir = filepath.Join(tmpDir, "testdata", test.dir)
+		if test.environ != nil {
+			cmd.Env = os.Environ()
+			cmd.Env = append(cmd.Env, test.environ...)
+		}
 		result, err := cmd.CombinedOutput()
-		if (err != nil && test.err == nil) || (err != nil && test.err != nil && err.Error() != test.err.Error()) {
-			t.Errorf("Expected error: %v, got: %v", test.err, err)
+		if err != nil {
+			t.Errorf("Unexpected error: %s", err)
 		}
 		actual := string(result)
 		if actual != test.expected {

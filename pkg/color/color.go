@@ -123,12 +123,12 @@ func Color(colors ...string) (string, error) {
 		return seq, nil
 	}
 	for _, color := range colors {
-		if strings.HasPrefix(color, "#") || strings.HasPrefix(color, "bg:#") {
-			r, g, b, err := hexToRGB(strings.TrimPrefix(color, "bg:"))
+		if strings.HasPrefix(color, "#") || strings.HasPrefix(color, "fg:#") || strings.HasPrefix(color, "bg:#") {
+			r, g, b, err := hexToRGB(strings.TrimPrefix(strings.TrimPrefix(color, "fg:"), "bg:"))
 			if err != nil {
 				return "", err
 			}
-			seq = rgbToEscapeSequence(r, g, b, strings.HasPrefix(color, "bg:#"))
+			seq += rgbToEscapeSequence(r, g, b, strings.HasPrefix(color, "bg:#"))
 		} else {
 			s, exists := standardColors[color]
 			if !exists {
