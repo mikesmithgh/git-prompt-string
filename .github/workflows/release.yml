@@ -27,4 +27,3 @@ jobs:
           GH_TOKEN: ${{ secrets.BGPS_CI_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.BGPS_CI_TOKEN }}
 
-
