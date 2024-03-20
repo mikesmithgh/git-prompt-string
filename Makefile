@@ -11,6 +11,5 @@ build:
 
 .PHONY: test
 test:
-	# TODO: temporary hack return 0 for first release
-	@echo skipping tests
+	@go clean --testcache && go test -v ./...
 
