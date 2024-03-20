@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-22.04
     name: release
     needs: 
-      - tests
+      - test
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
