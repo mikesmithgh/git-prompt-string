@@ -101,7 +101,8 @@ func HasUntracked() (bool, error) {
 	)
 	err := cmd.Run()
 	if err != nil {
-		if exitError, ok := err.(*exec.ExitError); ok {
+		var exitError *exec.ExitError
+		if errors.As(err, &exitError) {
 			exitCode = exitError.ExitCode()
 		}
 	}
@@ -112,7 +113,6 @@ func HasUntracked() (bool, error) {
 }
 
 func RevParseShort() (string, []byte, error) {
-
 	cmd := exec.Command(
 		"git",
 		"rev-parse",
@@ -221,7 +221,8 @@ func HasCleanWorkingTree() (bool, error) {
 	)
 	err := cmd.Run()
 	if err != nil {
-		if exitError, ok := err.(*exec.ExitError); ok {
+		var exitError *exec.ExitError
+		if errors.As(err, &exitError) {
 			exitCode = exitError.ExitCode()
 		}
 	}
@@ -235,7 +236,8 @@ func HasCleanWorkingTree() (bool, error) {
 	)
 	cachedErr := cachedCmd.Run()
 	if cachedErr != nil {
-		if exitError, ok := cachedErr.(*exec.ExitError); ok {
+		var exitError *exec.ExitError
+		if errors.As(cachedErr, &exitError) {
 			cachedExitCode = exitError.ExitCode()
 		}
 	}

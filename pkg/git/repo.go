@@ -85,25 +85,26 @@ func (g *GitRepo) BranchInfo(cfg config.BgpsConfig) (string, error) {
 			g.PromptMergeStatus = "|REBASE-i"
 		}
 	} else {
-		if g.IsGitDir("rebase-apply") {
-
+		switch {
+		case g.IsGitDir("rebase-apply"):
 			step = g.ReadGitDirFileExitOnError("rebase-apply/next")
 			total = g.ReadGitDirFileExitOnError("rebase-apply/last")
-			if g.GitDirFileExistsExitOnError("rebase-apply/rebasing") {
+			switch {
+			case g.GitDirFileExistsExitOnError("rebase-apply/rebasing"):
 				ref = g.ReadGitDirFileExitOnError("rebase-apply/head-name")
 				g.PromptMergeStatus = "|REBASE"
-			} else if g.GitDirFileExistsExitOnError("rebase-apply/applying") {
+			case g.GitDirFileExistsExitOnError("rebase-apply/applying"):
 				g.PromptMergeStatus = "|AM"
-			} else {
+			default:
 				g.PromptMergeStatus = "|AM/REBASE"
 			}
-		} else if g.GitDirFileExistsExitOnError("MERGE_HEAD") {
+		case g.GitDirFileExistsExitOnError("MERGE_HEAD"):
 			g.PromptMergeStatus = "|MERGING"
-		} else if g.GitDirFileExistsExitOnError("CHERRY_PICK_HEAD") {
+		case g.GitDirFileExistsExitOnError("CHERRY_PICK_HEAD"):
 			g.PromptMergeStatus = "|CHERRY-PICKING"
-		} else if g.GitDirFileExistsExitOnError("REVERT_HEAD") {
+		case g.GitDirFileExistsExitOnError("REVERT_HEAD"):
 			g.PromptMergeStatus = "|REVERTING"
-		} else if g.GitDirFileExistsExitOnError("BISECT_LOG") {
+		case g.GitDirFileExistsExitOnError("BISECT_LOG"):
 			g.PromptMergeStatus = "|BISECTING"
 		}
 
@@ -117,12 +118,13 @@ func (g *GitRepo) BranchInfo(cfg config.BgpsConfig) (string, error) {
 				ref = strings.TrimPrefix(head, "ref: ")
 				if head == ref {
 					tag, err := DescribeTag("HEAD")
-					if err == nil {
+					switch {
+					case err == nil:
 						ref = tag
 						g.Tag = ref
-					} else if g.ShortSha == "" && len(head) > 7 {
+					case g.ShortSha == "" && len(head) > 7:
 						ref = head[:7]
-					} else {
+					default:
 						ref = g.ShortSha
 					}
 					ref = fmt.Sprintf("(%s)", ref)
@@ -188,7 +190,6 @@ func (g *GitRepo) BranchInfo(cfg config.BgpsConfig) (string, error) {
 }
 
 func (g *GitRepo) BranchStatus(cfg config.BgpsConfig) (string, string, error) {
-
 	status := ""
 	statusColor := ""
 

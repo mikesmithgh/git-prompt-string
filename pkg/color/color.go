@@ -75,7 +75,6 @@ var standardColors = map[string]string{
 }
 
 func hexToRGB(hex string) (int, int, int, error) {
-
 	if !strings.HasPrefix(hex, "#") {
 		return 0, 0, 0, fmt.Errorf("hex must start with #, got %s", hex)
 	}
@@ -85,7 +84,6 @@ func hexToRGB(hex string) (int, int, int, error) {
 	if len(hex) != 6 {
 		return 0, 0, 0, fmt.Errorf("hex must be 6 digits, got %s", hex)
 	}
-
 	// Parse the hex string into RGB components
 	r, err := strconv.ParseInt(hex[0:2], 16, 32)
 	if err != nil {

@@ -33,7 +33,6 @@ var (
 )
 
 func main() {
-
 	cfg := config.BgpsConfig{
 		PromptPrefix:           *promptPrefix,
 		PromptSuffix:           *promptSuffix,

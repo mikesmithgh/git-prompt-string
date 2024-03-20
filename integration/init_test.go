@@ -60,5 +60,5 @@ func TestMain(m *testing.M) {
 	fmt.Println("builtBinaryPath:", builtBinaryPath)
 
 	code := m.Run()
-	os.Exit(code)
+	defer os.Exit(code)
 }
