@@ -1,0 +1,6 @@
+Revert "chore: test repo"
+
+This reverts commit 24afc9585ad36ab4a5bcfce5fe08131e72904a5e.
+
+# Conflicts:
+#	README.md

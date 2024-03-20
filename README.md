@@ -1,7 +1,7 @@
 # Better Git Prompt String
 
 > [!WARNING]\
-> 03/16/2024: bgps is actively undergoing a major v2 rewrite in ![go](https://img.shields.io/badge/Go-00ADD8?style=flat-square&logo=go&logoColor=white)
+> 03/20/2024: bgps is actively undergoing a major v2 rewrite in ![go](https://img.shields.io/badge/Go-00ADD8?style=flat-square&logo=go&logoColor=white)
 >
 > This is a breaking change that will simplify and improve maintainability of bgps
 >
@@ -160,3 +160,4 @@ bgps has been tested with the following:
 - Operating System: 20.6.0 Darwin Kernel Version 20.6.0
 - Bash: 5.1.16(1)-release (x86_64-apple-darwin20.6.0)
 - Git: 2.37.0
+

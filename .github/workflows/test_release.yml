@@ -1,0 +1,76 @@
+name: test_release
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    name: test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v4
+        with:
+          version: latest
+
+      - name: test
+        run: |
+          make test
+
+
+  release:
+    if: (github.ref == 'refs/heads/main') && (github.repository_owner == 'mikesmithgh')
+    runs-on: ubuntu-22.04
+    name: release
+    needs: 
+      - test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Setup Node 
+        uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+          
+      - name: Setup GoReleaser
+        uses: goreleaser/goreleaser-action@v5
+        with:
+          distribution: goreleaser
+          version: latest
+          install-only: true
+
+      - name: Semantic Release
+        run: |
+          npm install @semantic-release/git @semantic-release/changelog @semantic-release/exec -D
+          npx semantic-release
+        env:
+          GH_TOKEN: ${{ secrets.BGPS_CI_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.BGPS_CI_TOKEN }}

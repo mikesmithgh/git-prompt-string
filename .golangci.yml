@@ -1,0 +1,31 @@
+linters:
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck 
+    - unused 
+    - errorlint
+    - gofmt
+    - goimports
+    - gosec
+    - whitespace
+    - bodyclose
+    - dogsled
+    - durationcheck
+    - errorlint
+    - exhaustive
+    - exportloopref
+    - goconst
+    - gocritic
+    - gosec
+    - importas
+    - misspell
+    - nilerr
+    - gofumpt
+
+linters-settings:
+  gosec:
+    excludes:
+      - G204
