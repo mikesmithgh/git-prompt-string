@@ -23,6 +23,7 @@ linters:
     - importas
     - misspell
     - nilerr
+    - gofumpt
 
 linters-settings:
   gosec:
