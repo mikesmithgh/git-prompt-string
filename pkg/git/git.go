@@ -251,17 +251,17 @@ func HasCleanWorkingTree() (bool, error) {
 
 func BranchRemote(branch string) (string, error) {
 	fmt.Printf(" ** branch is %s ** ", branch)
-	cmd := exec.Command(
-		"git",
-		"config",
-		fmt.Sprintf("branch.%s.remote", branch),
-	)
-	stdCombined, err := cmd.CombinedOutput()
-	if err != nil {
-		return "", err
-	}
+	// cmd := exec.Command(
+	// 	"git",
+	// 	"config",
+	// 	fmt.Sprintf("branch.%s.remote", branch),
+	// )
+	// stdCombined, err := cmd.CombinedOutput()
+	// if err != nil {
+	// 	return "", err
+	// }
 
-	return strings.TrimSuffix(string(stdCombined), "\n"), nil
+	return strings.TrimSuffix(string("huh"), "\n"), nil
 }
 
 func BranchMerge(branch string) (string, error) {
