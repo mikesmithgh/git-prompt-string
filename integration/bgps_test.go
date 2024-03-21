@@ -9,7 +9,7 @@ import (
 )
 
 func adjustForWindows(result string) string {
-	result = strings.ReplaceAll(result, "\r", "")
+	result = strings.ReplaceAll(result, "\r", "") // TODO: try removing
 	result = strings.ReplaceAll(result, "The system cannot find the path specified.", "no such file or directory")
 	return result
 }

@@ -168,16 +168,10 @@ func (g *GitRepo) BranchInfo(cfg config.BgpsConfig) (string, error) {
 	}
 
 	if g.Tag == "" && g.ShortSha == "" && g.PromptMergeStatus == "" {
-		branch_remote, eee := BranchRemote(g.PromptBranch)
-		if eee != nil {
-			util.ErrMsg("err branch remote", eee, 0)
-		}
+		branch_remote, err := BranchRemote(g.PromptBranch)
 		var branch_merge string
-		if eee == nil {
+		if err == nil {
 			branch_merge, err = BranchMerge(g.PromptBranch)
-		}
-		if err != nil {
-			util.ErrMsg("err branch merge", err, 0)
 		}
 		if err == nil {
 			remoteParts := strings.SplitN(branch_remote, ":", 2)

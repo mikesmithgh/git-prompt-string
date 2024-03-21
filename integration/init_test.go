@@ -22,11 +22,9 @@ func TestMain(m *testing.M) {
 	}
 	defer os.RemoveAll(tmpDir)
 
-	var bgps string
+	bgps := "bgps"
 	if runtime.GOOS == "windows" {
-		bgps = "bgps.exe"
-	} else {
-		bgps = "bgps"
+		bgps += ".exe"
 	}
 	builtBinaryPath = filepath.Join(tmpDir, bgps)
 

@@ -250,12 +250,10 @@ func HasCleanWorkingTree() (bool, error) {
 }
 
 func BranchRemote(branch string) (string, error) {
-	r := fmt.Sprintf("branch.%s.remote", branch)
-	fmt.Printf("\n\n r is %q \n\n", r)
 	cmd := exec.Command(
 		"git",
 		"config",
-		r,
+		fmt.Sprintf("branch.%s.remote", branch),
 	)
 	stdCombined, err := cmd.CombinedOutput()
 	if err != nil {
