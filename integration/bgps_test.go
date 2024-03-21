@@ -1,19 +1,21 @@
 package integration
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
+	"runtime"
 	"testing"
 )
 
-func adjustForWindows(result string) string {
-	result = strings.ReplaceAll(result, "The system cannot find the path specified.", "no such file or directory")
-	return result
-}
-
 func TestBGPS(t *testing.T) {
+	var notFoundMsg string
+	if runtime.GOOS == "windows" {
+		notFoundMsg = "The system cannot find the path specified."
+	} else {
+		notFoundMsg = "no such file or directory"
+	}
 	tests := []struct {
 		dir      string
 		input    []string
@@ -73,8 +75,8 @@ func TestBGPS(t *testing.T) {
 		{"bisect", []string{}, "\x1b[48;2;204;204;255m\x1b[35m \ue0a0 main|BISECTING ↓[1]\x1b[0m", []string{"BGPS_CONFIG=../configs/color_overrides.toml"}},
 
 		// config errors
-		{"clean", []string{"--config=/fromparam/does/not/exist"}, "\x1b[31m bgps error(read config): open /fromparam/does/not/exist: no such file or directory\x1b[0m", nil},
-		{"configs", []string{}, "\x1b[31m bgps error(read config): open /fromenvvar/does/not/exist: no such file or directory\x1b[0m", []string{"BGPS_CONFIG=/fromenvvar/does/not/exist"}},
+		{"clean", []string{"--config=/fromparam/does/not/exist"}, fmt.Sprintf("\x1b[31m bgps error(read config): open /fromparam/does/not/exist: %s\x1b[0m", notFoundMsg), nil},
+		{"configs", []string{}, fmt.Sprintf("\x1b[31m bgps error(read config): open /fromenvvar/does/not/exist: %s\x1b[0m", notFoundMsg), []string{"BGPS_CONFIG=/fromenvvar/does/not/exist"}},
 		{"configs", []string{"--config=invalid_syntax.toml"}, "\x1b[31m bgps error(unmarshal config): toml: expected character =\x1b[0m", nil},
 		{"configs", []string{}, "\x1b[31m bgps error(unmarshal config): toml: expected character =\x1b[0m", []string{"BGPS_CONFIG=invalid_syntax.toml"}},
 
@@ -92,7 +94,7 @@ func TestBGPS(t *testing.T) {
 		if err != nil {
 			t.Errorf("Unexpected error: %s", err)
 		}
-		actual := adjustForWindows(string(result))
+		actual := string(result)
 		if actual != test.expected {
 			t.Errorf("in directory %s, %s != %s\nexpected:\n%q, \ngot:\n%q", test.dir, test.expected, actual, test.expected, actual)
 		}
