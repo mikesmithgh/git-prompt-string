@@ -1,3 +1,10 @@
+## [2.0.4](https://github.com/mikesmithgh/bgps/compare/v2.0.3...v2.0.4) (2024-03-21)
+
+
+### Bug Fixes
+
+* move publishCmd to semantic release github ([#34](https://github.com/mikesmithgh/bgps/issues/34)) ([d6f21da](https://github.com/mikesmithgh/bgps/commit/d6f21da9b3ff7b4acccb34c6b452e2fe8ac31888)), closes [#32](https://github.com/mikesmithgh/bgps/issues/32)
+
 ## [2.0.3](https://github.com/mikesmithgh/bgps/compare/v2.0.2...v2.0.3) (2024-03-21)
 
 
