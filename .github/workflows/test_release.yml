@@ -13,8 +13,14 @@ permissions:
 
 jobs:
   test:
-    runs-on: ubuntu-22.04
     name: test
+    strategy:
+      matrix:
+        os:
+         - ubuntu-22.04
+         - windows-2022
+         - macos-12
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
