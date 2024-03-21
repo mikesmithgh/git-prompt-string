@@ -23,6 +23,9 @@
       {
         "publishCmd": "./scripts/release_publish.sh \"${nextRelease.notes}\""
       }
+    ],
+    [
+      "@semantic-release/github"
     ]
   ]
 }
