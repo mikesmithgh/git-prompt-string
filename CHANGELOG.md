@@ -1,3 +1,10 @@
+## [2.0.2](https://github.com/mikesmithgh/bgps/compare/v2.0.1...v2.0.2) (2024-03-21)
+
+
+### Bug Fixes
+
+* CI test_release fixes ([#31](https://github.com/mikesmithgh/bgps/issues/31)) ([63988c8](https://github.com/mikesmithgh/bgps/commit/63988c85b8c1983553d1ca2fb8075d8f5299c6c3)), closes [#30](https://github.com/mikesmithgh/bgps/issues/30)
+
 ## [2.0.1](https://github.com/mikesmithgh/bgps/compare/v2.0.0...v2.0.1) (2024-03-21)
 
 
