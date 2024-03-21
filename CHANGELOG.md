@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/mikesmithgh/bgps/compare/v2.0.0...v2.0.1) (2024-03-21)
+
+
+### Bug Fixes
+
+* remove windows line endings ([#25](https://github.com/mikesmithgh/bgps/issues/25)) ([ec5eb3e](https://github.com/mikesmithgh/bgps/commit/ec5eb3e10c0da0a02620149505d7b126ff8eb504))
+
 # [2.0.0](https://github.com/mikesmithgh/bgps/compare/v1.0.0...v2.0.0) (2024-03-20)
 
 
