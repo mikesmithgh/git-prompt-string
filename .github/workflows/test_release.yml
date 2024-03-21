@@ -84,7 +84,7 @@ jobs:
 
       - name: Semantic Release
         run: |
-          npm install @semantic-release/git @semantic-release/changelog @semantic-release/exec -D
+          npm install @semantic-release/git @semantic-release/changelog -D
           npx semantic-release
         env:
           GH_TOKEN: ${{ secrets.BGPS_CI_TOKEN }}
