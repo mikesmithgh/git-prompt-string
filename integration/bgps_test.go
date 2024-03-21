@@ -8,6 +8,12 @@ import (
 	"testing"
 )
 
+func adjustForWindows(result string) string {
+	result = strings.ReplaceAll(result, "\r", "")
+	result = strings.ReplaceAll(result, "The system cannot find the path specified.", "no such file or directory")
+	return result
+}
+
 func TestBGPS(t *testing.T) {
 	tests := []struct {
 		dir      string
@@ -87,7 +93,7 @@ func TestBGPS(t *testing.T) {
 		if err != nil {
 			t.Errorf("Unexpected error: %s", err)
 		}
-		actual := strings.ReplaceAll(string(result), "\r", "")
+		actual := adjustForWindows(string(result))
 		if actual != test.expected {
 			t.Errorf("in directory %s, %s != %s\nexpected:\n%q, \ngot:\n%q", test.dir, test.expected, actual, test.expected, actual)
 		}
