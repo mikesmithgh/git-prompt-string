@@ -253,7 +253,7 @@ func BranchRemote(branch string) (string, error) {
 	cmd := exec.Command(
 		"git",
 		"config",
-		fmt.Sprintf("branch.main.remote", branch),
+		"branch.main.remote",
 	)
 	stdCombined, err := cmd.CombinedOutput()
 	if err != nil {
