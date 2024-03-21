@@ -40,7 +40,7 @@ func LsFilesUnmerged() (string, error) {
 	if err != nil {
 		return string(stdCombined), err
 	}
-	return strings.TrimSuffix(string(stdCombined), "\n"), err
+	return strings.TrimRight(string(stdCombined), "\r\n"), err
 }
 
 func SparseCheckout() (bool, error) {
@@ -54,7 +54,7 @@ func SparseCheckout() (bool, error) {
 	if err != nil && len(stdCombined) != 0 {
 		return false, err
 	}
-	isSparseCheckout, _ := strconv.ParseBool(strings.TrimSuffix(string(stdCombined), "\n"))
+	isSparseCheckout, _ := strconv.ParseBool(strings.TrimRight(string(stdCombined), "\r\n"))
 	return isSparseCheckout, nil
 }
 
@@ -68,7 +68,7 @@ func SymbolicRef(ref string) (string, error) {
 	if err != nil {
 		return string(stdCombined), err
 	}
-	return strings.TrimSuffix(string(stdCombined), "\n"), err
+	return strings.TrimRight(string(stdCombined), "\r\n"), err
 }
 
 func DescribeTag(ref string) (string, error) {
@@ -83,7 +83,7 @@ func DescribeTag(ref string) (string, error) {
 	if err != nil {
 		return string(stdCombined), err
 	}
-	return strings.TrimSuffix(string(stdCombined), "\n"), err
+	return strings.TrimRight(string(stdCombined), "\r\n"), err
 }
 
 func HasUntracked() (bool, error) {
@@ -144,7 +144,7 @@ func RevParseShort() (string, []byte, error) {
 
 	err = cmd.Wait()
 
-	return strings.TrimSuffix(string(stdout), "\n"), stderr, err
+	return strings.TrimRight(string(stdout), "\r\n"), stderr, err
 }
 
 func RevParse() (*GitRepo, []byte, error) {
@@ -187,7 +187,7 @@ func RevParse() (*GitRepo, []byte, error) {
 	err = cmd.Wait()
 
 	if len(stdout) > 0 {
-		result := strings.Split(strings.TrimSuffix(string(stdout), "\n"), "\n")
+		result := strings.Split(strings.TrimRight(string(stdout), "\r\n"), "\n")
 		resultLen := len(result)
 		if resultLen == 5 || resultLen == 6 {
 			g.GitDir = result[0]
@@ -262,7 +262,7 @@ func BranchRemote(branch string) (string, error) {
 		return "", err
 	}
 
-	return strings.TrimSuffix(string(stdCombined), "\n"), nil
+	return strings.TrimRight(string(stdCombined), "\r\n"), nil
 }
 
 func BranchMerge(branch string) (string, error) {
@@ -276,5 +276,5 @@ func BranchMerge(branch string) (string, error) {
 		return "", err
 	}
 
-	return strings.TrimSuffix(string(stdCombined), "\n"), nil
+	return strings.TrimRight(string(stdCombined), "\r\n"), nil
 }
