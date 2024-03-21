@@ -58,6 +58,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false # see https://github.com/semantic-release/semantic-release/discussions/2557
 
       - name: Setup Go
         uses: actions/setup-go@v5
