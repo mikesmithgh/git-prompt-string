@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"testing"
 )
 
@@ -21,7 +22,11 @@ func TestMain(m *testing.M) {
 	}
 	defer os.RemoveAll(tmpDir)
 
-	builtBinaryPath = filepath.Join(tmpDir, "bgps")
+	bgps := "bgps"
+	if runtime.GOOS == "windows" {
+		bgps += ".exe"
+	}
+	builtBinaryPath = filepath.Join(tmpDir, bgps)
 
 	cmd := exec.Command("go", "build", "-o", builtBinaryPath, "..")
 	output, err := cmd.CombinedOutput()

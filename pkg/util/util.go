@@ -30,7 +30,7 @@ func ReadFileTrimNewline(name string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return strings.TrimSuffix(string(result), "\n"), err
+	return strings.TrimRight(string(result), "\r\n"), err
 }
 
 func ErrMsg(hint string, e error, exitCode int) {
@@ -40,7 +40,7 @@ func ErrMsg(hint string, e error, exitCode int) {
 	if e == nil {
 		error_msg = "no error message provided"
 	} else {
-		error_msg = strings.ReplaceAll(e.Error(), "\n", "")
+		error_msg = strings.ReplaceAll(strings.ReplaceAll(e.Error(), "\n", ""), "\r", "")
 	}
 	fmt.Printf("%s bgps error(%s): %s%s", errorColor, hint, error_msg, clearColor)
 	os.Exit(exitCode)
