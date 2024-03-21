@@ -170,9 +170,15 @@ func (g *GitRepo) BranchInfo(cfg config.BgpsConfig) (string, error) {
 	if g.Tag == "" && g.ShortSha == "" && g.PromptMergeStatus == "" {
 		err = nil
 		branch_remote, err := BranchRemote(g.PromptBranch)
+		if err != nil {
+			util.ErrMsg("err branch remote", err, 0)
+		}
 		var branch_merge string
 		if err == nil {
 			branch_merge, err = BranchMerge(g.PromptBranch)
+		}
+		if err != nil {
+			util.ErrMsg("err branch merge", err, 0)
 		}
 		if err == nil {
 			remoteParts := strings.SplitN(branch_remote, ":", 2)
@@ -183,9 +189,6 @@ func (g *GitRepo) BranchInfo(cfg config.BgpsConfig) (string, error) {
 			if branch_merge != "" {
 				g.PromptBranch += fmt.Sprintf(cfg.NoUpstreamRemoteFormat, branch_remote, strings.TrimPrefix(branch_merge, "refs/heads/"))
 			}
-		}
-		if err != nil {
-			util.ErrMsg("errrrr", err, 0)
 		}
 	}
 
