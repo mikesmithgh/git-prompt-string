@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/mikesmithgh/bgps/pkg/color"
@@ -55,7 +56,7 @@ func (g *GitRepo) IsGitDirSymlink(name string) bool {
 }
 
 func (g *GitRepo) GitDirPath(path string) string {
-	return fmt.Sprintf("%s/%s", g.GitDir, path)
+	return filepath.Join(g.GitDir, path)
 }
 
 func (g *GitRepo) ReadGitDirFile(name string) (string, error) {
@@ -166,6 +167,7 @@ func (g *GitRepo) BranchInfo(cfg config.BgpsConfig) (string, error) {
 		g.PromptSparseCheckoutStatus = "|SPARSE"
 	}
 
+	fmt.Printf("** %+v **", g) // TODO: remove
 	if g.Tag == "" && g.ShortSha == "" && g.PromptMergeStatus == "" {
 		branch_remote, err := BranchRemote(g.PromptBranch)
 		var branch_merge string
