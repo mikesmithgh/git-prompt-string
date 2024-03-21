@@ -1,3 +1,10 @@
+## [2.0.5](https://github.com/mikesmithgh/bgps/compare/v2.0.4...v2.0.5) (2024-03-21)
+
+
+### Bug Fixes
+
+* revert CI changes ([#35](https://github.com/mikesmithgh/bgps/issues/35)) ([9083f3b](https://github.com/mikesmithgh/bgps/commit/9083f3bb33aacf70b5d2b99be17f665be24510d7))
+
 ## [2.0.4](https://github.com/mikesmithgh/bgps/compare/v2.0.3...v2.0.4) (2024-03-21)
 
 
