@@ -19,13 +19,10 @@
       }
     ],
     [
-      "@semantic-release/exec",
+      "@semantic-release/github",
       {
         "publishCmd": "./scripts/release_publish.sh \"${nextRelease.notes}\""
       }
     ],
-    [
-      "@semantic-release/github"
-    ]
   ]
 }
