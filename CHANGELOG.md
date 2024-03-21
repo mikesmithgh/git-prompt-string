@@ -1,3 +1,13 @@
+# [2.0.0](https://github.com/mikesmithgh/bgps/compare/v1.0.0...v2.0.0) (2024-03-20)
+
+
+* feat!: v2 rewrite in golang (#24) ([c022027](https://github.com/mikesmithgh/bgps/commit/c0220272255c3138ab3ef402c4d939075ada62e0)), closes [#24](https://github.com/mikesmithgh/bgps/issues/24) [#17](https://github.com/mikesmithgh/bgps/issues/17)
+
+
+### BREAKING CHANGES
+
+* initial rewrite of bgps in Golang
+
 # 1.0.0 (2024-03-17)
 
 
