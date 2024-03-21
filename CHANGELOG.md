@@ -1,3 +1,10 @@
+## [2.0.3](https://github.com/mikesmithgh/bgps/compare/v2.0.2...v2.0.3) (2024-03-21)
+
+
+### Bug Fixes
+
+* add semantic release github step ([#33](https://github.com/mikesmithgh/bgps/issues/33)) ([9e96f8f](https://github.com/mikesmithgh/bgps/commit/9e96f8f75fe2189de429e3e572526f6f3eb93c13)), closes [#32](https://github.com/mikesmithgh/bgps/issues/32)
+
 ## [2.0.2](https://github.com/mikesmithgh/bgps/compare/v2.0.1...v2.0.2) (2024-03-21)
 
 
