@@ -5,6 +5,11 @@ on:
       - main
   pull_request:
   workflow_dispatch:
+    inputs:
+      enable_debug_tmate:
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -27,13 +32,14 @@ jobs:
           go-version-file: go.mod
           cache: true
 
+      - name: (debug) Setup tmate session
+        if: ${{ inputs.enable_debug_tmate }} 
+        uses: mxschmitt/action-tmate@v3
+
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v4
         with:
           version: latest
-
-      - name: (debug) Setup tmate session
-        uses: mxschmitt/action-tmate@v3
 
       - name: test
         run: |
