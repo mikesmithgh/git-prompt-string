@@ -4,6 +4,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -86,7 +87,7 @@ func TestBGPS(t *testing.T) {
 		if err != nil {
 			t.Errorf("Unexpected error: %s", err)
 		}
-		actual := string(result)
+		actual := strings.ReplaceAll(string(result), "\r", "")
 		if actual != test.expected {
 			t.Errorf("in directory %s, %s != %s\nexpected:\n%q, \ngot:\n%q", test.dir, test.expected, actual, test.expected, actual)
 		}
