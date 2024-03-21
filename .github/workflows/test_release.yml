@@ -77,9 +77,6 @@ jobs:
           distribution: goreleaser
           version: latest
           install-only: true
-        env:
-          GH_TOKEN: ${{ secrets.BGPS_CI_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.BGPS_CI_TOKEN }}
 
       - name: (debug) Setup tmate session
         if: ${{ inputs.enable_debug_tmate }} 
