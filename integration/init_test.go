@@ -20,7 +20,8 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		panic("failed to create temp dir")
 	}
-	defer os.RemoveAll(tmpDir)
+	// testing
+	// defer os.RemoveAll(tmpDir)
 
 	gps := "git-prompt-string"
 	if runtime.GOOS == "windows" {
