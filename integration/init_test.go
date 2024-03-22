@@ -34,7 +34,13 @@ func TestMain(m *testing.M) {
 		panic(fmt.Sprintf("failed to build gps: %s, %s", output, err))
 	}
 
-	cmd = exec.Command("cp", "-r", "../testdata", tmpDir)
+	var copyCommand []string
+	if runtime.GOOS == "windows" {
+		copyCommand = []string{"xcopy", "/s", "/e", filepath.Join("..", "testdata"), tmpDir}
+	} else {
+		copyCommand = []string{"cp", "-r", filepath.Join("..", "testdata"), tmpDir}
+	}
+	cmd = exec.Command(copyCommand[0], copyCommand[1:]...)
 	err = cmd.Run()
 	if err != nil {
 		panic(fmt.Sprintf("failed to copy test data: %s", err))

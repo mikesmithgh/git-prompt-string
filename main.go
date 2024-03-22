@@ -38,6 +38,7 @@ var (
 )
 
 func main() {
+	// TODO: check if git is installed?
 	cfg := config.GPSConfig{
 		PromptPrefix:           *promptPrefix,
 		PromptSuffix:           *promptSuffix,
