@@ -20,8 +20,7 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		panic("failed to create temp dir")
 	}
-	// testing
-	// defer os.RemoveAll(tmpDir)
+	defer os.RemoveAll(tmpDir)
 
 	gps := "git-prompt-string"
 	if runtime.GOOS == "windows" {
@@ -37,7 +36,7 @@ func TestMain(m *testing.M) {
 
 	var copyCommand []string
 	if runtime.GOOS == "windows" {
-		copyCommand = []string{"xcopy", "/s", "/e", filepath.Join("..", "testdata"), tmpDir}
+		copyCommand = []string{"xcopy", "/s", "/e", filepath.Join("..", "testdata"), filepath.Join(tmpDir, "testdata")}
 	} else {
 		copyCommand = []string{"cp", "-r", filepath.Join("..", "testdata"), tmpDir}
 	}
