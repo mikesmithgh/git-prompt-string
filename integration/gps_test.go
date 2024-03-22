@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func TestBGPS(t *testing.T) {
+func TestGPS(t *testing.T) {
 	var notFoundMsg string
 	if runtime.GOOS == "windows" {
 		notFoundMsg = "The system cannot find the path specified."
@@ -72,13 +72,13 @@ func TestBGPS(t *testing.T) {
 		{"dirty", []string{"--config=../configs/color_overrides.toml"}, "\x1b[48;2;179;5;89m \ue0a0 main *\x1b[0m", nil},
 		{"conflict_ahead", []string{"--config=../configs/color_overrides.toml"}, "\x1b[38;2;252;183;40m \ue0a0 main ↑[1]\x1b[0m", nil},
 		{"untracked", []string{"--config=../configs/color_overrides.toml"}, "\x1b[38;2;255;0;0m\x1b[48;2;22;242;170m \ue0a0 main *\x1b[0m", nil},
-		{"bisect", []string{}, "\x1b[48;2;204;204;255m\x1b[35m \ue0a0 main|BISECTING ↓[1]\x1b[0m", []string{"BGPS_CONFIG=../configs/color_overrides.toml"}},
+		{"bisect", []string{}, "\x1b[48;2;204;204;255m\x1b[35m \ue0a0 main|BISECTING ↓[1]\x1b[0m", []string{"GIT_PROMPT_STRING_CONFIG=../configs/color_overrides.toml"}},
 
 		// config errors
-		{"clean", []string{"--config=/fromparam/does/not/exist"}, fmt.Sprintf("\x1b[31m bgps error(read config): open /fromparam/does/not/exist: %s\x1b[0m", notFoundMsg), nil},
-		{"configs", []string{}, fmt.Sprintf("\x1b[31m bgps error(read config): open /fromenvvar/does/not/exist: %s\x1b[0m", notFoundMsg), []string{"BGPS_CONFIG=/fromenvvar/does/not/exist"}},
-		{"configs", []string{"--config=invalid_syntax.toml"}, "\x1b[31m bgps error(unmarshal config): toml: expected character =\x1b[0m", nil},
-		{"configs", []string{}, "\x1b[31m bgps error(unmarshal config): toml: expected character =\x1b[0m", []string{"BGPS_CONFIG=invalid_syntax.toml"}},
+		{"clean", []string{"--config=/fromparam/does/not/exist"}, fmt.Sprintf("\x1b[31m git-prompt-string error(read config): open /fromparam/does/not/exist: %s\x1b[0m", notFoundMsg), nil},
+		{"configs", []string{}, fmt.Sprintf("\x1b[31m git-prompt-string error(read config): open /fromenvvar/does/not/exist: %s\x1b[0m", notFoundMsg), []string{"GIT_PROMPT_STRING_CONFIG=/fromenvvar/does/not/exist"}},
+		{"configs", []string{"--config=invalid_syntax.toml"}, "\x1b[31m git-prompt-string error(unmarshal config): toml: expected character =\x1b[0m", nil},
+		{"configs", []string{}, "\x1b[31m git-prompt-string error(unmarshal config): toml: expected character =\x1b[0m", []string{"GIT_PROMPT_STRING_CONFIG=invalid_syntax.toml"}},
 
 		{"norepo", []string{"--config=NONE"}, "", nil},
 	}

@@ -7,9 +7,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/mikesmithgh/bgps/pkg/color"
-	"github.com/mikesmithgh/bgps/pkg/config"
-	"github.com/mikesmithgh/bgps/pkg/util"
+	"github.com/mikesmithgh/git-prompt-string/pkg/color"
+	"github.com/mikesmithgh/git-prompt-string/pkg/config"
+	"github.com/mikesmithgh/git-prompt-string/pkg/util"
 )
 
 type GitRepo struct {
@@ -71,7 +71,7 @@ func (g *GitRepo) ReadGitDirFileExitOnError(name string) string {
 	return content
 }
 
-func (g *GitRepo) BranchInfo(cfg config.BgpsConfig) (string, error) {
+func (g *GitRepo) BranchInfo(cfg config.GPSConfig) (string, error) {
 	var err error
 	ref := ""
 	step := ""
@@ -190,7 +190,7 @@ func (g *GitRepo) BranchInfo(cfg config.BgpsConfig) (string, error) {
 	return prompt, nil
 }
 
-func (g *GitRepo) BranchStatus(cfg config.BgpsConfig) (string, string, error) {
+func (g *GitRepo) BranchStatus(cfg config.GPSConfig) (string, string, error) {
 	status := ""
 	statusColor := ""
 
