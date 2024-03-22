@@ -22,16 +22,16 @@ func TestMain(m *testing.M) {
 	}
 	defer os.RemoveAll(tmpDir)
 
-	bgps := "bgps"
+	gps := "git-prompt-string"
 	if runtime.GOOS == "windows" {
-		bgps += ".exe"
+		gps += ".exe"
 	}
-	builtBinaryPath = filepath.Join(tmpDir, bgps)
+	builtBinaryPath = filepath.Join(tmpDir, gps)
 
 	cmd := exec.Command("go", "build", "-o", builtBinaryPath, "..")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		panic(fmt.Sprintf("failed to build bgps: %s, %s", output, err))
+		panic(fmt.Sprintf("failed to build gps: %s, %s", output, err))
 	}
 
 	cmd = exec.Command("cp", "-r", "../testdata", tmpDir)

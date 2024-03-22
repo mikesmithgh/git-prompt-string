@@ -8,10 +8,10 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/mikesmithgh/bgps/pkg/color"
-	"github.com/mikesmithgh/bgps/pkg/config"
-	"github.com/mikesmithgh/bgps/pkg/git"
-	"github.com/mikesmithgh/bgps/pkg/util"
+	"github.com/mikesmithgh/git-prompt-string/pkg/color"
+	"github.com/mikesmithgh/git-prompt-string/pkg/config"
+	"github.com/mikesmithgh/git-prompt-string/pkg/git"
+	"github.com/mikesmithgh/git-prompt-string/pkg/util"
 	"github.com/pelletier/go-toml/v2"
 )
 
@@ -33,7 +33,7 @@ var (
 )
 
 func main() {
-	cfg := config.BgpsConfig{
+	cfg := config.GPSConfig{
 		PromptPrefix:           *promptPrefix,
 		PromptSuffix:           *promptSuffix,
 		AheadFormat:            *aheadFormat,
@@ -51,14 +51,14 @@ func main() {
 
 	flag.Parse()
 
-	var bgpsConfigPath string
-	bgpsConfigEnv := os.Getenv("BGPS_CONFIG")
+	var gpsConfig string
+	gpsConfigEnv := os.Getenv("GIT_PROMPT_STRING_CONFIG")
 	if *configPath == "" {
-		bgpsConfigPath = bgpsConfigEnv
+		gpsConfig = gpsConfigEnv
 	} else {
-		bgpsConfigPath = *configPath
+		gpsConfig = *configPath
 	}
-	if bgpsConfigPath == "" {
+	if gpsConfig == "" {
 		xdgConfigHome := os.Getenv("XDG_CONFIG_HOME")
 		if xdgConfigHome == "" {
 			home, err := os.UserHomeDir()
@@ -71,20 +71,20 @@ func main() {
 				xdgConfigHome = path.Join(home, ".config")
 			}
 		}
-		bgpsConfigPath = path.Join(xdgConfigHome, "bgps", "config.toml")
+		gpsConfig = path.Join(xdgConfigHome, "git-prompt-string", "config.toml")
 	}
 
-	if bgpsConfigPath != "NONE" {
-		bgpsConfigRaw, err := os.ReadFile(bgpsConfigPath)
+	if gpsConfig != "NONE" {
+		gpsConfigRaw, err := os.ReadFile(gpsConfig)
 		if err != nil && !os.IsNotExist(err) {
 			util.ErrMsg("read config exists", err, 0)
 		}
 
-		if err != nil && (*configPath != "" || bgpsConfigEnv != "") {
+		if err != nil && (*configPath != "" || gpsConfigEnv != "") {
 			util.ErrMsg("read config", err, 0)
 		}
 
-		err = toml.Unmarshal(bgpsConfigRaw, &cfg)
+		err = toml.Unmarshal(gpsConfigRaw, &cfg)
 		if err != nil {
 			util.ErrMsg("unmarshal config", err, 0)
 		}

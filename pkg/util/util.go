@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/mikesmithgh/bgps/pkg/color"
+	"github.com/mikesmithgh/git-prompt-string/pkg/color"
 )
 
 func IsDir(name string) bool {
@@ -42,6 +42,6 @@ func ErrMsg(hint string, e error, exitCode int) {
 	} else {
 		error_msg = strings.ReplaceAll(strings.ReplaceAll(e.Error(), "\n", ""), "\r", "")
 	}
-	fmt.Printf("%s bgps error(%s): %s%s", errorColor, hint, error_msg, clearColor)
+	fmt.Printf("%s git-prompt-string error(%s): %s%s", errorColor, hint, error_msg, clearColor)
 	os.Exit(exitCode)
 }

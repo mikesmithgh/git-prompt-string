@@ -1,4 +1,4 @@
-module github.com/mikesmithgh/bgps
+module github.com/mikesmithgh/git-prompt-string
 
 go 1.22.0
 

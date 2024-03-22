@@ -2,7 +2,7 @@
 help:
 	@echo "==> describe make commands"
 	@echo ""
-	@echo "build  ==> build bgps for current GOOS and GOARCH"
+	@echo "build  ==> build binary for current GOOS and GOARCH"
 	@echo "test   ==> run tests"
 
 .PHONY: build
