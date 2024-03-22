@@ -16,6 +16,9 @@ import (
 )
 
 var (
+	version                = "dev"     // populated by goreleaser
+	commit                 = "none"    // populated by goreleaser
+	date                   = "unknown" // populated by goreleaser
 	configPath             = flag.String("config", "", "")
 	promptPrefix           = flag.String("prompt-prefix", " \ue0a0 ", "")
 	promptSuffix           = flag.String("prompt-suffix", "", "")
@@ -30,6 +33,7 @@ var (
 	colorUntracked         = flag.String("color-untracked", "magenta", "")
 	colorNoUpstream        = flag.String("color-no-upstream", "bright-black", "")
 	colorMerging           = flag.String("color-merging", "blue", "")
+	versionFlag            = flag.Bool("version", false, "version for git-prompt-string")
 )
 
 func main() {
@@ -120,9 +124,22 @@ func main() {
 			cfg.ColorMerging = f.Value.String()
 		}
 	})
+
 	if !cfg.ColorEnabled {
 		color.Disable()
 	}
+
+	if *versionFlag {
+		fmt.Println()
+		fmt.Println("git-prompt-string")
+		fmt.Println("https://github.com/mikesmithgh/git-prompt-string")
+		fmt.Println()
+		fmt.Printf("Version:   %s\n", version)
+		fmt.Printf("Commit:    %s\n", commit)
+		fmt.Printf("BuildDate: %s\n", date)
+		os.Exit(0)
+	}
+
 	clearColor, err := color.Color("none")
 	if err != nil {
 		util.ErrMsg("color none", err, 0)
