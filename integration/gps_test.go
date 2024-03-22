@@ -58,13 +58,13 @@ func TestGPS(t *testing.T) {
 		{"bisect", []string{"--config=NONE"}, "\x1b[34m \ue0a0 main|BISECTING ↓[1]\x1b[0m", nil},
 
 		// formatting
-		{"clean", []string{"--config=NONE", "--color-enabled=false"}, " \ue0a0 main", nil},
-		{"clean", []string{"--config=NONE", "--color-enabled=false", "--prompt-prefix= start "}, " start main", nil},
-		{"clean", []string{"--config=NONE", "--color-enabled=false", "--prompt-suffix= stop"}, " \ue0a0 main stop", nil},
-		{"conflict_ahead", []string{"--config=NONE", "--color-enabled=false", "--ahead-format=ahead by %d"}, " \ue0a0 main ahead by 1", nil},
-		{"conflict_behind", []string{"--config=NONE", "--color-enabled=false", "--behind-format=behind by %d"}, " \ue0a0 main behind by 1", nil},
-		{"conflict_diverged", []string{"--config=NONE", "--color-enabled=false", "--diverged-format=ahead by %d behind by %d"}, " \ue0a0 main ahead by 1 behind by 1", nil},
-		{"no_upstream_remote", []string{"--config=NONE", "--color-enabled=false", "--no-upstream-remote-format= upstream=[repo: %s branch: %s]"}, " \ue0a0 main upstream=[repo: mikesmithgh/test branch: main]", nil},
+		{"clean", []string{"--config=NONE", "--color-disabled"}, " \ue0a0 main", nil},
+		{"clean", []string{"--config=NONE", "--color-disabled", "--prompt-prefix= start "}, " start main", nil},
+		{"clean", []string{"--config=NONE", "--color-disabled", "--prompt-suffix= stop"}, " \ue0a0 main stop", nil},
+		{"conflict_ahead", []string{"--config=NONE", "--color-disabled", "--ahead-format=ahead by %d"}, " \ue0a0 main ahead by 1", nil},
+		{"conflict_behind", []string{"--config=NONE", "--color-disabled", "--behind-format=behind by %d"}, " \ue0a0 main behind by 1", nil},
+		{"conflict_diverged", []string{"--config=NONE", "--color-disabled", "--diverged-format=ahead by %d behind by %d"}, " \ue0a0 main ahead by 1 behind by 1", nil},
+		{"no_upstream_remote", []string{"--config=NONE", "--color-disabled", "--no-upstream-remote-format= upstream=[repo: %s branch: %s]"}, " \ue0a0 main upstream=[repo: mikesmithgh/test branch: main]", nil},
 
 		// color overrides
 		{"clean", []string{"--config=../configs/color_overrides.toml"}, "\x1b[38;2;230;238;4m \ue0a0 main\x1b[0m", nil},

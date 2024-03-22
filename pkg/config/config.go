@@ -7,7 +7,7 @@ type GPSConfig struct {
 	BehindFormat           string `toml:"behind_format"`
 	DivergedFormat         string `toml:"diverged_format"`
 	NoUpstreamRemoteFormat string `toml:"no_upstream_remote_format"`
-	ColorEnabled           bool   `toml:"color_enabled"`
+	ColorDisabled          bool   `toml:"color_disabled"`
 	ColorClean             string `toml:"color_clean"`
 	ColorConflict          string `toml:"color_conflict"`
 	ColorDirty             string `toml:"color_dirty"`
