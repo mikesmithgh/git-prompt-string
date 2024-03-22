@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 	"runtime"
+	"strconv"
 	"strings"
 
 	"github.com/mikesmithgh/git-prompt-string/pkg/color"
@@ -26,7 +27,7 @@ var (
 	behindFormat           = flag.String("behind-format", "↓[%d]", "")
 	divergedFormat         = flag.String("diverged-format", "↕ ↑[%d] ↓[%d]", "")
 	noUpstreamRemoteFormat = flag.String("no-upstream-remote-format", " → %s/%s", "")
-	colorEnabled           = flag.Bool("color-enabled", true, "")
+	colorDisabled          = flag.Bool("color-disabled", false, "disable all color in prompt string")
 	colorClean             = flag.String("color-clean", "green", "")
 	colorConflict          = flag.String("color-conflict", "yellow", "")
 	colorDirty             = flag.String("color-dirty", "red", "")
@@ -44,7 +45,7 @@ func main() {
 		BehindFormat:           *behindFormat,
 		DivergedFormat:         *divergedFormat,
 		NoUpstreamRemoteFormat: *noUpstreamRemoteFormat,
-		ColorEnabled:           *colorEnabled,
+		ColorDisabled:          *colorDisabled,
 		ColorClean:             *colorClean,
 		ColorConflict:          *colorConflict,
 		ColorDirty:             *colorDirty,
@@ -108,8 +109,12 @@ func main() {
 			cfg.DivergedFormat = f.Value.String()
 		case "no-upstream-remote-format":
 			cfg.NoUpstreamRemoteFormat = f.Value.String()
-		case "color-enabled":
-			cfg.ColorEnabled = f.Value.String() == f.DefValue
+		case "color-disabled":
+			colorDisabled, err := strconv.ParseBool(f.Value.String())
+			if err != nil {
+				util.ErrMsg("parse color disabled", err, 0)
+			}
+			cfg.ColorDisabled = colorDisabled
 		case "color-clean":
 			cfg.ColorClean = f.Value.String()
 		case "color-conflict":
@@ -125,7 +130,7 @@ func main() {
 		}
 	})
 
-	if !cfg.ColorEnabled {
+	if cfg.ColorDisabled {
 		color.Disable()
 	}
 
