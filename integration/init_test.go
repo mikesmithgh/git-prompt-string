@@ -36,7 +36,7 @@ func TestMain(m *testing.M) {
 
 	var copyCommand []string
 	if runtime.GOOS == "windows" {
-		copyCommand = []string{"xcopy", "/s", "/e", filepath.Join("..", "testdata"), filepath.Join(tmpDir, "testdata")}
+		copyCommand = []string{"xcopy", "/S", "/E", "/I", filepath.Join("..", "testdata"), filepath.Join(tmpDir, "testdata")}
 	} else {
 		copyCommand = []string{"cp", "-r", filepath.Join("..", "testdata"), tmpDir}
 	}
