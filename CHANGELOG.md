@@ -1,3 +1,10 @@
+# [2.3.0](https://github.com/mikesmithgh/git-prompt-string/compare/v2.2.0...v2.3.0) (2024-03-22)
+
+
+### Features
+
+* change color enabled to color disabled ([#38](https://github.com/mikesmithgh/git-prompt-string/issues/38)) ([03b7aff](https://github.com/mikesmithgh/git-prompt-string/commit/03b7aff5dc33c16dd8cf20431ad2e6cf8c83e42e))
+
 # [2.2.0](https://github.com/mikesmithgh/git-prompt-string/compare/v2.1.0...v2.2.0) (2024-03-22)
 
 
