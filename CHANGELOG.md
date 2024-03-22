@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/mikesmithgh/git-prompt-string/compare/v2.0.5...v2.1.0) (2024-03-22)
+
+
+### Features
+
+* rename bgps to git-prompt-string ([#36](https://github.com/mikesmithgh/git-prompt-string/issues/36)) ([6e3e6d1](https://github.com/mikesmithgh/git-prompt-string/commit/6e3e6d1c4b6dff5ecc93a7936d868bcee404742f))
+
 ## [2.0.5](https://github.com/mikesmithgh/bgps/compare/v2.0.4...v2.0.5) (2024-03-21)
 
 
