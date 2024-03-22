@@ -1,3 +1,10 @@
+# [2.2.0](https://github.com/mikesmithgh/git-prompt-string/compare/v2.1.0...v2.2.0) (2024-03-22)
+
+
+### Features
+
+* add version flag ([#37](https://github.com/mikesmithgh/git-prompt-string/issues/37)) ([94a1dd5](https://github.com/mikesmithgh/git-prompt-string/commit/94a1dd547a64dc3b2b24b3042700b4d23d844a97))
+
 # [2.1.0](https://github.com/mikesmithgh/git-prompt-string/compare/v2.0.5...v2.1.0) (2024-03-22)
 
 
