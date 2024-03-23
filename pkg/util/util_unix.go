@@ -4,6 +4,4 @@ package util
 
 import "path"
 
-var (
-	XDGConfigPath string = path.Join(".config")
-)
+var XDGConfigPath string = path.Join(".config")
