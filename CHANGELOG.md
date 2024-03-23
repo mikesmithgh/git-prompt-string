@@ -1,3 +1,10 @@
+# [2.4.0](https://github.com/mikesmithgh/git-prompt-string/compare/v2.3.0...v2.4.0) (2024-03-23)
+
+
+### Features
+
+* return error exit codes and add windows fixes ([#39](https://github.com/mikesmithgh/git-prompt-string/issues/39)) ([d6193d5](https://github.com/mikesmithgh/git-prompt-string/commit/d6193d5660580e142df599bddc5a1eafc632ab05))
+
 # [2.3.0](https://github.com/mikesmithgh/git-prompt-string/compare/v2.2.0...v2.3.0) (2024-03-22)
 
 
