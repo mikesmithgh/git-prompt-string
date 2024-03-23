@@ -4,8 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"os/exec"
 	"path"
-	"runtime"
 	"strconv"
 	"strings"
 
@@ -38,6 +38,7 @@ var (
 )
 
 func main() {
+	// TODO: check if git is installed?
 	cfg := config.GPSConfig{
 		PromptPrefix:           *promptPrefix,
 		PromptSuffix:           *promptSuffix,
@@ -68,13 +69,9 @@ func main() {
 		if xdgConfigHome == "" {
 			home, err := os.UserHomeDir()
 			if err != nil {
-				util.ErrMsg("user home", err, 0)
+				util.ErrMsg("user home", err)
 			}
-			if runtime.GOOS == "windows" {
-				xdgConfigHome = path.Join(home, "AppData", "Local")
-			} else {
-				xdgConfigHome = path.Join(home, ".config")
-			}
+			xdgConfigHome = path.Join(home, util.XDGConfigPath)
 		}
 		gpsConfig = path.Join(xdgConfigHome, "git-prompt-string", "config.toml")
 	}
@@ -82,16 +79,16 @@ func main() {
 	if gpsConfig != "NONE" {
 		gpsConfigRaw, err := os.ReadFile(gpsConfig)
 		if err != nil && !os.IsNotExist(err) {
-			util.ErrMsg("read config exists", err, 0)
+			util.ErrMsg("read config exists", err)
 		}
 
 		if err != nil && (*configPath != "" || gpsConfigEnv != "") {
-			util.ErrMsg("read config", err, 0)
+			util.ErrMsg("read config", err)
 		}
 
 		err = toml.Unmarshal(gpsConfigRaw, &cfg)
 		if err != nil {
-			util.ErrMsg("unmarshal config", err, 0)
+			util.ErrMsg("unmarshal config", err)
 		}
 	}
 
@@ -112,7 +109,7 @@ func main() {
 		case "color-disabled":
 			colorDisabled, err := strconv.ParseBool(f.Value.String())
 			if err != nil {
-				util.ErrMsg("parse color disabled", err, 0)
+				util.ErrMsg("parse color disabled", err)
 			}
 			cfg.ColorDisabled = colorDisabled
 		case "color-clean":
@@ -147,24 +144,28 @@ func main() {
 
 	clearColor, err := color.Color("none")
 	if err != nil {
-		util.ErrMsg("color none", err, 0)
+		util.ErrMsg("color none", err)
 	}
 
 	gitRepo, stderr, err := git.RevParse()
 	if err != nil {
-		if strings.Contains(string(stderr), "not a git repository") {
+		switch {
+		case strings.Contains(err.Error(), exec.ErrNotFound.Error()):
+			util.ErrMsg("rev parse", err)
+		case strings.Contains(string(stderr), "not a git repository"):
 			os.Exit(0)
+		default:
+			// allow other errors to pass through, the git repo may not have upstream
 		}
-		// allow other errors to pass through, the git repo may not have upstream
 	}
 
 	branchInfo, err := gitRepo.BranchInfo(cfg)
 	if err != nil {
-		util.ErrMsg("branch info", err, 0)
+		util.ErrMsg("branch info", err)
 	}
 	branchStatus, promptColor, err := gitRepo.BranchStatus(cfg)
 	if err != nil {
-		util.ErrMsg("branch status", err, 0)
+		util.ErrMsg("branch status", err)
 	}
 
 	fmt.Printf("%s%s%s%s%s%s", promptColor, cfg.PromptPrefix, branchInfo, branchStatus, cfg.PromptSuffix, clearColor)

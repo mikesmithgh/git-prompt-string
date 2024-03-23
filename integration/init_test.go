@@ -5,7 +5,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"runtime"
 	"testing"
 )
 
@@ -22,11 +21,7 @@ func TestMain(m *testing.M) {
 	}
 	defer os.RemoveAll(tmpDir)
 
-	gps := "git-prompt-string"
-	if runtime.GOOS == "windows" {
-		gps += ".exe"
-	}
-	builtBinaryPath = filepath.Join(tmpDir, gps)
+	builtBinaryPath = filepath.Join(tmpDir, git_prompt_string_bin)
 
 	cmd := exec.Command("go", "build", "-o", builtBinaryPath, "..")
 	output, err := cmd.CombinedOutput()
@@ -34,7 +29,8 @@ func TestMain(m *testing.M) {
 		panic(fmt.Sprintf("failed to build gps: %s, %s", output, err))
 	}
 
-	cmd = exec.Command("cp", "-r", "../testdata", tmpDir)
+	copyCommand, copyArgs := copyTestDataCmd("..", tmpDir)
+	cmd = exec.Command(copyCommand, copyArgs...)
 	err = cmd.Run()
 	if err != nil {
 		panic(fmt.Sprintf("failed to copy test data: %s", err))
