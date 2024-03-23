@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path"
-	"runtime"
 	"strconv"
 	"strings"
 
@@ -71,11 +70,7 @@ func main() {
 			if err != nil {
 				util.ErrMsg("user home", err, 0)
 			}
-			if runtime.GOOS == "windows" {
-				xdgConfigHome = path.Join(home, "AppData", "Local")
-			} else {
-				xdgConfigHome = path.Join(home, ".config")
-			}
+			xdgConfigHome = path.Join(home, util.XDGConfigPath)
 		}
 		gpsConfig = path.Join(xdgConfigHome, "git-prompt-string", "config.toml")
 	}

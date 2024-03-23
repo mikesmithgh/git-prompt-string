@@ -5,17 +5,10 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"runtime"
 	"testing"
 )
 
 func TestGPS(t *testing.T) {
-	var notFoundMsg string
-	if runtime.GOOS == "windows" {
-		notFoundMsg = "The system cannot find the path specified."
-	} else {
-		notFoundMsg = "no such file or directory"
-	}
 	tests := []struct {
 		dir      string
 		input    []string
