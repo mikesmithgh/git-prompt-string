@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/buildkite/shellwords"
 	"github.com/mikesmithgh/git-prompt-string/pkg/color"
 )
 
@@ -33,7 +34,7 @@ func ReadFileTrimNewline(name string) (string, error) {
 	return strings.TrimRight(string(result), "\r\n"), err
 }
 
-func ErrMsg(hint string, e error, exitCode int) {
+func ErrMsg(hint string, e error) {
 	errorColor, _ := color.Color("red")
 	clearColor, _ := color.Color("none")
 	var error_msg string
@@ -42,6 +43,6 @@ func ErrMsg(hint string, e error, exitCode int) {
 	} else {
 		error_msg = strings.ReplaceAll(strings.ReplaceAll(e.Error(), "\n", ""), "\r", "")
 	}
-	fmt.Printf("%s git-prompt-string error(%s): %s%s", errorColor, hint, error_msg, clearColor)
-	os.Exit(exitCode)
+	fmt.Printf("%s git-prompt-string error(%s): %s%s", errorColor, hint, shellwords.Quote(error_msg), clearColor)
+	os.Exit(1)
 }

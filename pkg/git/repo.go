@@ -42,7 +42,7 @@ func (g *GitRepo) GitDirFileExists(name string) (bool, error) {
 func (g *GitRepo) GitDirFileExistsExitOnError(name string) bool {
 	exists, err := g.GitDirFileExists(name)
 	if err != nil {
-		util.ErrMsg(fmt.Sprintf("dir exists %s", name), err, 0)
+		util.ErrMsg(fmt.Sprintf("dir exists %s", name), err)
 	}
 	return exists
 }
@@ -66,7 +66,7 @@ func (g *GitRepo) ReadGitDirFile(name string) (string, error) {
 func (g *GitRepo) ReadGitDirFileExitOnError(name string) string {
 	content, err := g.ReadGitDirFile(name)
 	if err != nil {
-		util.ErrMsg(fmt.Sprintf("read file %s", name), err, 0)
+		util.ErrMsg(fmt.Sprintf("read file %s", name), err)
 	}
 	return content
 }
@@ -197,7 +197,7 @@ func (g *GitRepo) BranchStatus(cfg config.GPSConfig) (string, string, error) {
 	if g.IsInBareRepo || g.IsInGitDir {
 		c, err := color.Color(strings.Split(cfg.ColorNoUpstream, " ")...)
 		if err != nil {
-			util.ErrMsg("color no upstream", err, 0)
+			util.ErrMsg("color no upstream", err)
 		}
 		return status, c, nil
 	}
@@ -222,21 +222,21 @@ func (g *GitRepo) BranchStatus(cfg config.GPSConfig) (string, string, error) {
 	if cleanWorkingTree {
 		statusColor, err = color.Color(strings.Split(cfg.ColorClean, " ")...)
 		if err != nil {
-			util.ErrMsg("color clean", err, 0)
+			util.ErrMsg("color clean", err)
 		}
 	}
 
 	if ahead > 0 {
 		statusColor, err = color.Color(strings.Split(cfg.ColorConflict, " ")...)
 		if err != nil {
-			util.ErrMsg("color conflict", err, 0)
+			util.ErrMsg("color conflict", err)
 		}
 		status = fmt.Sprintf(cfg.AheadFormat, ahead)
 	}
 	if behind > 0 {
 		statusColor, err = color.Color(strings.Split(cfg.ColorConflict, " ")...)
 		if err != nil {
-			util.ErrMsg("color conflict", err, 0)
+			util.ErrMsg("color conflict", err)
 		}
 		status = fmt.Sprintf(cfg.BehindFormat, behind)
 	}
@@ -248,21 +248,21 @@ func (g *GitRepo) BranchStatus(cfg config.GPSConfig) (string, string, error) {
 	if g.ShortSha == "" {
 		statusColor, err = color.Color(strings.Split(cfg.ColorNoUpstream, " ")...)
 		if err != nil {
-			util.ErrMsg("color no upstream", err, 0)
+			util.ErrMsg("color no upstream", err)
 		}
 	}
 
 	if g.PromptMergeStatus != "" {
 		statusColor, err = color.Color(strings.Split(cfg.ColorMerging, " ")...)
 		if err != nil {
-			util.ErrMsg("color merging", err, 0)
+			util.ErrMsg("color merging", err)
 		}
 	}
 
 	if hasUntracked {
 		statusColor, err = color.Color(strings.Split(cfg.ColorUntracked, " ")...)
 		if err != nil {
-			util.ErrMsg("color untracked", err, 0)
+			util.ErrMsg("color untracked", err)
 		}
 		status = fmt.Sprintf("*%s", status)
 	}
@@ -270,7 +270,7 @@ func (g *GitRepo) BranchStatus(cfg config.GPSConfig) (string, string, error) {
 	if !cleanWorkingTree && !hasUntracked {
 		statusColor, err = color.Color(strings.Split(cfg.ColorDirty, " ")...)
 		if err != nil {
-			util.ErrMsg("color dirty", err, 0)
+			util.ErrMsg("color dirty", err)
 		}
 		status = fmt.Sprintf("*%s", status)
 	}
