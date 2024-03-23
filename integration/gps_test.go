@@ -72,8 +72,8 @@ func TestGPS(t *testing.T) {
 		// config errors
 		{"clean", []string{"--config=/fromparam/does/not/exist"}, fmt.Sprintf("\x1b[31m git-prompt-string error(read config): \"open /fromparam/does/not/exist: %s\"\x1b[0m", notFoundMsg), nil, errors.New("exit status 1")},
 		{"configs", []string{}, fmt.Sprintf("\x1b[31m git-prompt-string error(read config): \"open /fromenvvar/does/not/exist: %s\"\x1b[0m", notFoundMsg), []string{"GIT_PROMPT_STRING_CONFIG=/fromenvvar/does/not/exist"}, errors.New("exit status 1")},
-		{"configs", []string{"--config=invalid_syntax.toml"}, "\x1b[31m git-prompt-string error(unmarshal config): \"toml: expected character \\=\"\x1b[0m", nil, errors.New("exit status 1")},
-		{"configs", []string{}, "\x1b[31m git-prompt-string error(unmarshal config): \"toml: expected character \\=\"\x1b[0m", []string{"GIT_PROMPT_STRING_CONFIG=invalid_syntax.toml"}, errors.New("exit status 1")},
+		{"configs", []string{"--config=invalid_syntax.toml"}, fmt.Sprintf("\x1b[31m git-prompt-string error(unmarshal config): \"toml: expected character %s\"\x1b[0m", escapedEqualSign), nil, errors.New("exit status 1")},
+		{"configs", []string{}, fmt.Sprintf("\x1b[31m git-prompt-string error(unmarshal config): \"toml: expected character %s\"\x1b[0m", escapedEqualSign), []string{"GIT_PROMPT_STRING_CONFIG=invalid_syntax.toml"}, errors.New("exit status 1")},
 
 		{"norepo", []string{"--config=NONE"}, "", nil, nil},
 	}
