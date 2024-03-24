@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/mikesmithgh/git-prompt-string/compare/v1.0.0...v1.0.1) (2024-03-24)
+
+
+### Bug Fixes
+
+* bump version ([#41](https://github.com/mikesmithgh/git-prompt-string/issues/41)) ([0e4f986](https://github.com/mikesmithgh/git-prompt-string/commit/0e4f986f68191a78321afcd510bfcd8558329fab))
+
 # [1.0.0](https://github.com/mikesmithgh/git-prompt-string/compare/v0.0.1...v1.0.0) (2024-03-24)
 
 
