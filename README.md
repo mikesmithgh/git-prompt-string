@@ -1,11 +1,11 @@
 # 📍 git-prompt-string
 
 > [!WARNING]\
-> 03/20/2024: git-prompt-string (previously bgps) is actively undergoing a major v2 rewrite in ![go](https://img.shields.io/badge/Go-00ADD8?style=flat-square&logo=go&logoColor=white)
+> 03/20/2024: git-prompt-string (previously bgps) is actively undergoing a major rewrite in ![go](https://img.shields.io/badge/Go-00ADD8?style=flat-square&logo=go&logoColor=white)
 >
 > This is a breaking change that will simplify and improve maintainability of git-prompt-string
 >
-> If you prefer to keep using legacy bgps, then use the tag [v1.0.0](https://github.com/mikesmithgh/bgps/releases/tag/v1.0.0)
+> If you prefer to keep using legacy bgps, then use the tag [v0.0.1](https://github.com/mikesmithgh/bgps/releases/tag/v0.0.1)
 
 A better bash prompt for git. bgps provides a convenient way to customize
 the PS1 prompt and to determine information about the current git branch. 
