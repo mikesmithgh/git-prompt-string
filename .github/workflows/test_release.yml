@@ -89,3 +89,4 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GIT_PROMPT_STRING_CI_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GIT_PROMPT_STRING_CI_TOKEN }}
+          TAP_GITHUB_TOKEN: ${{ secrets.HOMEBREW_GIT_PROMPT_STRING_CI_TOKEN }}

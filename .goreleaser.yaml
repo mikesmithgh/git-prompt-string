@@ -22,6 +22,20 @@ archives:
     format_overrides:
       - goos: windows
         format: zip
+brews:
+  - repository:
+      owner: mikesmithgh
+      name: homebrew-git-prompt-string
+      token: "{{ .Env.TAP_GITHUB_TOKEN }}"
+    folder: Formula
+    goarm: "7"
+    homepage: https://github.com/mikesmithgh/git-prompt-string
+    description: "A shell agnostic git prompt written in Go"
+    license: "Apache-2.0"
+    test: |
+      system "#{bin}/git-prompt-string --version"
+    dependencies:
+      - name: git
 
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
 # vim: set ts=2 sw=2 tw=0 fo=cnqoj
