@@ -4,8 +4,8 @@ git-prompt-string is a shell agnostic git prompt written in Go. git-prompt-strin
 information about the current git branch and is inspired by
 [git-prompt.sh](https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh).
 
-[![semantic-release: angular](https://img.shields.io/static/v1?style=flat-square&label=semantic-release&message=angular&logo=semantic-release&labelColor=282828&logoColor=d8869b&color=8f3f71)](https://github.com/semantic-release/semantic-release)
 [![go](https://img.shields.io/static/v1?style=flat-square&label=&message=v1.22.0&logo=go&labelColor=282828&logoColor=9dbad4&color=9dbad4)](https://go.dev/)
+[![semantic-release: angular](https://img.shields.io/static/v1?style=flat-square&label=semantic-release&message=angular&logo=semantic-release&labelColor=282828&logoColor=d8869b&color=8f3f71)](https://github.com/semantic-release/semantic-release)
 
 > [!WARNING]\
 > 03/25/2024: git-prompt-string (previously bgps) is actively undergoing a major rewrite 
@@ -15,6 +15,11 @@ information about the current git branch and is inspired by
 > If you prefer to keep using legacy bgps, then use the tag [v0.0.1](https://github.com/mikesmithgh/git-prompt-string/tree/v0.0.1)
 
 ## 📦 Installation
+
+### homebrew tap
+```sh
+brew install mikesmithgh/homebrew-git-prompt-string/git-prompt-string
+```
 
 ### go install
 
