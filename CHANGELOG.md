@@ -1,3 +1,10 @@
+## [1.0.4](https://github.com/mikesmithgh/git-prompt-string/compare/v1.0.3...v1.0.4) (2024-03-26)
+
+
+### Bug Fixes
+
+* add homebrew to goreleaser ([#45](https://github.com/mikesmithgh/git-prompt-string/issues/45)) ([4bf5e04](https://github.com/mikesmithgh/git-prompt-string/commit/4bf5e04fdeb5f984defbf28c4a9b4cce97c6b976))
+
 ## [1.0.3](https://github.com/mikesmithgh/git-prompt-string/compare/v1.0.2...v1.0.3) (2024-03-26)
 
 
