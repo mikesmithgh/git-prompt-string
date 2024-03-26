@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/mikesmithgh/git-prompt-string/compare/v1.0.2...v1.0.3) (2024-03-26)
+
+
+### Bug Fixes
+
+* remove bash scripts and change license ([#44](https://github.com/mikesmithgh/git-prompt-string/issues/44)) ([a8096be](https://github.com/mikesmithgh/git-prompt-string/commit/a8096be4aae58b46d6101d08947453e722cb48bb)), closes [#26](https://github.com/mikesmithgh/git-prompt-string/issues/26)
+
 ## [1.0.2](https://github.com/mikesmithgh/git-prompt-string/compare/v1.0.1...v1.0.2) (2024-03-24)
 
 
