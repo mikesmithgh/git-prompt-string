@@ -16,6 +16,11 @@ information about the current git branch and is inspired by
 
 ## 📦 Installation
 
+### homebrew tap
+```sh
+brew install mikesmithgh/homebrew-git-prompt-string/git-prompt-string
+```
+
 ### go install
 
 ```sh
