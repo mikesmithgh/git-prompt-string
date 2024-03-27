@@ -227,16 +227,16 @@ func (g *GitRepo) BranchStatus(cfg config.GPSConfig) (string, string, error) {
 	}
 
 	if ahead > 0 {
-		statusColor, err = color.Color(strings.Split(cfg.ColorConflict, " ")...)
+		statusColor, err = color.Color(strings.Split(cfg.ColorDelta, " ")...)
 		if err != nil {
-			util.ErrMsg("color conflict", err)
+			util.ErrMsg("color delta ahead", err)
 		}
 		status = fmt.Sprintf(cfg.AheadFormat, ahead)
 	}
 	if behind > 0 {
-		statusColor, err = color.Color(strings.Split(cfg.ColorConflict, " ")...)
+		statusColor, err = color.Color(strings.Split(cfg.ColorDelta, " ")...)
 		if err != nil {
-			util.ErrMsg("color conflict", err)
+			util.ErrMsg("color delta behind", err)
 		}
 		status = fmt.Sprintf(cfg.BehindFormat, behind)
 	}
