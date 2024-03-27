@@ -20,25 +20,33 @@ var (
 	version                = "dev"     // populated by goreleaser
 	commit                 = "none"    // populated by goreleaser
 	date                   = "unknown" // populated by goreleaser
-	configPath             = flag.String("config", "", "")
-	promptPrefix           = flag.String("prompt-prefix", " \ue0a0 ", "")
-	promptSuffix           = flag.String("prompt-suffix", "", "")
-	aheadFormat            = flag.String("ahead-format", "↑[%d]", "")
-	behindFormat           = flag.String("behind-format", "↓[%d]", "")
-	divergedFormat         = flag.String("diverged-format", "↕ ↑[%d] ↓[%d]", "")
-	noUpstreamRemoteFormat = flag.String("no-upstream-remote-format", " → %s/%s", "")
-	colorDisabled          = flag.Bool("color-disabled", false, "disable all color in prompt string")
-	colorClean             = flag.String("color-clean", "green", "")
-	colorConflict          = flag.String("color-conflict", "yellow", "")
-	colorDirty             = flag.String("color-dirty", "red", "")
-	colorUntracked         = flag.String("color-untracked", "magenta", "")
-	colorNoUpstream        = flag.String("color-no-upstream", "bright-black", "")
-	colorMerging           = flag.String("color-merging", "blue", "")
-	versionFlag            = flag.Bool("version", false, "version for git-prompt-string")
+	configPath             = flag.String("config", "", "The filepath of the git-prompt-string toml configuration.")
+	promptPrefix           = flag.String("prompt-prefix", " \ue0a0 ", "A prefix that is added to the beginning of the prompt. The\npowerline icon  is used be default. It is recommended to\nuse a Nerd Font to properly display the  (nf-pl-branch) icon.\nSee https://www.nerdfonts.com/ to download a Nerd Font. If you\ndo not want this symbol, replace the prompt prefix with \" \".\n\\ue0a0 is the unicode representation of .")
+	promptSuffix           = flag.String("prompt-suffix", "", "A suffix that is added to the end of the prompt.")
+	aheadFormat            = flag.String("ahead-format", "↑[%v]", "The format used to indicate the number of commits ahead of the\nremote branch. The %v verb represents the number of commits\nahead. One %v verb is required.")
+	behindFormat           = flag.String("behind-format", "↓[%v]", "The format used to indicate the number of commits behind the\nremote branch. The %v verb represents the number of commits\nbehind. One %v verb is required.")
+	divergedFormat         = flag.String("diverged-format", "↕ ↑[%v] ↓[%v]", "The format used to indicate the number of commits diverged\nfrom the remote branch. The first %v verb represents the number\nof commits ahead of the remote branch. The second %v verb\nrepresents the number of commits behind the remote branch. Two\n%v verbs are required.")
+	noUpstreamRemoteFormat = flag.String("no-upstream-remote-format", " → %v/%v", "The format used to indicate when there is no remote upstream,\nbut there is still a remote branch configured. The first %v\nrepresents the remote repository. The second %v represents the\nremote branch. Two %v are required.")
+	colorDisabled          = flag.Bool("color-disabled", false, "Disable all colors in the prompt.")
+	colorClean             = flag.String("color-clean", "green", "The color of the prompt when the working directory is clean.\n")
+	colorDelta             = flag.String("color-delta", "yellow", "The color of the prompt when the local branch is ahead, behind,\nor has diverged from the remote branch.")
+	colorDirty             = flag.String("color-dirty", "red", "The color of the prompt when the working directory has changes\nthat have not yet been committed.")
+	colorUntracked         = flag.String("color-untracked", "magenta", "The color of the prompt when there are untracked files in the\nworking directory.")
+	colorNoUpstream        = flag.String("color-no-upstream", "bright-black", "The color of the prompt when there is no remote upstream branch.\n")
+	colorMerging           = flag.String("color-merging", "blue", "The color of the prompt during a merge, rebase, cherry-pick,\nrevert, or bisect.")
+	versionFlag            = flag.Bool("version", false, "Print version information for git-prompt-string.")
 )
 
+func header() string {
+	var sb strings.Builder
+	sb.WriteString("\n")
+	sb.WriteString("git-prompt-string: a shell agnostic git prompt written in Go.\n")
+	sb.WriteString("https://github.com/mikesmithgh/git-prompt-string\n")
+	sb.WriteString("\n")
+	return sb.String()
+}
+
 func main() {
-	// TODO: check if git is installed?
 	cfg := config.GPSConfig{
 		PromptPrefix:           *promptPrefix,
 		PromptSuffix:           *promptSuffix,
@@ -48,11 +56,32 @@ func main() {
 		NoUpstreamRemoteFormat: *noUpstreamRemoteFormat,
 		ColorDisabled:          *colorDisabled,
 		ColorClean:             *colorClean,
-		ColorConflict:          *colorConflict,
+		ColorDelta:             *colorDelta,
 		ColorDirty:             *colorDirty,
 		ColorUntracked:         *colorUntracked,
 		ColorNoUpstream:        *colorNoUpstream,
 		ColorMerging:           *colorMerging,
+	}
+
+	flag.Usage = func() {
+		w := flag.CommandLine.Output()
+
+		var sb strings.Builder
+
+		sb.WriteString(header())
+		sb.WriteString("Usage:")
+		sb.WriteString("\n")
+		sb.WriteString("git-prompt-string [flags]")
+		sb.WriteString("\n\n")
+		sb.WriteString("Flags can be prefixed with either - or --. For example, -version and")
+		sb.WriteString("\n")
+		sb.WriteString("--version are both valid flags.")
+		sb.WriteString("\n\n")
+		sb.WriteString("Flags:")
+		sb.WriteString("\n")
+		fmt.Fprint(w, sb.String())
+
+		flag.PrintDefaults()
 	}
 
 	flag.Parse()
@@ -114,8 +143,8 @@ func main() {
 			cfg.ColorDisabled = colorDisabled
 		case "color-clean":
 			cfg.ColorClean = f.Value.String()
-		case "color-conflict":
-			cfg.ColorConflict = f.Value.String()
+		case "color-delta":
+			cfg.ColorDelta = f.Value.String()
 		case "color-dirty":
 			cfg.ColorDirty = f.Value.String()
 		case "color-untracked":
@@ -132,10 +161,7 @@ func main() {
 	}
 
 	if *versionFlag {
-		fmt.Println()
-		fmt.Println("git-prompt-string")
-		fmt.Println("https://github.com/mikesmithgh/git-prompt-string")
-		fmt.Println()
+		fmt.Print(header())
 		fmt.Printf("Version:   %s\n", version)
 		fmt.Printf("Commit:    %s\n", commit)
 		fmt.Printf("BuildDate: %s\n", date)

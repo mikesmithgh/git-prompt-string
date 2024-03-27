@@ -9,7 +9,7 @@ type GPSConfig struct {
 	NoUpstreamRemoteFormat string `toml:"no_upstream_remote_format"`
 	ColorDisabled          bool   `toml:"color_disabled"`
 	ColorClean             string `toml:"color_clean"`
-	ColorConflict          string `toml:"color_conflict"`
+	ColorDelta             string `toml:"color_delta"`
 	ColorDirty             string `toml:"color_dirty"`
 	ColorUntracked         string `toml:"color_untracked"`
 	ColorNoUpstream        string `toml:"color_no_upstream"`
