@@ -30,7 +30,7 @@ var (
 	colorDisabled          = flag.Bool("color-disabled", false, "Disable all colors in the prompt.")
 	colorClean             = flag.String("color-clean", "green", "The color of the prompt when the working directory is clean.\n")
 	colorDelta             = flag.String("color-delta", "yellow", "The color of the prompt when the local branch is ahead, behind,\nor has diverged from the remote branch.")
-	colorDirty             = flag.String("color-dirty", "red", "The color of the prompt when the working directory has changes\nthat have not yet been commited.")
+	colorDirty             = flag.String("color-dirty", "red", "The color of the prompt when the working directory has changes\nthat have not yet been committed.")
 	colorUntracked         = flag.String("color-untracked", "magenta", "The color of the prompt when there are untracked files in the\nworking directory.")
 	colorNoUpstream        = flag.String("color-no-upstream", "bright-black", "The color of the prompt when there is no remote upstream branch.\n")
 	colorMerging           = flag.String("color-merging", "blue", "The color of the prompt during a merge, rebase, cherry-pick,\nrevert, or bisect.")
