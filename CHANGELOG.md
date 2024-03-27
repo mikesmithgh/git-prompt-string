@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/mikesmithgh/git-prompt-string/compare/v1.0.4...v1.1.0) (2024-03-27)
+
+
+### Features
+
+* rename conflict to delta and doc cli flags ([#47](https://github.com/mikesmithgh/git-prompt-string/issues/47)) ([626b6a5](https://github.com/mikesmithgh/git-prompt-string/commit/626b6a5b2f2bd84fb00dbec021567024d65e707e))
+
 ## [1.0.4](https://github.com/mikesmithgh/git-prompt-string/compare/v1.0.3...v1.0.4) (2024-03-26)
 
 
