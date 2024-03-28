@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/mikesmithgh/git-prompt-string/compare/v1.1.0...v1.2.0) (2024-03-28)
+
+
+### Features
+
+* rename none to reset and add docs ([#48](https://github.com/mikesmithgh/git-prompt-string/issues/48)) ([1b36b97](https://github.com/mikesmithgh/git-prompt-string/commit/1b36b97eb308d3fbee37a84cb3724aa2c9e771fd))
+
 # [1.1.0](https://github.com/mikesmithgh/git-prompt-string/compare/v1.0.4...v1.1.0) (2024-03-27)
 
 
