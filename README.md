@@ -42,8 +42,8 @@ PROMPT_COMMAND='PS1="\[\n \e[0;33m\w\e[0m$(git-prompt-string)\n \e[0;32m\u@local
 
 #### Nerd Font
 
-By default, the powerline icon  is used as a prefix in the prompt. It is recommended to use a [Nerd Font](https://www.nerdfonts.com/)
-to properly display the  (nf-pl-branch) icon. See https://www.nerdfonts.com/ to download a Nerd Font. If you
+By default, the powerline icon `` is used as a prefix in the prompt. It is recommended to use a [Nerd Font](https://www.nerdfonts.com/)
+to properly display the `` (nf-pl-branch) icon. See https://www.nerdfonts.com/ to download a Nerd Font. If you
 do not want this symbol, replace the prompt prefix with " ". For example, add the following to you git-prompt-string
 configuration.
 
