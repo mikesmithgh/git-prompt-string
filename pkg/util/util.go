@@ -36,7 +36,7 @@ func ReadFileTrimNewline(name string) (string, error) {
 
 func ErrMsg(hint string, e error) {
 	errorColor, _ := color.Color("red")
-	clearColor, _ := color.Color("none")
+	clearColor, _ := color.Color("reset")
 	var error_msg string
 	if e == nil {
 		error_msg = "no error message provided"

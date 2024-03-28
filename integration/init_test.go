@@ -26,7 +26,7 @@ func TestMain(m *testing.M) {
 	cmd := exec.Command("go", "build", "-o", builtBinaryPath, "..")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		panic(fmt.Sprintf("failed to build gps: %s, %s", output, err))
+		panic(fmt.Sprintf("failed to build git-prompt-string: %s, %s", output, err))
 	}
 
 	copyCommand, copyArgs := copyTestDataCmd("..", tmpDir)

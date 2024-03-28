@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func TestGPS(t *testing.T) {
+func TestGitPromptString(t *testing.T) {
 	tests := []struct {
 		dir      string
 		input    []string
@@ -63,7 +63,7 @@ func TestGPS(t *testing.T) {
 
 		// color overrides
 		{"clean", []string{"--config=../configs/color_overrides.toml"}, "\x1b[38;2;230;238;4m \ue0a0 main\x1b[0m", nil, nil},
-		{"no_upstream", []string{"--config=../configs/color_overrides.toml"}, "\x1b[30m\x1b[47m \ue0a0 main\x1b[0m", nil, nil},
+		{"no_upstream", []string{"--config=../configs/color_overrides.toml"}, "\x1b[0m\x1b[30m\x1b[47m \ue0a0 main\x1b[0m", nil, nil},
 		{"dirty", []string{"--config=../configs/color_overrides.toml"}, "\x1b[48;2;179;5;89m \ue0a0 main *\x1b[0m", nil, nil},
 		{"conflict_ahead", []string{"--config=../configs/color_overrides.toml"}, "\x1b[38;2;252;183;40m \ue0a0 main ↑[1]\x1b[0m", nil, nil},
 		{"untracked", []string{"--config=../configs/color_overrides.toml"}, "\x1b[38;2;255;0;0m\x1b[48;2;22;242;170m \ue0a0 main *\x1b[0m", nil, nil},

@@ -71,7 +71,7 @@ func (g *GitRepo) ReadGitDirFileExitOnError(name string) string {
 	return content
 }
 
-func (g *GitRepo) BranchInfo(cfg config.GPSConfig) (string, error) {
+func (g *GitRepo) BranchInfo(cfg config.GitPromptStringConfig) (string, error) {
 	var err error
 	ref := ""
 	step := ""
@@ -190,7 +190,7 @@ func (g *GitRepo) BranchInfo(cfg config.GPSConfig) (string, error) {
 	return prompt, nil
 }
 
-func (g *GitRepo) BranchStatus(cfg config.GPSConfig) (string, string, error) {
+func (g *GitRepo) BranchStatus(cfg config.GitPromptStringConfig) (string, string, error) {
 	status := ""
 	statusColor := ""
 
