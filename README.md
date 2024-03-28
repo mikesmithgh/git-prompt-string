@@ -29,19 +29,21 @@ go install github.com/mikesmithgh/git-prompt-string@latest
 
 ## 🛠️ Setup
 
+### Prompt configuration
+
 Add git-prompt-string to your prompt. For example,
 
-### bash
+#### bash
 ```sh
 PROMPT_COMMAND='PS1="\[\n \e[0;33m\w\e[0m$(git-prompt-string)\n \e[0;32m\u@local \e[0;36m\$\e[0m \]"'
 ```
 
-## Configuration
+### git-prompt-string configuration
 
-### Nerd Font
+#### Nerd Font
 
-By default, the powerline icon  is used as a prefix in the prompt. It is recommended to use a [Nerd Font](https://www.nerdfonts.com/)
-to properly display the  (nf-pl-branch) icon. See https://www.nerdfonts.com/ to download a Nerd Font. If you
+By default, the powerline icon `` is used as a prefix in the prompt. It is recommended to use a [Nerd Font](https://www.nerdfonts.com/)
+to properly display the `` (nf-pl-branch) icon. See https://www.nerdfonts.com/ to download a Nerd Font. If you
 do not want this symbol, replace the prompt prefix with " ". For example, add the following to you git-prompt-string
 configuration.
 
@@ -49,7 +51,7 @@ configuration.
 prompt_prefix = ' '
 ```
 
-### Configuration file
+#### Configuration file
 
 git-prompt-string will first check if the `--config` option was passed as an argument. If 
 `--config` is set, the filepath defined in the value will be used as the configuration
@@ -80,7 +82,7 @@ If the configuration filepath is set to the special value of `NONE`, then all us
 be ignored. For example, `git-prompt-string --config=NONE` or `GIT_PROMPT_STRING_CONFIG=NONE git-prompt-string`
 will use the default configuration values defined by git-prompt-string.
 
-### Configuration options
+#### Configuration options
 
 The following configuration options are available in either as a command-line argument or TOML key.
 
@@ -147,7 +149,7 @@ The following configuration options are available in either as a command-line ar
       A suffix that is added to the end of the prompt.
 ```
 
-### Specifying colors
+#### Specifying colors
 
 A color value in the configuration must be either a single color or multiple colors
 separated by white space.
@@ -199,7 +201,7 @@ color_untracked="fg:#ff0000 bg:#16f2aa"
 color_merging="bg:#ccccff magenta"
 ```
 
-### Default configuration
+#### Default configuration
 
 ```toml
 prompt_prefix = '  '
