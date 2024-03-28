@@ -1,6 +1,6 @@
 package config
 
-type GPSConfig struct {
+type GitPromptStringConfig struct {
 	PromptPrefix           string `toml:"prompt_prefix"`
 	PromptSuffix           string `toml:"prompt_suffix"`
 	AheadFormat            string `toml:"ahead_format"`

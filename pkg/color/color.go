@@ -71,7 +71,7 @@ var standardColors = map[string]string{
 	"bg:bright-cyan":    codeToEscapeSequence(106),
 	"bg:bright-white":   codeToEscapeSequence(107),
 
-	"none": codeToEscapeSequence(0),
+	"reset": codeToEscapeSequence(0),
 }
 
 func hexToRGB(hex string) (int, int, int, error) {

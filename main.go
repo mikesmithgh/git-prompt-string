@@ -47,7 +47,7 @@ func header() string {
 }
 
 func main() {
-	cfg := config.GPSConfig{
+	cfg := config.GitPromptStringConfig{
 		PromptPrefix:           *promptPrefix,
 		PromptSuffix:           *promptSuffix,
 		AheadFormat:            *aheadFormat,
@@ -86,14 +86,14 @@ func main() {
 
 	flag.Parse()
 
-	var gpsConfig string
-	gpsConfigEnv := os.Getenv("GIT_PROMPT_STRING_CONFIG")
+	var cfgPath string
+	cfgEnv := os.Getenv("GIT_PROMPT_STRING_CONFIG")
 	if *configPath == "" {
-		gpsConfig = gpsConfigEnv
+		cfgPath = cfgEnv
 	} else {
-		gpsConfig = *configPath
+		cfgPath = *configPath
 	}
-	if gpsConfig == "" {
+	if cfgPath == "" {
 		xdgConfigHome := os.Getenv("XDG_CONFIG_HOME")
 		if xdgConfigHome == "" {
 			home, err := os.UserHomeDir()
@@ -102,20 +102,20 @@ func main() {
 			}
 			xdgConfigHome = path.Join(home, util.XDGConfigPath)
 		}
-		gpsConfig = path.Join(xdgConfigHome, "git-prompt-string", "config.toml")
+		cfgPath = path.Join(xdgConfigHome, "git-prompt-string", "config.toml")
 	}
 
-	if gpsConfig != "NONE" {
-		gpsConfigRaw, err := os.ReadFile(gpsConfig)
+	if cfgPath != "NONE" {
+		cfgBytes, err := os.ReadFile(cfgPath)
 		if err != nil && !os.IsNotExist(err) {
 			util.ErrMsg("read config exists", err)
 		}
 
-		if err != nil && (*configPath != "" || gpsConfigEnv != "") {
+		if err != nil && (*configPath != "" || cfgEnv != "") {
 			util.ErrMsg("read config", err)
 		}
 
-		err = toml.Unmarshal(gpsConfigRaw, &cfg)
+		err = toml.Unmarshal(cfgBytes, &cfg)
 		if err != nil {
 			util.ErrMsg("unmarshal config", err)
 		}
@@ -168,9 +168,9 @@ func main() {
 		os.Exit(0)
 	}
 
-	clearColor, err := color.Color("none")
+	resetColor, err := color.Color("reset")
 	if err != nil {
-		util.ErrMsg("color none", err)
+		util.ErrMsg("color reset", err)
 	}
 
 	gitRepo, stderr, err := git.RevParse()
@@ -194,5 +194,5 @@ func main() {
 		util.ErrMsg("branch status", err)
 	}
 
-	fmt.Printf("%s%s%s%s%s%s", promptColor, cfg.PromptPrefix, branchInfo, branchStatus, cfg.PromptSuffix, clearColor)
+	fmt.Printf("%s%s%s%s%s%s", promptColor, cfg.PromptPrefix, branchInfo, branchStatus, cfg.PromptSuffix, resetColor)
 }

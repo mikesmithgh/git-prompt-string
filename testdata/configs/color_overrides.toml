@@ -1,5 +1,5 @@
  color_clean='#e6ee04'
- color_no_upstream="fg:black bg:white"
+ color_no_upstream="reset fg:black bg:white"
  color_dirty="bg:#b30559"
  color_delta="fg:#fcb728"
  color_untracked="fg:#ff0000 bg:#16f2aa"
