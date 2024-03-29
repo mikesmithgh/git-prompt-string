@@ -33,9 +33,86 @@ go install github.com/mikesmithgh/git-prompt-string@latest
 
 Add git-prompt-string to your prompt. For example,
 
-#### bash
+#### [bash](https://www.gnu.org/software/bash/)
+
 ```sh
-PROMPT_COMMAND='PS1="\[\n \e[0;33m\w\e[0m$(git-prompt-string)\n \e[0;32m\u@local \e[0;36m\$\e[0m \]"'
+PS1='\[\n\e[0;33m\w\e[0m$(git-prompt-string)\n\e[0;32mbash \e[0;36m\$\e[0m \]'
+```
+
+#### [zsh](https://www.zsh.org/)
+
+```sh
+autoload -U colors && colors
+setopt PROMPT_SUBST
+PROMPT=$'\n%{$fg[yellow]%}%~%{$reset_color%}$(git-prompt-string)\n%{$fg[green]%}zsh %{$fg[cyan]%}%#%{$reset_color%} '
+```
+
+#### [fish](https://fishshell.com/)
+
+```fish
+set -U fish_prompt_pwd_dir_length 0
+function fish_prompt
+  set -l symbol ' $ '
+  if fish_is_root_user
+      set symbol ' # '
+  end
+
+  printf '\n%s%s%s%s\n%s%sfish%s%s%s' \
+  (set_color yellow) (prompt_pwd) (set_color normal) (git-prompt-string) \
+  (set_color green) (set_color blue) (set_color cyan) $symbol (set_color normal)
+end
+```
+
+#### [powershell](https://learn.microsoft.com/en-us/powershell/)
+
+```powershell
+function prompt {
+    $ESC = [char]27
+    $w = $pwd.Path.Replace($env:USER_PROFILE, "~").Replace($env:HOME, "~")
+    return "`n$ESC[0;33m$w$ESC[0m$(git-prompt-string)`n$ESC[0;32mPS $ESC[0;36m>$ESC[0m "
+}
+```
+
+#### [nushell](https://www.nushell.sh/)
+
+```nu
+$env.PROMPT_INDICATOR = { ||
+    $" (ansi cyan)>(ansi reset) "
+}
+$env.PROMPT_COMMAND = { ||
+    $"\n(ansi yellow)($env.PWD | str replace $"($env.HOME)" '~')(git-prompt-string)\n(ansi green)nushell"
+}
+$env.PROMPT_COMMAND_RIGHT = ""
+```
+
+#### [starship](https://starship.rs/config/)
+
+Starship will hide custom commands that fail with a non-zero exit code. To prevent this, add `|| :`
+or your shell's equvilent command to always return a zero exit code. It is recommended to always
+return successfully so that error messages are displayed. 
+
+```toml
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = """
+$directory\
+${custom.git-prompt-string}\
+$line_break\
+[starship](green) \
+[\\$](cyan) \
+"""
+
+[custom.git-prompt-string]
+command = "git-prompt-string || :"
+when = true
+
+[directory]
+home_symbol='~'
+format = '[$path]($style)'
+truncation_length = 0
+truncate_to_repo = false
+style = "yellow"
+use_logical_path = true
 ```
 
 ### git-prompt-string configuration
