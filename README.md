@@ -7,15 +7,12 @@ information about the current git branch and is inspired by
 [![go](https://img.shields.io/static/v1?style=flat-square&label=&message=v1.22.0&logo=go&labelColor=282828&logoColor=9dbad4&color=9dbad4)](https://go.dev/)
 [![semantic-release: angular](https://img.shields.io/static/v1?style=flat-square&label=semantic-release&message=angular&logo=semantic-release&labelColor=282828&logoColor=d8869b&color=8f3f71)](https://github.com/semantic-release/semantic-release)
 
-![git-prompt-string](https://github.com/mikesmithgh/git-prompt-string/assets/10135646/80dd6b32-8155-4a07-9801-358f413ddbe8)
+![git-prompt-string](https://github.com/mikesmithgh/git-prompt-string/assets/10135646/b89014f7-1af0-4e7a-93c1-e062b2916d60)
 
-
-> [!WARNING]\
-> 03/25/2024: git-prompt-string (previously bgps) is actively undergoing a major rewrite 
+> [!NOTE]\
+> Looking for [bgps](https://github.com/mikesmithgh/git-prompt-string/tree/v0.0.1)? git-prompt-string is the successor of bgps.
+> bgps is still available on the tag [v0.0.1](https://github.com/mikesmithgh/git-prompt-string/tree/v0.0.1)
 >
-> This is a breaking change that will simplify and improve maintainability of git-prompt-string
->
-> If you prefer to keep using legacy bgps, then use the tag [v0.0.1](https://github.com/mikesmithgh/git-prompt-string/tree/v0.0.1)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -77,7 +74,7 @@ mv git-prompt-string "$HOME/bin" # replace with your preferred directory that is
 
 ### Prompt configuration
 
-Add git-prompt-string to your prompt. For example,
+See the following for examples for a reference on how you could add git-prompt-string to your prompt.
 
 #### [bash](https://www.gnu.org/software/bash/)
 
@@ -359,4 +356,5 @@ color_merging = 'blue'
 - [bash-git-prompt](https://github.com/magicmonty/bash-git-prompt) - An informative and fancy bash prompt for Git users
 - [zsh-git-prompt](https://github.com/olivierverdier/zsh-git-prompt) - Informative git prompt for zsh
 - [starship](https://starship.rs/) - The minimal, blazing-fast, and infinitely customizable prompt for any shell!
+  - You can integrate git-prompt-string with starship or use starship's builtin git configurations.
 
