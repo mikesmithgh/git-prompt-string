@@ -9,12 +9,10 @@ information about the current git branch and is inspired by
 
 ![git-prompt-string](https://github.com/mikesmithgh/git-prompt-string/assets/10135646/b89014f7-1af0-4e7a-93c1-e062b2916d60)
 
-> [!WARNING]\
-> 03/25/2024: git-prompt-string (previously bgps) is actively undergoing a major rewrite 
+> [!INFO]\
+> Looking for [bgps](https://github.com/mikesmithgh/git-prompt-string/tree/v0.0.1)? git-prompt-string is the successor of bgps.
+> bgps is still available on the tag [v0.0.1](https://github.com/mikesmithgh/git-prompt-string/tree/v0.0.1)
 >
-> This is a breaking change that will simplify and improve maintainability of git-prompt-string
->
-> If you prefer to keep using legacy bgps, then use the tag [v0.0.1](https://github.com/mikesmithgh/git-prompt-string/tree/v0.0.1)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
