@@ -50,6 +50,7 @@ feed 'sed -i "16s/$/TODO: add demo/" README.md'
 feed 'touch new_file.txt'
 feed 'rm -f new_file.txt'
 feed 'git commit -am "chore: add TODO message"'
+feed git merge
 feed 'git checkout --theirs README.md && git add .'
 feed 'git merge --abort'
 feed git rebase
