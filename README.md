@@ -77,7 +77,7 @@ mv git-prompt-string "$HOME/bin" # replace with your preferred directory that is
 
 ### Prompt configuration
 
-Add git-prompt-string to your prompt. For example,
+See the following for examples for a reference on how you could add git-prompt-string to your prompt.
 
 #### [bash](https://www.gnu.org/software/bash/)
 
