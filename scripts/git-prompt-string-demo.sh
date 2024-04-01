@@ -2,6 +2,10 @@
 
 # Utility script to execute demo steps via Kitty
 
+# gif generated with
+# ffmpeg -i git-prompt-string-demo.mov -r 5 frame%04d.png
+# gifski --quality 97 --motion-quality 97 --lossy-quality 97 --width 1200 --height 627 -o git-prompt-string.gif frame*.png
+
 win= # replace with kitty window ID
 delay='0.2'
 
