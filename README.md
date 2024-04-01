@@ -7,8 +7,7 @@ information about the current git branch and is inspired by
 [![go](https://img.shields.io/static/v1?style=flat-square&label=&message=v1.22.0&logo=go&labelColor=282828&logoColor=9dbad4&color=9dbad4)](https://go.dev/)
 [![semantic-release: angular](https://img.shields.io/static/v1?style=flat-square&label=semantic-release&message=angular&logo=semantic-release&labelColor=282828&logoColor=d8869b&color=8f3f71)](https://github.com/semantic-release/semantic-release)
 
-![git-prompt-string](https://github.com/mikesmithgh/git-prompt-string/assets/10135646/80dd6b32-8155-4a07-9801-358f413ddbe8)
-
+![git-prompt-string](https://github.com/mikesmithgh/git-prompt-string/assets/10135646/b89014f7-1af0-4e7a-93c1-e062b2916d60)
 
 > [!WARNING]\
 > 03/25/2024: git-prompt-string (previously bgps) is actively undergoing a major rewrite 
