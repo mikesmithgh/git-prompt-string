@@ -14,6 +14,32 @@ information about the current git branch and is inspired by
 >
 > If you prefer to keep using legacy bgps, then use the tag [v0.0.1](https://github.com/mikesmithgh/git-prompt-string/tree/v0.0.1)
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- 📦 [Installation](#-installation)
+  - [homebrew tap](#homebrew-tap)
+  - [go install](#go-install)
+  - [manually](#manually)
+- 🛠️ [Setup](#-setup)
+  - [Prompt configuration](#prompt-configuration)
+    - [bash](#bash)
+    - [zsh](#zsh)
+    - [fish](#fish)
+    - [powershell](#powershell)
+    - [nushell](#nushell)
+    - [starship](#starship)
+  - [git-prompt-string configuration](#git-prompt-string-configuration)
+    - [Nerd Font](#nerd-font)
+    - [Configuration file](#configuration-file)
+    - [Configuration options](#configuration-options)
+    - [Specifying colors](#specifying-colors)
+    - [Default configuration](#default-configuration)
+- 📌 [Alternatives](#-alternatives)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+
 ## 📦 Installation
 
 ### homebrew tap
