@@ -17,6 +17,7 @@ information about the current git branch and is inspired by
 ## 📦 Installation
 
 ### homebrew tap
+
 ```sh
 brew install mikesmithgh/homebrew-git-prompt-string/git-prompt-string
 ```
@@ -25,6 +26,22 @@ brew install mikesmithgh/homebrew-git-prompt-string/git-prompt-string
 
 ```sh
 go install github.com/mikesmithgh/git-prompt-string@latest 
+```
+
+### manually
+1. Download pre-compiled binary from [releases](https://github.com/mikesmithgh/git-prompt-string/releases/latest).
+2. If you are on MacOS, run `xattr -c git-prompt-string*.tar.gz` to avoid "unknown developer" warning
+3. Extract the `tar.gz` or `zip` file
+4. Move `git-prompt-string` to a file location that is in your `PATH` environment variable
+5. Run `git-prompt-string --version`
+
+#### Example manually downloading via curl on MacOS
+
+```sh
+curl -L -o git-prompt-string.tar.gz https://github.com/mikesmithgh/git-prompt-string/releases/latest/download/git-prompt-string_Darwin_arm64.tar.gz
+xattr -c git-prompt-string.tar.gz
+tar xzvf git-prompt-string.tar.gz
+mv git-prompt-string "$HOME/bin" # replace with your preferred directory that is in PATH
 ```
 
 ## 🛠️ Setup
