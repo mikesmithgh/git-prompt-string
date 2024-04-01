@@ -85,6 +85,8 @@ Add git-prompt-string to your prompt. For example,
 PS1='\[\n\e[0;33m\w\e[0m$(git-prompt-string)\n\e[0;32mbash \e[0;36m\$\e[0m \]'
 ```
 
+![bash](https://github.com/mikesmithgh/git-prompt-string/assets/10135646/0cd23b15-e12b-4ae6-a51e-20d2b38ea7a0)
+
 #### [zsh](https://www.zsh.org/)
 
 ```sh
@@ -92,6 +94,8 @@ autoload -U colors && colors
 setopt PROMPT_SUBST
 PROMPT=$'\n%{$fg[yellow]%}%~%{$reset_color%}$(git-prompt-string)\n%{$fg[green]%}zsh %{$fg[cyan]%}%#%{$reset_color%} '
 ```
+
+![zsh](https://github.com/mikesmithgh/git-prompt-string/assets/10135646/4ec33fa3-6fc9-4c14-8f4a-7d1daeaeaa3e)
 
 #### [fish](https://fishshell.com/)
 
@@ -109,6 +113,8 @@ function fish_prompt
 end
 ```
 
+![fish](https://github.com/mikesmithgh/git-prompt-string/assets/10135646/f4ed0600-e8cd-464f-98bf-5064f00d88d5)
+
 #### [powershell](https://learn.microsoft.com/en-us/powershell/)
 
 ```powershell
@@ -118,6 +124,8 @@ function prompt {
     return "`n$ESC[0;33m$w$ESC[0m$(git-prompt-string)`n$ESC[0;32mPS $ESC[0;36m>$ESC[0m "
 }
 ```
+
+![pwsh](https://github.com/mikesmithgh/git-prompt-string/assets/10135646/bd712f7a-1ba9-4907-b98a-b8ee35640a50)
 
 #### [nushell](https://www.nushell.sh/)
 
@@ -130,6 +138,8 @@ $env.PROMPT_COMMAND = { ||
 }
 $env.PROMPT_COMMAND_RIGHT = ""
 ```
+
+![nu](https://github.com/mikesmithgh/git-prompt-string/assets/10135646/d75dfeed-cd26-4f87-9475-9288df7247e1)
 
 #### [starship](https://starship.rs/config/)
 
@@ -160,6 +170,8 @@ truncate_to_repo = false
 style = "yellow"
 use_logical_path = true
 ```
+
+![starship](https://github.com/mikesmithgh/git-prompt-string/assets/10135646/6a3d1899-7a81-4dbc-82d4-d6b60fc8513f)
 
 ### git-prompt-string configuration
 
