@@ -9,7 +9,7 @@ information about the current git branch and is inspired by
 
 ![git-prompt-string](https://github.com/mikesmithgh/git-prompt-string/assets/10135646/b89014f7-1af0-4e7a-93c1-e062b2916d60)
 
-> [!INFO]\
+> [!NOTE]\
 > Looking for [bgps](https://github.com/mikesmithgh/git-prompt-string/tree/v0.0.1)? git-prompt-string is the successor of bgps.
 > bgps is still available on the tag [v0.0.1](https://github.com/mikesmithgh/git-prompt-string/tree/v0.0.1)
 >
