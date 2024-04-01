@@ -359,4 +359,5 @@ color_merging = 'blue'
 - [bash-git-prompt](https://github.com/magicmonty/bash-git-prompt) - An informative and fancy bash prompt for Git users
 - [zsh-git-prompt](https://github.com/olivierverdier/zsh-git-prompt) - Informative git prompt for zsh
 - [starship](https://starship.rs/) - The minimal, blazing-fast, and infinitely customizable prompt for any shell!
+  - You can integrate git-prompt-string with starship or use starship's builtin git configurations.
 
