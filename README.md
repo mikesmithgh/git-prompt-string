@@ -356,5 +356,13 @@ color_merging = 'blue'
 - [bash-git-prompt](https://github.com/magicmonty/bash-git-prompt) - An informative and fancy bash prompt for Git users
 - [zsh-git-prompt](https://github.com/olivierverdier/zsh-git-prompt) - Informative git prompt for zsh
 - [starship](https://starship.rs/) - The minimal, blazing-fast, and infinitely customizable prompt for any shell!
-  - You can integrate git-prompt-string with starship or use starship's builtin git configurations.
+  - You can integrate git-prompt-string with starship or use starship's builtin git [configurations](https://starship.rs/config/).
+- [ohmyzsh](https://ohmyz.sh/) - 🙃 A delightful community-driven (with 2,200+ contributors) framework for managing your zsh configuration.
+  - ohmyzsh offers git [plugins](https://github.com/ohmyzsh/ohmyzsh/wiki/Plugins) to customize the prompt
+- [powerlevel10k](https://github.com/romkatv/powerlevel10k) - A Zsh theme
+  - powerlevel10k offers [git status](https://github.com/romkatv/powerlevel10k?tab=readme-ov-file#what-do-different-symbols-in-git-status-mean) integration into the prompt
+- [oh-my-posh](https://ohmyposh.dev/) - The most customisable and low-latency cross platform/shell prompt renderer
+  - oh-my-posh offers a [git segment](https://ohmyposh.dev/docs/segments/git) to customize the prompt
+- [fish_git_prompt](https://fishshell.com/docs/current/cmds/fish_git_prompt.html) - Fish has builtin git support to display information about the current git repository, if any.
+- [gitprompt](https://github.com/akupila/gitprompt) - a configurable, fast and zero-dependencies* way of getting the current git status to be displayed in the PROMPT.
 
