@@ -150,7 +150,7 @@ func main() {
 		case "color-untracked":
 			cfg.ColorUntracked = f.Value.String()
 		case "color-no-upstream":
-			cfg.ColorUntracked = f.Value.String()
+			cfg.ColorNoUpstream = f.Value.String()
 		case "color-merging":
 			cfg.ColorMerging = f.Value.String()
 		}
