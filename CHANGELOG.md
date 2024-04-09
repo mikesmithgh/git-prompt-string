@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/mikesmithgh/git-prompt-string/compare/v1.2.0...v1.2.1) (2024-04-09)
+
+
+### Bug Fixes
+
+* use correct color from --color-no-upsteam arg ([#57](https://github.com/mikesmithgh/git-prompt-string/issues/57)) ([dd587ea](https://github.com/mikesmithgh/git-prompt-string/commit/dd587ea04b267a2ead7fcd0914b1905c6a63c944))
+
 # [1.2.0](https://github.com/mikesmithgh/git-prompt-string/compare/v1.1.0...v1.2.0) (2024-03-28)
 
 
