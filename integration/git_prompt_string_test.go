@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -76,6 +77,93 @@ func TestGitPromptString(t *testing.T) {
 		{"configs", []string{}, fmt.Sprintf("\x1b[31m git-prompt-string error(unmarshal config): \"toml: expected character %s\"\x1b[0m", escapedEqualSign), []string{"GIT_PROMPT_STRING_CONFIG=invalid_syntax.toml"}, errors.New("exit status 1")},
 
 		{"norepo", []string{"--config=NONE"}, "", nil, nil},
+
+		// json
+		{
+			"bare",
+			[]string{"--config=NONE", "--json"},
+			strings.TrimSpace(`
+{
+  "branchInfo": "BARE:main",
+  "branchStatus": "",
+  "color": "bright-black",
+  "promptPrefix": "  ",
+  "promptSuffix": ""
+}
+`), nil, nil,
+		},
+		{"no_upstream_remote", []string{"--config=NONE", "--json"}, strings.TrimSpace(`
+{
+  "branchInfo": "main → mikesmithgh/test/main",
+  "branchStatus": "",
+  "color": "bright-black",
+  "promptPrefix": "  ",
+  "promptSuffix": ""
+}
+    `), nil, nil},
+		{"git_dir", []string{"--config=NONE", "--json"}, strings.TrimSpace(`
+{
+  "branchInfo": "GIT_DIR!",
+  "branchStatus": "",
+  "color": "bright-black",
+  "promptPrefix": "  ",
+  "promptSuffix": ""
+}
+    `), nil, nil},
+		{"clean", []string{"--config=NONE", "--json", "--prompt-prefix=a"}, strings.TrimSpace(`
+{
+  "branchInfo": "main",
+  "branchStatus": "",
+  "color": "green",
+  "promptPrefix": "a",
+  "promptSuffix": ""
+}
+    `), nil, nil},
+		{"tag", []string{"--config=NONE", "--json", "--prompt-suffix=z"}, strings.TrimSpace(`
+{
+  "branchInfo": "(v1.0.0)",
+  "branchStatus": "",
+  "color": "bright-black",
+  "promptPrefix": "  ",
+  "promptSuffix": "z"
+}
+    `), nil, nil},
+		{"dirty", []string{"--config=NONE", "--json", "--color-dirty=CustomRed"}, strings.TrimSpace(`
+{
+  "branchInfo": "main",
+  "branchStatus": " *",
+  "color": "CustomRed",
+  "promptPrefix": "  ",
+  "promptSuffix": ""
+}
+    `), nil, nil},
+		{"conflict_diverged", []string{"--config=NONE", "--json"}, strings.TrimSpace(`
+{
+  "branchInfo": "main",
+  "branchStatus": " ↕ ↑[1] ↓[1]",
+  "color": "yellow",
+  "promptPrefix": "  ",
+  "promptSuffix": ""
+}
+    `), nil, nil},
+		{"untracked", []string{"--config=NONE", "--json"}, strings.TrimSpace(`
+{
+  "branchInfo": "main",
+  "branchStatus": " *",
+  "color": "magenta",
+  "promptPrefix": "  ",
+  "promptSuffix": ""
+}
+    `), nil, nil},
+		{"sparse", []string{"--config=NONE", "--json"}, strings.TrimSpace(`
+{
+  "branchInfo": "main|SPARSE",
+  "branchStatus": "",
+  "color": "green",
+  "promptPrefix": "  ",
+  "promptSuffix": ""
+}     
+    `), nil, nil},
 	}
 
 	for _, test := range tests {

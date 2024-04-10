@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/mikesmithgh/git-prompt-string/pkg/color"
 	"github.com/mikesmithgh/git-prompt-string/pkg/config"
 	"github.com/mikesmithgh/git-prompt-string/pkg/util"
 )
@@ -195,11 +194,7 @@ func (g *GitRepo) BranchStatus(cfg config.GitPromptStringConfig) (string, string
 	statusColor := ""
 
 	if g.IsInBareRepo || g.IsInGitDir {
-		c, err := color.Color(strings.Split(cfg.ColorNoUpstream, " ")...)
-		if err != nil {
-			util.ErrMsg("color no upstream", err)
-		}
-		return status, c, nil
+		return status, cfg.ColorNoUpstream, nil
 	}
 
 	cleanWorkingTree, err := HasCleanWorkingTree()
@@ -220,24 +215,15 @@ func (g *GitRepo) BranchStatus(cfg config.GitPromptStringConfig) (string, string
 	}
 
 	if cleanWorkingTree {
-		statusColor, err = color.Color(strings.Split(cfg.ColorClean, " ")...)
-		if err != nil {
-			util.ErrMsg("color clean", err)
-		}
+		statusColor = cfg.ColorClean
 	}
 
 	if ahead > 0 {
-		statusColor, err = color.Color(strings.Split(cfg.ColorDelta, " ")...)
-		if err != nil {
-			util.ErrMsg("color delta ahead", err)
-		}
+		statusColor = cfg.ColorDelta
 		status = fmt.Sprintf(cfg.AheadFormat, ahead)
 	}
 	if behind > 0 {
-		statusColor, err = color.Color(strings.Split(cfg.ColorDelta, " ")...)
-		if err != nil {
-			util.ErrMsg("color delta behind", err)
-		}
+		statusColor = cfg.ColorDelta
 		status = fmt.Sprintf(cfg.BehindFormat, behind)
 	}
 
@@ -246,32 +232,20 @@ func (g *GitRepo) BranchStatus(cfg config.GitPromptStringConfig) (string, string
 	}
 
 	if g.ShortSha == "" {
-		statusColor, err = color.Color(strings.Split(cfg.ColorNoUpstream, " ")...)
-		if err != nil {
-			util.ErrMsg("color no upstream", err)
-		}
+		statusColor = cfg.ColorNoUpstream
 	}
 
 	if g.PromptMergeStatus != "" {
-		statusColor, err = color.Color(strings.Split(cfg.ColorMerging, " ")...)
-		if err != nil {
-			util.ErrMsg("color merging", err)
-		}
+		statusColor = cfg.ColorMerging
 	}
 
 	if hasUntracked {
-		statusColor, err = color.Color(strings.Split(cfg.ColorUntracked, " ")...)
-		if err != nil {
-			util.ErrMsg("color untracked", err)
-		}
+		statusColor = cfg.ColorUntracked
 		status = fmt.Sprintf("*%s", status)
 	}
 
 	if !cleanWorkingTree && !hasUntracked {
-		statusColor, err = color.Color(strings.Split(cfg.ColorDirty, " ")...)
-		if err != nil {
-			util.ErrMsg("color dirty", err)
-		}
+		statusColor = cfg.ColorDirty
 		status = fmt.Sprintf("*%s", status)
 	}
 	if status != "" {

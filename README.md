@@ -279,6 +279,19 @@ The following configuration options are available in either as a command-line ar
 
 --prompt-suffix or prompt_suffix
       A suffix that is added to the end of the prompt.
+
+--json
+      Output the results in JSON format. The keys of the JSON result are
+      branchInfo, branchStatus, color, promptPrefix, and promptSuffix.
+    
+      Example:
+      {
+        "branchInfo": "main",
+        "branchStatus": "",
+        "color": "green",
+        "promptPrefix": "  ",
+        "promptSuffix": ""
+      }
 ```
 
 #### Specifying colors

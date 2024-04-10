@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
@@ -34,6 +35,7 @@ var (
 	colorUntracked         = flag.String("color-untracked", "magenta", "The color of the prompt when there are untracked files in the\nworking directory.")
 	colorNoUpstream        = flag.String("color-no-upstream", "bright-black", "The color of the prompt when there is no remote upstream branch.\n")
 	colorMerging           = flag.String("color-merging", "blue", "The color of the prompt during a merge, rebase, cherry-pick,\nrevert, or bisect.")
+	jsonFormat             = flag.Bool("json", false, "Output the results in JSON format. The keys of the JSON result are\nbranchInfo, branchStatus, color, promptPrefix, and promptSuffix.\n\nExample:\n{\n  \"branchInfo\": \"main\",\n  \"branchStatus\": \"\",\n  \"color\": \"green\",\n  \"promptPrefix\": \"  \",\n  \"promptSuffix\": \"\"\n}")
 	versionFlag            = flag.Bool("version", false, "Print version information for git-prompt-string.")
 )
 
@@ -189,10 +191,33 @@ func main() {
 	if err != nil {
 		util.ErrMsg("branch info", err)
 	}
-	branchStatus, promptColor, err := gitRepo.BranchStatus(cfg)
+	branchStatus, statusColor, err := gitRepo.BranchStatus(cfg)
 	if err != nil {
 		util.ErrMsg("branch status", err)
 	}
 
-	fmt.Printf("%s%s%s%s%s%s", promptColor, cfg.PromptPrefix, branchInfo, branchStatus, cfg.PromptSuffix, resetColor)
+	if *jsonFormat {
+		color := ""
+		if !cfg.ColorDisabled {
+			color = statusColor
+		}
+		output := map[string]string{
+			"branchInfo":   branchInfo,
+			"branchStatus": branchStatus,
+			"promptPrefix": cfg.PromptPrefix,
+			"promptSuffix": cfg.PromptSuffix,
+			"color":        color,
+		}
+		jsonOutput, err := json.MarshalIndent(output, "", "  ")
+		if err != nil {
+			util.ErrMsg("marshal json", err)
+		}
+		fmt.Print(string(jsonOutput))
+	} else {
+		promptColor, err := color.Color(strings.Split(statusColor, " ")...)
+		if err != nil {
+			util.ErrMsg("prompt color", err)
+		}
+		fmt.Printf("%s%s%s%s%s%s", promptColor, cfg.PromptPrefix, branchInfo, branchStatus, cfg.PromptSuffix, resetColor)
+	}
 }
