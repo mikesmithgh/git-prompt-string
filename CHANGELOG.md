@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/mikesmithgh/git-prompt-string/compare/v1.2.1...v1.3.0) (2024-04-10)
+
+
+### Features
+
+* add flag for json output ([#58](https://github.com/mikesmithgh/git-prompt-string/issues/58)) ([3582a66](https://github.com/mikesmithgh/git-prompt-string/commit/3582a663247d0be3300e9daa7d108e5f8696254a))
+
 ## [1.2.1](https://github.com/mikesmithgh/git-prompt-string/compare/v1.2.0...v1.2.1) (2024-04-09)
 
 
