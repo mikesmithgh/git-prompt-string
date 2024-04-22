@@ -13,7 +13,7 @@ import (
 
 type GitRepo struct {
 	GitDir                     string
-	IsInGitDir                 bool
+	IsInGitDir                 *bool // pointer is used during checks if in a git repo
 	IsInWorkTree               bool
 	IsInBareRepo               bool
 	IsInShallowRepo            bool
@@ -155,7 +155,7 @@ func (g *GitRepo) BranchInfo(cfg config.GitPromptStringConfig) (string, error) {
 		}
 	}
 
-	if g.IsInGitDir {
+	if *g.IsInGitDir {
 		if g.IsInBareRepo {
 			g.PromptBareRepoStatus = "BARE:"
 		} else {
@@ -201,7 +201,7 @@ func (g *GitRepo) BranchStatus(cfg config.GitPromptStringConfig) (string, string
 	status := ""
 	statusColor := ""
 
-	if g.IsInBareRepo || g.IsInGitDir {
+	if g.IsInBareRepo || *g.IsInGitDir {
 		return status, cfg.ColorNoUpstream, nil
 	}
 

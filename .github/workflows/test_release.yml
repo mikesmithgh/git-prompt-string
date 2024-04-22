@@ -46,6 +46,12 @@ jobs:
         run: |
           make test
 
+      - name: test (different LOCALE)
+        if: runner.os == 'Linux'
+        run: |
+          sudo locale-gen zh_CN.UTF-8
+          LC_ALL='zh_CN.UTF-8' make test
+
 
   release:
     if: (github.ref == 'refs/heads/main') && (github.repository_owner == 'mikesmithgh')

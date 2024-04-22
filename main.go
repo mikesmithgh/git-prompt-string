@@ -175,12 +175,12 @@ func main() {
 		util.ErrMsg("color reset", err)
 	}
 
-	gitRepo, stderr, err := git.RevParse()
+	gitRepo, _, err := git.RevParse()
 	if err != nil {
 		switch {
 		case strings.Contains(err.Error(), exec.ErrNotFound.Error()):
 			util.ErrMsg("rev parse", err)
-		case strings.Contains(string(stderr), "not a git repository"):
+		case gitRepo.IsInGitDir == nil:
 			os.Exit(0)
 		default:
 			// allow other errors to pass through, the git repo may not have upstream
