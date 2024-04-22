@@ -70,6 +70,14 @@ func (g *GitRepo) ReadGitDirFileExitOnError(name string) string {
 	return content
 }
 
+func (g *GitRepo) ReadGitDirFileEmptyOnError(name string) string {
+	content, err := g.ReadGitDirFile(name)
+	if err != nil {
+		return ""
+	}
+	return content
+}
+
 func (g *GitRepo) BranchInfo(cfg config.GitPromptStringConfig) (string, error) {
 	var err error
 	ref := ""
@@ -78,8 +86,8 @@ func (g *GitRepo) BranchInfo(cfg config.GitPromptStringConfig) (string, error) {
 
 	if g.IsGitDir("rebase-merge") {
 		ref = g.ReadGitDirFileExitOnError("rebase-merge/head-name")
-		step = g.ReadGitDirFileExitOnError("rebase-merge/msgnum")
-		total = g.ReadGitDirFileExitOnError("rebase-merge/end")
+		step = g.ReadGitDirFileEmptyOnError("rebase-merge/msgnum")
+		total = g.ReadGitDirFileEmptyOnError("rebase-merge/end")
 		g.PromptMergeStatus = "|REBASE-m"
 		if g.GitDirFileExistsExitOnError("rebase-merge/interactive") {
 			g.PromptMergeStatus = "|REBASE-i"
@@ -87,8 +95,8 @@ func (g *GitRepo) BranchInfo(cfg config.GitPromptStringConfig) (string, error) {
 	} else {
 		switch {
 		case g.IsGitDir("rebase-apply"):
-			step = g.ReadGitDirFileExitOnError("rebase-apply/next")
-			total = g.ReadGitDirFileExitOnError("rebase-apply/last")
+			step = g.ReadGitDirFileEmptyOnError("rebase-apply/next")
+			total = g.ReadGitDirFileEmptyOnError("rebase-apply/last")
 			switch {
 			case g.GitDirFileExistsExitOnError("rebase-apply/rebasing"):
 				ref = g.ReadGitDirFileExitOnError("rebase-apply/head-name")
