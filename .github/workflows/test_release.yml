@@ -49,7 +49,7 @@ jobs:
       - name: test (different LOCALE)
         if: runner.os == 'Linux'
         run: |
-          locale-gen zh_CN.UTF-8
+          sudo locale-gen zh_CN.UTF-8
           LC_ALL='zh_CN.UTF-8' make test
 
 
