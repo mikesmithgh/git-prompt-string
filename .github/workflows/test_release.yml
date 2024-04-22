@@ -46,6 +46,10 @@ jobs:
         run: |
           make test
 
+      - name: test (different LOCALE)
+        run: |
+          LC_ALL='zh_CN.UTF-8' make test
+
 
   release:
     if: (github.ref == 'refs/heads/main') && (github.repository_owner == 'mikesmithgh')
