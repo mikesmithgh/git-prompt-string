@@ -37,10 +37,12 @@ func TestGitPromptString(t *testing.T) {
 		// rebase merge
 		{"rebase_i", []string{"--config=NONE"}, "\x1b[34m \ue0a0 main|REBASE-i 1/1\x1b[0m", nil, nil},
 		{"rebase_m", []string{"--config=NONE"}, "\x1b[34m \ue0a0 main|REBASE-m 1/1\x1b[0m", nil, nil},
+		{"rebase_i_no_steps", []string{"--config=NONE"}, "\x1b[34m \ue0a0 main|REBASE-i\x1b[0m", nil, nil},
 		// rebase apply
 		{"am_rebase", []string{"--config=NONE"}, "\x1b[34m \ue0a0 (b69e688)|AM/REBASE 1/1\x1b[0m", nil, nil},
 		{"am", []string{"--config=NONE"}, "\x1b[34m \ue0a0 (b69e688)|AM 1/1\x1b[0m", nil, nil},
 		{"rebase", []string{"--config=NONE"}, "\x1b[34m \ue0a0 main|REBASE 1/1\x1b[0m", nil, nil},
+		{"rebase_no_steps", []string{"--config=NONE"}, "\x1b[34m \ue0a0 main|REBASE\x1b[0m", nil, nil},
 		// merge
 		{"merge_conflict", []string{"--config=NONE"}, "\x1b[31m \ue0a0 main|MERGING|CONFLICT *↕ ↑[1] ↓[1]\x1b[0m", nil, nil},
 		{"merge", []string{"--config=NONE"}, "\x1b[35m \ue0a0 main|MERGING *↕ ↑[1] ↓[1]\x1b[0m", nil, nil},
