@@ -27,7 +27,7 @@ brews:
       owner: mikesmithgh
       name: homebrew-git-prompt-string
       token: "{{ .Env.TAP_GITHUB_TOKEN }}"
-    folder: Formula
+    directory: Formula
     goarm: "7"
     homepage: https://github.com/mikesmithgh/git-prompt-string
     description: "A shell agnostic git prompt written in Go"
