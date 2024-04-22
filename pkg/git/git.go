@@ -191,7 +191,8 @@ func RevParse() (*GitRepo, []byte, error) {
 		resultLen := len(result)
 		if resultLen == 5 || resultLen == 6 {
 			g.GitDir = result[0]
-			g.IsInGitDir, _ = strconv.ParseBool(result[1])
+			isInGitDir, _ := strconv.ParseBool(result[1])
+			g.IsInGitDir = &isInGitDir
 			g.IsInWorkTree, _ = strconv.ParseBool(result[2])
 			g.IsInBareRepo, _ = strconv.ParseBool(result[3])
 			g.IsInShallowRepo, _ = strconv.ParseBool(result[4])
