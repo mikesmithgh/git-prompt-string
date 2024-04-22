@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/mikesmithgh/git-prompt-string/compare/v1.3.0...v1.3.1) (2024-04-22)
+
+
+### Bug Fixes
+
+* do not error when no steps in a rebase ([#60](https://github.com/mikesmithgh/git-prompt-string/issues/60)) ([cacd862](https://github.com/mikesmithgh/git-prompt-string/commit/cacd862a4cde2216f1f205a564ed8f5ac23ee497))
+
 # [1.3.0](https://github.com/mikesmithgh/git-prompt-string/compare/v1.2.1...v1.3.0) (2024-04-10)
 
 
