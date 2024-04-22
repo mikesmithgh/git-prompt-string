@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/mikesmithgh/git-prompt-string/compare/v1.3.1...v1.3.2) (2024-04-22)
+
+
+### Bug Fixes
+
+* check isInGitDir instead of stderr msg ([#63](https://github.com/mikesmithgh/git-prompt-string/issues/63)) ([568a36c](https://github.com/mikesmithgh/git-prompt-string/commit/568a36cfea7458209da0df09dcd305548a671039)), closes [#62](https://github.com/mikesmithgh/git-prompt-string/issues/62)
+
 ## [1.3.1](https://github.com/mikesmithgh/git-prompt-string/compare/v1.3.0...v1.3.1) (2024-04-22)
 
 
