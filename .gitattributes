@@ -1,0 +1,3 @@
+# Fix language classification on GitHub.com
+.fdignore linguist-language=Ignore-List
+.releaserc linguist-language=JSON
