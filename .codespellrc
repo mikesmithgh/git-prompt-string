@@ -1,5 +1,5 @@
+; -*-INI-*- vim:ft=dosini
+
 [codespell]
 skip = vendor,testdata,node_modules,dist
 ignore-regex = .*cspell:disable-line.*
-
-# vim: filetype=dosini
