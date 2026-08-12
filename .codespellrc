@@ -2,5 +2,4 @@
 skip = vendor,testdata,node_modules,dist
 ignore-regex = .*cspell:disable-line.*
 
-# vim: filetype=toml
-
+# vim: filetype=dosini
